@@ -1,5 +1,6 @@
 import { Grid, GridItem } from "@chakra-ui/react";
 import React from "react";
+import { ColorModeSwitcher } from "../ColorModeSwitcher";
 
 export const Home: React.FC = () => {
   return (
@@ -10,7 +11,9 @@ export const Home: React.FC = () => {
       gap={4}
     >
       <GridItem rowSpan={2} colSpan={1} bg="tomato" />
-      <GridItem colSpan={4} bg="papayawhip" />
+      <GridItem colSpan={4} bg="blue">
+        <ColorModeSwitcher mt="1%" ml="96%" />
+      </GridItem>
       <GridItem colSpan={4} bg="tomato" />
     </Grid>
   );

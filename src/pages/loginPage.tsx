@@ -1,6 +1,7 @@
 import { GridItem, Grid, Box } from "@chakra-ui/react";
 import React from "react";
 import LoginForm from "../components/loginForm";
+import { ColorModeSwitcher } from "../ColorModeSwitcher";
 
 export const LoginPage: React.FC = () => {
   return (
@@ -21,13 +22,13 @@ export const LoginPage: React.FC = () => {
       </GridItem>
 
       {/* Coluna direita */}
-      <GridItem mt="30%">
+      <GridItem>
         {/* Conteúdo para a coluna direita, como um formulário de login */}
-        
-          {" "}
-          {/* Adicione padding para espaçamento */}
-          {/* Seu formulário de login aqui */}
-        <LoginForm />
+        <ColorModeSwitcher ml="95%"/> {/* Adicione padding para espaçamento */}
+        {/* Seu formulário de login aqui */}
+        <Box mt="30%">
+          <LoginForm />
+        </Box>
       </GridItem>
     </Grid>
   );

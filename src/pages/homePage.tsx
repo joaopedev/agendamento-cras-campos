@@ -1,50 +1,66 @@
 import { Button, Flex, Stack, Box } from '@chakra-ui/react';
 import React from 'react';
 import { SidebarS } from '../components/SidebarS';
-import { ColorModeSwitcher } from '../ColorModeSwitcher';
+import { HamburgerMenu } from '../components/HamburgerMenu';
 
 export const Home: React.FC = () => {
 	return (
 		<Flex h="100vh">
 			<SidebarS />
-			<Stack gap={'30px'} w="80%" m={'auto'} alignItems="center">
-				<Box sx={boxStyle}>
-					<Box fontSize="30px" fontWeight="bold" mb="20px">
+			<HamburgerMenu />
+			<Stack
+				gap={['20px', '20px', '30px', '30px']}
+				w={['60%', '60%', '60%', '80%']}
+				m={'auto'}
+				alignItems="center"
+			>
+				<Box
+					sx={boxStyle}
+					maxW={['500px', '500px', '500px', '950px']}
+					position={['relative', 'static', 'static', 'static']}
+				>
+					<Box fontSize={['20px', '25px', '30px', '30px']} fontWeight="bold" mb="20px">
 						SEUS DADOS
 					</Box>
-					<Box alignItems="center">
-						<Box fontWeight="bold" mt={'10px'} mb={'3px'}>
-							Nome:
-						</Box>
-						<Box w="" bg="white" borderRadius="5px" p="8px 0">
-							Fulano da Silva Júnior
-						</Box>
+
+					<Box sx={textStyle2}>Nome:</Box>
+					<Box w="" sx={textStyle1}>
+						Fulano da Silva Júnior
 					</Box>
-					<Box fontWeight="bold" mt={'10px'} mb={'3px'}>
-						CPF:
-					</Box>
-					<Box bg="white" borderRadius="5px" p="8px 0">
-						123.456.789-00
-					</Box>
-					<Box fontWeight="bold" mt={'10px'} mb={'3px'}>
-						Unidade do CRAS:
-					</Box>
-					<Box bg="white" borderRadius="5px" p="8px 0">
-						CRAS da Penha
-					</Box>
+
+					<Box sx={textStyle2}>CPF:</Box>
+					<Box sx={textStyle1}>123.456.789-00</Box>
+					<Box sx={textStyle2}>Unidade do CRAS:</Box>
+					<Box sx={textStyle1}>CRAS da Penha</Box>
 				</Box>
-				<Button sx={btnStyle}>AGENDAR ATENDIMENTO</Button>
+				<Button sx={btnStyle} transform="auto">
+					AGENDAR ATENDIMENTO
+				</Button>
 			</Stack>
 		</Flex>
 	);
 };
 
+const textStyle1 = {
+	fontSize: ['0.7rem', '0.8rem', '0.9rem', '1rem'],
+	bg: 'white',
+	borderRadius: '5px',
+	p: '8px 0',
+};
+
+const textStyle2 = {
+	fontSize: ['0.7rem', '0.8rem', '0.9rem', '1rem'],
+	fontWeight: 'bold',
+	mt: '10px',
+	mb: '3px',
+};
+
 export const boxStyle = {
-	maxW: '950px',
-	minW: '400px',
-	boxShadow: '2px 2px 5px hsla(0, 28%, 0%, 0.5)',
 	w: '60%',
-	p: '40px',
+	maxW: ['300px', '350px', '500px', '950px'],
+	minW: '250px',
+	boxShadow: '2px 2px 5px hsla(0, 28%, 0%, 0.5)',
+	p: ['20px', '25px', '30px', '40px'],
 	borderRadius: '25px',
 	bg: '#F4F4F4',
 	textAlign: 'center',
@@ -57,7 +73,8 @@ export const btnStyle = {
 	color: '#fff',
 	bg: '#2CA1FF',
 	maxW: '950px',
-	minW: '400px',
+	minW: ['150px', '200px', '250px', '300px'],
+	fontSize: ['0.7rem', '0.8rem', '0.9rem', '1rem'],
 	_hover: {
 		bg: '#1C75BC',
 		fontWeight: 'bold',

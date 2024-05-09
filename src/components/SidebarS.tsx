@@ -3,7 +3,7 @@ import { Button, Text, Stack, Box, Image } from '@chakra-ui/react';
 export const SidebarS: React.FC = () => {
 	const sideBtnStyle = {
 		textColor: 'white',
-		fontSize: '28',
+		fontSize: ['18', '18', '20', '28'],
 		h: 'fit-content',
 		p: '10px 15px',
 		borderRadius: '0',
@@ -23,14 +23,15 @@ export const SidebarS: React.FC = () => {
 
 	return (
 		<Box
-			w={'20%'}
-			h={'100vh'}
+			w={['30%', '30%', '25%', '20%']}
+			h={['100vh']}
 			borderRadius="0 100px 0 0 "
 			bgImage={
 				'https://www.turismo.rj.gov.br/wp-content/uploads/2020/03/Rio-Para%C3%ADba-do-Sul-1.jpg'
 			}
 			bgSize={'cover'}
 			bgPos={'20%'}
+			display={['none', 'flex', 'flex', 'flex']}
 		>
 			<Stack
 				p={'150px 0 40px '}
@@ -41,15 +42,13 @@ export const SidebarS: React.FC = () => {
 				borderRadius="0 100px 0 0 "
 				alignItems="center"
 				boxSize={'full'}
-				// backdropFilter="auto"
-				// backdropContrast="10%"
 			>
 				<Stack p=" 0" w={'100%'}>
 					<Button sx={sideBtnStyle}>Início</Button>
 
 					<Button sx={sideBtnStyle}>Agendamento</Button>
 				</Stack>
-				<Stack alignItems={'center'} mt={'100px'}>
+				<Stack alignItems={'center'}>
 					<Image
 						boxSize={'100px'}
 						objectFit="contain"

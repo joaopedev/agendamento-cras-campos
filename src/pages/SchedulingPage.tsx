@@ -1,29 +1,22 @@
-import { Button, Flex, Stack, Box } from '@chakra-ui/react';
+import { Flex } from '@chakra-ui/react';
 import React from 'react';
 import { SidebarS } from '../components/SidebarS';
-import { ColorModeSwitcher } from '../ColorModeSwitcher';
-// import { Calendar, momentLocalizer } from 'react-big-calendar';
-import { Calendar, momentLocalizer } from 'react-big-calendar';
-import moment from 'moment';
+import 'react-big-calendar/lib/css/react-big-calendar.css';
+import { HamburgerMenu } from '../components/HamburgerMenu';
+import SelecionarDia from '../components/SelecionarDia';
 
-const Scheduling: React.FC = () => {
-	const localizer = momentLocalizer(moment);
+const SchedulingPage: React.FC = () => {
+	const handleDataChange = (novaData: Date) => {
+		console.log('Data selecionada:', novaData);
+	};
+
 	return (
-		<>
-			<Flex h="100vh">
-				<SidebarS />
-				<Box></Box>
-			</Flex>
-			<Flex>
-				<Calendar
-					localizer={localizer}
-					startAccessor="start"
-					endAccessor="end"
-					style={{ height: 500 }}
-				/>
-			</Flex>
-		</>
+		<Flex h="100vh">
+			<SidebarS />
+			<HamburgerMenu />
+			<SelecionarDia />
+		</Flex>
 	);
 };
 
-export default Scheduling;
+export default SchedulingPage;

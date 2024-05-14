@@ -2,6 +2,7 @@ import { Button, Flex, Stack, Box } from '@chakra-ui/react';
 import React from 'react';
 import { SidebarS } from '../components/SidebarS';
 import { HamburgerMenu } from '../components/HamburgerMenu';
+import { NavLink } from 'react-router-dom';
 
 export const Home: React.FC = () => {
 	return (
@@ -33,9 +34,15 @@ export const Home: React.FC = () => {
 					<Box sx={textStyle2}>Unidade do CRAS:</Box>
 					<Box sx={textStyle1}>CRAS da Penha</Box>
 				</Box>
-				<Button sx={btnStyle} transform="auto">
-					AGENDAR ATENDIMENTO
-				</Button>
+				<NavLink to="/agendamento">
+					<Button
+						sx={btnStyle}
+						transform="auto"
+						// onClick={}
+					>
+						AGENDAR ATENDIMENTO
+					</Button>
+				</NavLink>
 			</Stack>
 		</Flex>
 	);

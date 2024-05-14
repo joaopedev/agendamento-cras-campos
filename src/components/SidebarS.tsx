@@ -1,11 +1,12 @@
 import { Button, Text, Stack, Box, Image } from '@chakra-ui/react';
+import { NavLink } from 'react-router-dom';
 
 export const SidebarS: React.FC = () => {
 	const sideBtnStyle = {
 		textColor: 'white',
 		fontSize: ['18', '18', '20', '28'],
 		h: 'fit-content',
-		p: '10px 15px',
+		p: ['10px 12px', '10px 12px', '10px 15px', '10px 15px'],
 		borderRadius: '0',
 		bgColor: '#ffffff50',
 		w: '100%',
@@ -15,7 +16,10 @@ export const SidebarS: React.FC = () => {
 			bg: '#ebedf090',
 		},
 		_focus: {
-			boxShadow: 'dark-lg',
+			color: '#1C75BC',
+			bg: 'white',
+		},
+		_active: {
 			color: '#1C75BC',
 			bg: 'white',
 		},
@@ -44,9 +48,21 @@ export const SidebarS: React.FC = () => {
 				boxSize={'full'}
 			>
 				<Stack p=" 0" w={'100%'}>
-					<Button sx={sideBtnStyle}>Início</Button>
+					<NavLink to={'/home'}>
+						{({ isActive }) => (
+							<Button isActive={isActive} sx={sideBtnStyle}>
+								Início
+							</Button>
+						)}
+					</NavLink>
 
-					<Button sx={sideBtnStyle}>Agendamento</Button>
+					<NavLink to="/agendamento">
+						{({ isActive }) => (
+							<Button isActive={isActive} sx={sideBtnStyle}>
+								Agendamento
+							</Button>
+						)}
+					</NavLink>
 				</Stack>
 				<Stack alignItems={'center'}>
 					<Image

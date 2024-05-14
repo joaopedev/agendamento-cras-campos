@@ -1,4 +1,5 @@
 import { Menu, MenuButton, MenuList, MenuItem, Box, IconButton } from '@chakra-ui/react';
+import { NavLink } from 'react-router-dom';
 import { HamburgerIcon } from '@chakra-ui/icons';
 
 export const HamburgerMenu: React.FC = () => {
@@ -21,12 +22,31 @@ export const HamburgerMenu: React.FC = () => {
 					_active={{}}
 				/>
 				<MenuList bg={'#2CA1FF'}>
-					<MenuItem bg={'none'} color={'white'}>
-						Início
-					</MenuItem>
-					<MenuItem bg={'none'} color={'white'}>
-						Agendamento
-					</MenuItem>
+					<NavLink to={'/home'}>
+						<MenuItem
+							bg={'none'}
+							_hover={{
+								bg: '#1C75BC',
+								fontWeight: 'bold',
+							}}
+							color={'white'}
+						>
+							Início
+						</MenuItem>
+					</NavLink>
+
+					<NavLink to={'/agendamento'}>
+						<MenuItem
+							bg={'none'}
+							_hover={{
+								bg: '#1C75BC',
+								fontWeight: 'bold',
+							}}
+							color={'white'}
+						>
+							Agendamento
+						</MenuItem>
+					</NavLink>
 				</MenuList>
 			</Menu>
 		</Box>

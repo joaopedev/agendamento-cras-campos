@@ -35,11 +35,7 @@ export const Home: React.FC = () => {
 					<Box sx={textStyle1}>CRAS da Penha</Box>
 				</Box>
 				<NavLink to="/agendamento">
-					<Button
-						sx={btnStyle}
-						transform="auto"
-						// onClick={}
-					>
+					<Button sx={btnStyle} transform="auto">
 						AGENDAR ATENDIMENTO
 					</Button>
 				</NavLink>

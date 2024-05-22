@@ -25,6 +25,9 @@ export const SidebarHome: React.FC = () => {
     },
   };
 
+  
+
+export const Sidem: React.FC = () => {
   return (
     <Box
       w={['30%', '30%', '25%', '20%']}
@@ -64,6 +67,39 @@ export const SidebarHome: React.FC = () => {
             )}
           </NavLink>
         </Stack>
+        <Text
+          fontFamily={'Poppins, sans-serif'} // Fonte mais moderna e legível
+          fontSize={'30px'}
+          color={'white'}
+          textAlign={'left'}
+          maxW={'250px'}
+          textShadow='1px 1px 2px rgba(0, 0, 0, 0.5)' // Sombra sutil
+        >
+          Bem vindo(a) à{' '}
+          <Text as='span' fontWeight='bold'>
+            central
+          </Text>{' '}
+          de{' '}
+          <Text as='span' fontWeight='bold'>
+            agendamento
+          </Text>{' '}
+          do{' '}
+          <Text as='span' fontWeight='bold'>
+            CRAS
+          </Text>
+        </Text>
+        <Divider
+          mt={-8} // Margem superior (opcional)
+          borderColor='white'
+          borderWidth='2px' // Espessura da linha
+          borderRadius={'10'}
+          width='80%' // Largura da linha (80% da largura do container pai)
+          marginLeft='15%' // Margem esquerda para controlar o início
+          marginRight='15%' // Margem direita
+          boxShadow='0px 2px 5px rgba(0, 0, 0, 0.3)' // Sombra
+        />
+
+        <Stack p=' 0' w={'100%'}></Stack>
         <Stack alignItems={'center'}>
           <Image
             boxSize={'100px'}

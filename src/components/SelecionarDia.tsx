@@ -1,33 +1,56 @@
 import 'react-datepicker/dist/react-datepicker.module.css';
 import 'react-datepicker/dist/react-datepicker.css';
 import { ptBR } from 'date-fns/locale/pt-BR';
-import { format } from 'date-fns';
+import { format, addDays } from 'date-fns';
 import * as React from 'react';
-import { useState, useEffect } from 'react';
-import DatePicker, {
-	// @ts-expect-error The library is not exporting the component as a named export
-	ReactDatePicker as _MissingNamedExport,
-	registerLocale,
-} from 'react-datepicker';
+import { useState } from 'react';
+import DatePicker, { registerLocale } from 'react-datepicker';
 import {
+	Button,
 	Box,
-	useDisclosure,
-	Container,
 	Flex,
-	Center,
-	Fade,
-	ScaleFade,
-	Slide,
-	SlideFade,
-	Collapse,
 	Text,
+	SimpleGrid,
+	Modal,
+	ModalOverlay,
+	ModalContent,
+	ModalHeader,
+	ModalFooter,
+	ModalBody,
+	ModalCloseButton,
+	useDisclosure,
 } from '@chakra-ui/react';
 
 registerLocale('pt-BR', ptBR);
 
 const SelecionarDia: React.FC = () => {
-	const { isOpen, onToggle } = useDisclosure();
+	const [horarioSelecionado, setHorarioSelecionado] = useState<string | null>(null);
+	const maxDate = addDays(new Date(), 30);
 	const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+	const { isOpen, onOpen, onClose } = useDisclosure();
+	const { isOpen: isConfirmOpen, onOpen: onConfirmOpen, onClose: onConfirmClose } = useDisclosure();
+
+	const BoxHorario = ({ horario, onOpen }: { horario: string; onOpen: () => void }) => {
+		return (
+			<Button
+				bg="#2CA1FF"
+				color="white"
+				_hover={{ bg: '#1C75BC' }}
+				onClick={() => {
+					setHorarioSelecionado(horario);
+					onOpen();
+				}}
+			>
+				{horario}
+			</Button>
+		);
+	};
+
+	const handleConfirmar = () => {
+		onClose();
+		onConfirmOpen();
+	};
+
 	const handleDateChange = (date: Date | null) => {
 		setSelectedDate(date);
 
@@ -58,11 +81,13 @@ const SelecionarDia: React.FC = () => {
 					</Text>
 				</Box>
 			)}
+
 			{selectedDate && (
 				<Box
 					className="box__cinza"
+					boxShadow="2px 2px 5px hsla(0, 28%, 0%, 0.5)"
 					textAlign={'center'}
-					p={4}
+					p={[2, 3, 4, 4]}
 					borderWidth="1px"
 					display={selectedDate ? 'block' : 'none'}
 					borderRadius="md"
@@ -71,7 +96,7 @@ const SelecionarDia: React.FC = () => {
 					alignSelf={'center'}
 					w={'80%'}
 				>
-					<Flex gap={'10px'} flexDirection={'column'}>
+					<Flex gap={'5px'} flexDirection={'column'}>
 						<Box className="box__dia" alignItems={'center'} display={'flex'} p={2}>
 							<Text mr={'5px'} fontWeight="bold" fontSize={['12px', '12px', '15px', '15px']}>
 								DIA SELECIONADO:
@@ -86,27 +111,63 @@ const SelecionarDia: React.FC = () => {
 							<Text fontSize={['12px', '12px', '15px', '15px']} fontWeight="bold">
 								HORÁRIOS DISPONÍVEIS
 							</Text>
-							{/* Mapear os horários disponíveis aqui */}
-							<Box
-								fontWeight={'bold'}
-								fontSize={['12px', '12px', '15px', '15px']}
-								bg={'#fff'}
-								h={'stretch'}
+							<SimpleGrid columns={[2, null, 5]} spacing="1">
+								<BoxHorario horario="08:00" onOpen={onOpen} />
+								<BoxHorario horario="09:00" onOpen={onOpen} />
+								<BoxHorario horario="10:00" onOpen={onOpen} />
+								<BoxHorario horario="11:00" onOpen={onOpen} />
+								<BoxHorario horario="12:00" onOpen={onOpen} />
+								<BoxHorario horario="13:00" onOpen={onOpen} />
+								<BoxHorario horario="14:00" onOpen={onOpen} />
+								<BoxHorario horario="15:00" onOpen={onOpen} />
+								<BoxHorario horario="16:00" onOpen={onOpen} />
+							</SimpleGrid>
+							<Modal isOpen={isOpen} onClose={onClose} isCentered size={['xs', 'sm', 'md', 'lg']}>
+								<ModalOverlay />
+								<ModalContent textAlign={'center'}>
+									<ModalHeader>Confirmar Agendamento</ModalHeader>
+									<ModalCloseButton />
+									<ModalBody>
+										Deseja confirmar o agendamento <br /> para o dia{' '}
+										<strong>{selectedDate && format(selectedDate, 'dd/MM/yyyy')}</strong> às{' '}
+										<strong>{horarioSelecionado}</strong>?
+									</ModalBody>
+									<ModalFooter>
+										<Button colorScheme="red" variant="ghost" mr={3} onClick={onClose}>
+											Cancelar
+										</Button>
+										<Button
+											// colorScheme="green"
+											bg={'#2CA1FF'}
+											textColor={'white'}
+											_hover={{
+												bg: '#1C75BC',
+											}}
+											onClick={handleConfirmar}
+										>
+											Confirmar
+										</Button>
+									</ModalFooter>
+								</ModalContent>
+							</Modal>
+							<Modal
+								isOpen={isConfirmOpen}
+								onClose={onConfirmClose}
+								isCentered
+								size={['xs', 'sm', 'md', 'lg']}
 							>
-								<Box bg="green.500" p={2} mb={2}>
-									08:00
-								</Box>
-								<Box bg="green.500" p={2} mb={2}>
-									09:00
-								</Box>
-								<Box bg="green.500" p={2} mb={2}>
-									11:00
-								</Box>
-								<Box bg="green.500" p={2} mb={2}>
-									14:00
-								</Box>
-								{/* ... outros horários */}
-							</Box>
+								<ModalOverlay />
+								<ModalContent color={'white'} bg={'#1C75BC'} textAlign={'center'}>
+									<ModalHeader>Agendamento Confirmado! 🎉</ModalHeader>
+									<ModalCloseButton />
+									<ModalBody pb={5}>
+										O seu atendimento será feito
+										<br />
+										dia <strong>{selectedDate && format(selectedDate, 'dd/MM/yyyy')} </strong>
+										às <strong>{horarioSelecionado}.</strong>
+									</ModalBody>
+								</ModalContent>
+							</Modal>
 						</Box>
 					</Flex>
 				</Box>
@@ -116,7 +177,7 @@ const SelecionarDia: React.FC = () => {
 				locale={'pt-BR'}
 				selected={selectedDate}
 				inline
-				filterDate={date => date.getDay() !== 0 && date.getDay() !== 6}
+				filterDate={date => date.getDay() !== 0 && date.getDay() !== 6 && date <= maxDate}
 				onSelect={handleDateChange}
 				onChange={(date: Date | null) => setSelectedDate(date)}
 				minDate={new Date()}

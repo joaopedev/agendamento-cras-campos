@@ -28,12 +28,11 @@ export const Home: React.FC = () => {
           >
             SEUS DADOS
           </Box>
-
+          
           <Box sx={textStyle2}>Nome:</Box>
           <Box w='' sx={textStyle1}>
             Fulano da Silva Júnior
           </Box>
-
           <Box sx={textStyle2}>CPF:</Box>
           <Box sx={textStyle1}>123.456.789-00</Box>
           <Box sx={textStyle2}>E-mail:</Box>

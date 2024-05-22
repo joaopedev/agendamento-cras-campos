@@ -2,18 +2,22 @@ import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import LoginPage from '../pages/loginPage';
 import Home from '../pages/homePage';
+import HomeADM from '../pages/homeADM';
 import SchedulingPage from '../pages/SchedulingPage';
+import Cadastro from '../pages/cadastroPage';
 
 const AppRoutes: React.FC = () => {
-	return (
-		<BrowserRouter>
-			<Routes>
-				<Route path="/" element={<LoginPage />} />
-				<Route path="/home" element={<Home />} />
-				<Route path="/agendamento" element={<SchedulingPage />} />
-			</Routes>
-		</BrowserRouter>
-	);
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path='/' element={<LoginPage />} />
+        <Route path='/home' element={<Home />} />
+        <Route path='/home-adm' element={<HomeADM />} />
+        <Route path='/agendamento' element={<SchedulingPage />} />
+        <Route path='/cadastro' element={<Cadastro />} />
+      </Routes>
+    </BrowserRouter>
+  );
 };
 
 export default AppRoutes;

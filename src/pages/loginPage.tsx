@@ -1,18 +1,58 @@
-import { Flex, Stack, Box, Input, Link } from '@chakra-ui/react';
-import React, { useState } from 'react';
-import { SidebarS } from '../components/SidebarS';
-import { HamburgerMenu } from '../components/HamburgerMenu';
-import LoadingButton from '../components/LoadingButton';
-import { Link as RouterLink } from 'react-router-dom'; // Import Link from react-router-dom
+import React, { useState, ChangeEvent } from 'react';
+import {
+  Flex,
+  Stack,
+  Box,
+  Input,
+  Link,
+  InputLeftElement,
+  InputGroup,
+} from '@chakra-ui/react'; // Importando componentes do Chakra UI
+import { Link as RouterLink } from 'react-router-dom'; // Importando o Link do react-router-dom
+import SidebarLogin from '../components/SidebarLogin'; // Importando o componente SidebarHome
+import LoadingButton from '../components/LoadingButton'; // Importando o componente LoadingButton
 
-export const Home: React.FC = () => {
+export const Login: React.FC = () => {
   const [isLoading] = useState(false);
-  const [inputValue, setInputValue] = useState(''); // Input value state
+  const [inputValue, setInputValue] = useState('');
+  const [inputDataNascimento, setInputDataNascimento] = useState(''); // Novo estado para data de nascimento
+
+  const handleCpfChange = (e: ChangeEvent<HTMLInputElement>) => {
+    // Define o tipo do parâmetro
+    let value = e.target.value.replace(/\D/g, '');
+    value = value.slice(0, 11);
+
+    if (value.length > 3) {
+      value = value.slice(0, 3) + '.' + value.slice(3);
+    }
+    if (value.length > 7) {
+      value = value.slice(0, 7) + '.' + value.slice(7);
+    }
+    if (value.length > 11) {
+      value = value.slice(0, 11) + '-' + value.slice(11);
+    }
+
+    setInputValue(value);
+  };
+
+  const handleDataNascimentoChange = (e: ChangeEvent<HTMLInputElement>) => {
+    let value = e.target.value.replace(/\D/g, ''); // Remove não numéricos
+    value = value.slice(0, 8); // Limita a 8 dígitos (DDMMAAAA)
+
+    // Formatação
+    if (value.length > 2) {
+      value = value.slice(0, 2) + '/' + value.slice(2);
+    }
+    if (value.length > 5) {
+      value = value.slice(0, 5) + '/' + value.slice(5);
+    }
+
+    setInputDataNascimento(value);
+  };
 
   return (
     <Flex h='100vh'>
-      <SidebarS />
-      <HamburgerMenu />
+      <SidebarLogin />
       <Stack
         gap={['20px', '20px', '30px', '30px']}
         w={['60%', '60%', '60%', '80%']}
@@ -27,54 +67,68 @@ export const Home: React.FC = () => {
           <Box
             fontSize={['20px', '25px', '30px', '30px']}
             fontWeight='bold'
-            mb='20px'
+            mb='10px'
+            padding={0}
+            alignItems={'center'}
           >
             ENTRAR
           </Box>
 
-          <Input
-            placeholder='  CPF'
-            value={inputValue}
-            onChange={e => setInputValue(e.target.value)}
-            size='md'
-            sx={{
-              fontSize: ['0.7rem', '0.8rem', '0.9rem', '1rem'],
-              bg: 'white',
-              borderRadius: '5px',
-              p: '8px 0',
-              mt: '10px',
-              mb: '3px',
-            }}
-          />
+          <InputGroup>
+            {' '}
+            {/* Envolva os elementos Input e InputLeftElement */}
+            <Input
+              placeholder='CPF'
+              value={inputValue}
+              onChange={handleCpfChange}
+              size='md'
+              sx={{
+                fontSize: ['0.7rem', '0.8rem', '0.9rem', '1rem'],
+                bg: 'white',
+                borderRadius: '5px',
+                p: '4px 0',
+                mt: '0px',
+                mb: '0px',
+                paddingLeft: '16px',
+              }}
+              _placeholder={{ paddingLeft: 0 }}
+            />
+            <InputLeftElement pointerEvents='none' children={' '} />
+          </InputGroup>
 
           <Box sx={textStyle2}></Box>
-          <Input // Password input field
-            placeholder='  Senha'
-            type='password' // This is the key change
-            size='md'
-            sx={{
-              fontSize: ['0.7rem', '0.8rem', '0.9rem', '1rem'],
-              bg: 'white',
-              borderRadius: '5px',
-              p: '8px 0',
-              mt: '10px',
-              mb: '3px',
-            }}
-          />
-
+          <InputGroup>
+            <Input // Input para data de nascimento
+              placeholder='Data de Nascimento'
+              value={inputDataNascimento} //
+              onChange={handleDataNascimentoChange}
+              size='md'
+              sx={{
+                fontSize: ['0.7rem', '0.8rem', '0.9rem', '1rem'],
+                bg: 'white',
+                borderRadius: '5px',
+                p: '4px 0',
+                mt: '0px',
+                mb: '0px',
+                paddingLeft: '16px',
+              }}
+            />
+            <InputLeftElement pointerEvents='none' children={' '} />
+          </InputGroup>
           <Box sx={textStyle2}></Box>
 
           <LoadingButton isLoading={isLoading} sx={btnStyle} transform='auto'>
             CONFIRMAR
           </LoadingButton>
+          <Box sx={textStyle2}></Box>
           <Box sx={textStyle3}>Não possui uma conta?</Box>
-          <Link // Chakra UI Link component
-            as={RouterLink} // Use react-router-dom's Link for routing
-            to='/home' // Replace with the actual path to your signup page
-            sx={textStyle4}
-          >
-            Clique aqui
+          <Link as={RouterLink} to='/cadastro' sx={textStyle4}>
+            Criar minha conta
           </Link>
+          <Box sx={textStyle3}></Box>
+          {/* <Link as={RouterLink} to='/home' sx={textStyle4}>
+            Esqueci minha senha
+          </Link> */}
         </Box>
       </Stack>
     </Flex>
@@ -98,13 +152,13 @@ const textStyle2 = {
 const textStyle3 = {
   fontSize: ['0.6rem', '0.6rem', '0.7rem'],
   borderRadius: '5px',
-  p: '8px 0',
+  p: '0px 0',
 };
 
 const textStyle4 = {
   fontSize: ['0.6rem', '0.6rem', '0.7rem'],
-  borderRadius: '5px',
-  p: '8px 0',
+  borderRadius: '2px',
+  p: '2px 0',
   textDecoration: 'underline',
 };
 
@@ -133,4 +187,4 @@ export const btnStyle = {
     fontWeight: 'bold',
   },
 };
-export default Home;
+export default Login;

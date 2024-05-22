@@ -122,13 +122,13 @@ export const Login: React.FC = () => {
           </LoadingButton>
           <Box sx={textStyle2}></Box>
           <Box sx={textStyle3}>Não possui uma conta?</Box>
-          <Link as={RouterLink} to='/home' sx={textStyle4}>
+          <Link as={RouterLink} to='/cadastro' sx={textStyle4}>
             Criar minha conta
           </Link>
           <Box sx={textStyle3}></Box>
-          <Link as={RouterLink} to='/home' sx={textStyle4}>
+          {/* <Link as={RouterLink} to='/home' sx={textStyle4}>
             Esqueci minha senha
-          </Link>
+          </Link> */}
         </Box>
       </Stack>
     </Flex>

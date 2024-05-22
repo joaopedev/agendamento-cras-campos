@@ -1,7 +1,7 @@
 import { Button, Text, Stack, Box, Image } from '@chakra-ui/react';
 import { NavLink } from 'react-router-dom';
 
-export const SidebarHome: React.FC = () => {
+export const SidebarADM: React.FC = () => {
   const sideBtnStyle = {
     textColor: 'white',
     fontSize: ['18', '18', '20', '28'],
@@ -63,6 +63,13 @@ export const SidebarHome: React.FC = () => {
               </Button>
             )}
           </NavLink>
+          <NavLink to='/agendamento'>
+            {({ isActive }) => (
+              <Button isActive={isActive} sx={sideBtnStyle}>
+                Administração
+              </Button>
+            )}
+          </NavLink>
         </Stack>
         <Stack alignItems={'center'}>
           <Image
@@ -85,4 +92,4 @@ export const SidebarHome: React.FC = () => {
   );
 };
 
-export default SidebarHome;
+export default SidebarADM;

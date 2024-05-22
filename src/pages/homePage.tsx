@@ -11,7 +11,7 @@ export const Home: React.FC = () => {
       <SidebarHome />
       <HamburgerMenu />
       <Stack
-        gap={['20px', '20px', '30px', '30px']}
+        gap={['15px', '15px', '18px', '18px']}
         w={['60%', '60%', '60%', '80%']}
         m={'auto'}
         alignItems='center'
@@ -22,7 +22,7 @@ export const Home: React.FC = () => {
           position={['relative', 'static', 'static', 'static']}
         >
           <Box
-            fontSize={['20px', '25px', '30px', '30px']}
+            fontSize={['15px', '20px', '25px', '30px']}
             fontWeight='bold'
             mb='20px'
           >
@@ -35,6 +35,8 @@ export const Home: React.FC = () => {
           </Box>
           <Box sx={textStyle2}>CPF:</Box>
           <Box sx={textStyle1}>123.456.789-00</Box>
+          <Box sx={textStyle2}>E-mail:</Box>
+          <Box sx={textStyle1}>user@gmail.com</Box>
           <Box sx={textStyle2}>Bairro:</Box>
           <Box sx={textStyle1}>VILA ROMANA</Box>
           <Box sx={textStyle2}>Unidade do CRAS:</Box>
@@ -70,7 +72,7 @@ export const boxStyle = {
   maxW: ['300px', '350px', '500px', '950px'],
   minW: '250px',
   boxShadow: '2px 2px 5px hsla(0, 28%, 0%, 0.5)',
-  p: ['20px', '25px', '30px', '40px'],
+  p: ['20px', '20px', '30px', '40px'],
   borderRadius: '25px',
   bg: '#F4F4F4',
   textAlign: 'center',

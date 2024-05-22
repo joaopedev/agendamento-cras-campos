@@ -9,9 +9,7 @@ import {
   InputGroup,
 } from '@chakra-ui/react'; // Importando componentes do Chakra UI
 import { Link as RouterLink } from 'react-router-dom'; // Importando o Link do react-router-dom
-
 import SidebarLogin from '../components/SidebarLogin'; // Importando o componente SidebarHome
-
 import LoadingButton from '../components/LoadingButton'; // Importando o componente LoadingButton
 
 export const Login: React.FC = () => {
@@ -54,9 +52,7 @@ export const Login: React.FC = () => {
 
   return (
     <Flex h='100vh'>
-
       <SidebarLogin />
-
       <Stack
         gap={['20px', '20px', '30px', '30px']}
         w={['60%', '60%', '60%', '80%']}
@@ -126,7 +122,6 @@ export const Login: React.FC = () => {
           </LoadingButton>
           <Box sx={textStyle2}></Box>
           <Box sx={textStyle3}>Não possui uma conta?</Box>
-
           <Link as={RouterLink} to='/cadastro' sx={textStyle4}>
             Criar minha conta
           </Link>

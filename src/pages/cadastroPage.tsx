@@ -11,7 +11,7 @@ import {
   FormControl,
 } from '@chakra-ui/react'; // Importando componentes do Chakra UI
 import { Link as RouterLink } from 'react-router-dom'; // Importando o Link do react-router-dom
-import SidebarHome from '../components/SidebarLogin'; // Importando o componente SidebarHome
+import SidebarHome from '../components/SidebarHome'; // Importando o componente SidebarHome
 import LoadingButton from '../components/LoadingButton'; // Importando o componente LoadingButton
 
 export const Cadastro: React.FC = () => {

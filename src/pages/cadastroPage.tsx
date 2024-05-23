@@ -12,8 +12,8 @@ import {
 } from '@chakra-ui/react'; // Importando componentes do Chakra UI
 import { Link as RouterLink } from 'react-router-dom'; // Importando o Link do react-router-dom
 import LoadingButton from '../components/LoadingButton'; // Importando o componente LoadingButton
-import { HamburgerMenu } from '../components/HamburgerMenu';
 import SidebarLogin from '../components/SidebarLogin';
+import { FooterLogin } from '../components/FooterLogin';
 
 export const Cadastro: React.FC = () => {
 	const [isLoading] = useState(false);
@@ -328,8 +328,8 @@ export const Cadastro: React.FC = () => {
 	return (
 		<Flex h="100vh">
 			<SidebarLogin />
-			<HamburgerMenu />
 			<Stack
+				pb={['130px', '0', '0', '0']}
 				pt={['60px', '0', '0', '0']}
 				m="auto"
 				paddingLeft={['0', '40%', '50%', '50%']}
@@ -450,6 +450,7 @@ export const Cadastro: React.FC = () => {
 					</Link>
 				</Box>
 			</Stack>
+			<FooterLogin />
 		</Flex>
 	);
 };

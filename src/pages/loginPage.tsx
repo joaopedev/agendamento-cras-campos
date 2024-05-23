@@ -4,6 +4,7 @@ import { Link as RouterLink } from 'react-router-dom'; // Importando o Link do r
 import SidebarLogin from '../components/SidebarLogin'; // Importando o componente SidebarHome
 import LoadingButton from '../components/LoadingButton'; // Importando o componente LoadingButton
 import { HamburgerMenu } from '../components/HamburgerMenu';
+import { FooterLogin } from '../components/FooterLogin';
 
 export const Login: React.FC = () => {
 	const [isLoading] = useState(false);
@@ -44,11 +45,11 @@ export const Login: React.FC = () => {
 	};
 
 	return (
-		<Flex h="100vh">
+		<Flex h="100vh" flex={['column', '', '', '']}>
 			<SidebarLogin />
-			<HamburgerMenu />
 			<Stack
 				pt={['60px', '0', '0', '0']}
+				pb={['130px', '0', '0', '0']}
 				m="auto"
 				paddingLeft={['0', '40%', '50%', '50%']}
 				gap={['20px', '20px', '30px', '30px']}
@@ -127,6 +128,7 @@ export const Login: React.FC = () => {
           </Link> */}
 				</Box>
 			</Stack>
+			<FooterLogin />
 		</Flex>
 	);
 };

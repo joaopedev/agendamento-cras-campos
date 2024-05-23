@@ -46,7 +46,7 @@ export const SidebarADM: React.FC = () => {
 				bg="hsla(207, 74%, 42%, 0.85)"
 				w="20%"
 				h="100%"
-				borderRadius="0 100px 0 0 "
+				borderRadius={['0 70px 0 0', '0 80px 0 0', '0 90px 0 0', '0 100px 0 0']}
 				alignItems="center"
 				boxSize={'full'}
 			>

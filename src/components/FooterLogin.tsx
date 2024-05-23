@@ -1,4 +1,10 @@
-import { Box, Divider, Flex, Image, Text } from '@chakra-ui/react';
+import {
+	Box,
+	Divider,
+	Flex,
+	// Image,
+	Text,
+} from '@chakra-ui/react';
 export const FooterLogin: React.FC = () => {
 	return (
 		<Box
@@ -13,7 +19,7 @@ export const FooterLogin: React.FC = () => {
 			w="100%"
 		>
 			<Flex justifyContent="space-between" alignItems="center">
-				<Text fontSize={'16'}>
+				<Text fontSize={'20'}>
 					Bem vindo(a) à <b>central</b> de <b>agendamento</b> do <b>CRAS</b>
 				</Text>
 				<Divider
@@ -25,16 +31,16 @@ export const FooterLogin: React.FC = () => {
 					h="80px" // Altura relativa ao container pai
 					boxShadow="0px 2px 5px rgba(0, 0, 0, 0.3)"
 				/>
-				<Flex gap={'5px'}>
-					<Image
+				<Flex alignItems={'center'} gap={'5px'}>
+					{/* <Image
 						boxSize={['75px', '75px', '100px', '100px']}
 						objectFit="contain"
 						src="https://upload.wikimedia.org/wikipedia/commons/e/e1/Bras%C3%A3o_de_Campos_dos_Goytacazes.png"
 						alt="Brasão de Campos dos Goytacazes"
-					/>
+					/> */}
 					<Text
 						//  ml={'5px'}
-						fontSize={'12'}
+						fontSize={'16'}
 					>
 						Prefeitura Municipal de Campos dos Goytacazes
 					</Text>

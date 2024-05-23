@@ -77,6 +77,7 @@ export const boxStyle = {
 	alignContent: 'center',
 };
 export const btnStyle = {
+	p: '0',
 	w: '30%',
 	display: '-ms-grid',
 	boxShadow: '1px 1px 2px hsla(0, 28%, 0%, 0.7)',

@@ -3,7 +3,6 @@ import { Flex, Stack, Box, Input, Link, InputLeftElement, InputGroup } from '@ch
 import { Link as RouterLink } from 'react-router-dom'; // Importando o Link do react-router-dom
 import SidebarLogin from '../components/SidebarLogin'; // Importando o componente SidebarHome
 import LoadingButton from '../components/LoadingButton'; // Importando o componente LoadingButton
-import { HamburgerMenu } from '../components/HamburgerMenu';
 import { FooterLogin } from '../components/FooterLogin';
 
 export const Login: React.FC = () => {
@@ -51,7 +50,7 @@ export const Login: React.FC = () => {
 				pt={['60px', '0', '0', '0']}
 				pb={['130px', '0', '0', '0']}
 				m="auto"
-				paddingLeft={['0', '40%', '50%', '50%']}
+				paddingLeft={['0', '45%', '50%', '50%']}
 				gap={['20px', '20px', '30px', '30px']}
 				w={['60%', '60%', '60%', '80%']}
 				alignItems="center"
@@ -161,7 +160,7 @@ const textStyle4 = {
 };
 
 export const boxStyle = {
-	w: '30%',
+	// w: '30%',
 	maxW: ['300px', '350px', '500px', '950px'],
 	minW: '250px',
 	boxShadow: '2px 2px 5px hsla(0, 28%, 0%, 0.5)',

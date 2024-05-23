@@ -1,4 +1,11 @@
-import { Text, Stack, Box, Image, Divider, Flex } from '@chakra-ui/react';
+import {
+	Text,
+	Stack,
+	Box,
+	// Image,
+	Divider,
+	Flex,
+} from '@chakra-ui/react';
 
 export const SidebarLogin: React.FC = () => {
 	return (
@@ -7,12 +14,12 @@ export const SidebarLogin: React.FC = () => {
 			position={'fixed'}
 			top={'0'}
 			left={'0'}
-			w={['40%', '40%', '50%', '50%']}
+			w={['40%', '45%', '50%', '50%']}
 			h={['100vh']}
 			borderRadius="0 100px 0 0 "
-			bgImage={
-				'https://www.turismo.rj.gov.br/wp-content/uploads/2020/03/Rio-Para%C3%ADba-do-Sul-1.jpg'
-			}
+			// bgImage={
+			// 'https://www.turismo.rj.gov.br/wp-content/uploads/2020/03/Rio-Para%C3%ADba-do-Sul-1.jpg'
+			// }
 			bgSize={'cover'}
 			bgPos={'20%'}
 			display={['none', 'flex', 'flex', 'flex']}
@@ -21,10 +28,11 @@ export const SidebarLogin: React.FC = () => {
 				className="stack"
 				// p={['100px 0 30px', '100px 0 30px', '130px 0 35px', '150px 0 40px ']}
 				// justifyContent="space-between"
-				px={'20px'}
+				px={['15px', '15px', '20px', '20px']}
 				py={['50px', '60px', '75px', '90px']}
 				gap={'50px'}
-				bg="hsla(207, 74%, 42%, 0.85)"
+				// bg="hsla(207, 74%, 42%, 0.85)" // transparente
+				background={'linear-gradient(41deg, rgba(28,117,188,1) 0%, rgba(44,161,255,1) 100%)'}
 				w="20%"
 				h="100%"
 				borderRadius="0 100px 0 0 "
@@ -35,11 +43,11 @@ export const SidebarLogin: React.FC = () => {
 				<Box>
 					<Text
 						fontFamily={'Poppins, sans-serif'} // Fonte mais moderna e legível
-						fontSize={['18px', '22px', '26px', '30px']}
+						fontSize={['28px', '32px', '48px', '52px']}
 						color={'white'}
 						textAlign={'left'}
 						w="fit-content"
-						maxW={'250px'}
+						maxW={'350px'}
 						textShadow="1px 1px 2px rgba(0, 0, 0, 0.5)" // Sombra sutil
 					>
 						Bem vindo(a) à <b>central</b> de <b>agendamento</b> do <b>CRAS</b>
@@ -55,18 +63,19 @@ export const SidebarLogin: React.FC = () => {
 				/>
 
 				<Flex alignItems={'center'}>
-					<Image
-						boxSize={['75px', '75px', '100px', '100px']}
+					{/* <Image
+						boxSize={['75px', '85px', '150px', '200px']}
 						objectFit="contain"
 						src="https://upload.wikimedia.org/wikipedia/commons/e/e1/Bras%C3%A3o_de_Campos_dos_Goytacazes.png"
 						alt="Brasão de Campos dos Goytacazes"
-					/>
+					/> */}
 					<Text
 						textShadow="1px 1px 2px rgba(0, 0, 0, 0.5)"
-						fontSize={['12px', '12px', '18px', '18']}
+						fontSize={['16px', '16px', '32px', '40']}
 						color={'white'}
-						textAlign={'left'}
-						maxW={'150px'}
+						// textAlign={'left'}
+						textAlign={'center'}
+						maxW={'250px'}
 					>
 						Prefeitura <br /> Municipal de <br /> Campos dos <br /> Goytacazes
 					</Text>

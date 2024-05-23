@@ -67,7 +67,9 @@ const SelecionarDia: React.FC = () => {
 			alignItems={'center'}
 			gap={'10px'}
 			p={['10px', '0', '0', '0']}
-			w={['100%', '70%', '75%', '80%']}
+			// w={['100%', '70%', '75%', '80%']}
+			pl={['0%', '30%', '25%', '20%']}
+			w="100%"
 			flexDir={'column'}
 		>
 			{!selectedDate && (

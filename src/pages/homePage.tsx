@@ -15,7 +15,8 @@ export const Home: React.FC = () => {
 				w={['60%', '60%', '60%', '80%']}
 				m={'auto'}
 				alignItems="center"
-				pl={['30%', '30%', '25%', '20%']}
+				pt={['60px', '0', '0', '0']}
+				pl={['0%', '30%', '25%', '20%']}
 			>
 				<Box
 					sx={boxStyle}

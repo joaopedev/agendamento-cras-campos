@@ -6,17 +6,19 @@ import { HamburgerMenu } from '../components/HamburgerMenu';
 import SelecionarDia from '../components/SelecionarDia';
 
 const SchedulingPage: React.FC = () => {
-  const handleDataChange = (novaData: Date) => {
-    console.log('Data selecionada:', novaData);
-  };
+	const handleDataChange = (novaData: Date) => {
+		console.log('Data selecionada:', novaData);
+	};
 
-  return (
-    <Flex h='100vh'>
-      <SidebarHome />
-      <HamburgerMenu />
-      <SelecionarDia />
-    </Flex>
-  );
+	return (
+		<>
+			<SidebarHome />
+			<Flex className="flex" h="100vh">
+				<HamburgerMenu />
+				<SelecionarDia />
+			</Flex>
+		</>
+	);
 };
 
 export default SchedulingPage;

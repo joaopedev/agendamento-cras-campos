@@ -5,6 +5,7 @@ import { HamburgerMenu } from '../components/HamburgerMenu';
 import LoadingButton from '../components/LoadingButton';
 import { useUser } from '../components/UserContext';
 export const Home: React.FC = () => {
+
   const { isLoggedIn } = useUser();
 
   console.log('isLoggedIn no componente Home:', isLoggedIn);

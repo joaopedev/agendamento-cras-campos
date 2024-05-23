@@ -11,10 +11,11 @@ export const HomeADM: React.FC = () => {
 			<SidebarADM />
 			<HamburgerMenu />
 			<Stack
+				pt={['60px', '0px', '0px', '0px']}
 				gap={['15px', '15px', '18px', '18px']}
 				w={['60%', '60%', '60%', '80%']}
 				m={'auto'}
-				pl={['30%', '30%', '25%', '20%']}
+				pl={['0%', '30%', '25%', '20%']}
 				alignItems="center"
 			>
 				<Box

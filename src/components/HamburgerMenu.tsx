@@ -4,7 +4,7 @@ import { HamburgerIcon } from '@chakra-ui/icons';
 
 export const HamburgerMenu: React.FC = () => {
 	return (
-		<Box display={['flex', 'none', 'none', 'none']} pos={'absolute'}>
+		<Box display={['flex', 'none', 'none', 'none']} pos={'fixed'}>
 			<Menu>
 				<MenuButton
 					as={IconButton}

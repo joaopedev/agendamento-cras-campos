@@ -12,7 +12,8 @@ export const HomeFuncionario: React.FC = () => {
 				gap={['20px', '20px', '30px', '30px']}
 				w={['60%', '60%', '60%', '80%']}
 				m={'auto'}
-				pl={['30%', '30%', '25%', '20%']}
+				pt={['60px', '0px', '0px', '0px']}
+				pl={['0%', '30%', '25%', '20%']}
 				alignItems="center"
 			>
 				<Box

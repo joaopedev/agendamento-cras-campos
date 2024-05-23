@@ -1,6 +1,6 @@
 import React from 'react';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import LoginPage from '../pages/loginPage';
+import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
+import Login from '../pages/loginPage';
 import Home from '../pages/homePage';
 import HomeADM from '../pages/homeADM';
 import HomeFuncionario from '../pages/homeFuncionario';
@@ -11,8 +11,9 @@ const AppRoutes: React.FC = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path='/' element={<LoginPage />} />
+        <Route path='/login' element={<Login />} />
         <Route path='/home' element={<Home />} />
+        ;
         <Route path='/home-adm' element={<HomeADM />} />
         <Route path='/home-funcionario' element={<HomeFuncionario />} />
         <Route path='/agendamento' element={<SchedulingPage />} />

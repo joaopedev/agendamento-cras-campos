@@ -2,7 +2,7 @@ import { Flex, Stack, Box } from '@chakra-ui/react';
 import React, { useState } from 'react';
 import { SidebarHome } from '../components/SidebarHome';
 import { HamburgerMenu } from '../components/HamburgerMenu';
-import LoadingButton from '../components/LoadingButton';
+import LoadingButtonHome from '../components/LoadingButtonHome';
 import { useUser } from '../components/UserContext';
 export const Home: React.FC = () => {
 
@@ -36,23 +36,23 @@ export const Home: React.FC = () => {
 
           <Box sx={textStyle2}>Nome:</Box>
           <Box w='' sx={textStyle1}>
-            Fulano da Silva Júnior
+            José Pereira Nunes
           </Box>
           <Box sx={textStyle2}>CPF:</Box>
           <Box sx={textStyle1}>123.456.789-00</Box>
           <Box sx={textStyle2}>E-mail:</Box>
-          <Box sx={textStyle1}>user@gmail.com</Box>
+          <Box sx={textStyle1}>usuario@gmail.com</Box>
           <Box sx={textStyle2}>Bairro:</Box>
           <Box sx={textStyle1}>VILA ROMANA</Box>
           <Box sx={textStyle2}>Unidade do CRAS:</Box>
           <Box sx={textStyle1}>CRAS de Goytacazes</Box>
         </Box>
-        <LoadingButton isLoading={isLoading} sx={btnStyle} transform='auto'>
+        <LoadingButtonHome isLoading={isLoading} sx={btnStyle} transform='auto'>
           AGENDAR ATENDIMENTO
-        </LoadingButton>
-        <LoadingButton isLoading={isLoading} sx={btnStyle} transform='auto'>
+        </LoadingButtonHome>
+        {/* <LoadingButton isLoading={isLoading} sx={btnStyle} transform='auto'>
           EDITAR INFORMAÇÕES
-        </LoadingButton>
+        </LoadingButton> */}
       </Stack>
     </Flex>
   );

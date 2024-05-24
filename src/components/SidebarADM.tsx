@@ -8,28 +8,28 @@ import {
 import { NavLink } from 'react-router-dom';
 
 export const SidebarADM: React.FC = () => {
-  const sideBtnStyle = {
-    textColor: 'white',
-    fontSize: ['18', '18', '20', '28'],
-    h: 'fit-content',
-    p: ['10px 12px', '10px 12px', '10px 15px', '10px 15px'],
-    borderRadius: '0',
-    bgColor: '#ffffff50',
-    w: '100%',
-    justifyContent: 'left',
-    _hover: {
-      color: '#1C75BC',
-      bg: '#ebedf090',
-    },
-    _focus: {
-      color: '#1C75BC',
-      bg: 'white',
-    },
-    _active: {
-      color: '#1C75BC',
-      bg: 'white',
-    },
-  };
+	const sideBtnStyle = {
+		textColor: 'white',
+		fontSize: ['18', '18', '20', '28'],
+		h: 'fit-content',
+		p: ['10px 12px', '10px 12px', '10px 15px', '10px 15px'],
+		borderRadius: '0',
+		bgColor: '#ffffff50',
+		w: '100%',
+		justifyContent: 'left',
+		_hover: {
+			color: '#1C75BC',
+			bg: '#ebedf090',
+		},
+		_focus: {
+			color: '#1C75BC',
+			bg: 'white',
+		},
+		_active: {
+			color: '#1C75BC',
+			bg: 'white',
+		},
+	};
 
 	return (
 		<Box
@@ -58,7 +58,7 @@ export const SidebarADM: React.FC = () => {
 				boxSize={'full'}
 			>
 				<Stack p=" 0" w={'100%'}>
-					<NavLink to={'/home'}>
+					<NavLink to={'/home-adm'}>
 						{({ isActive }) => (
 							<Button isActive={isActive} sx={sideBtnStyle}>
 								Início
@@ -73,7 +73,7 @@ export const SidebarADM: React.FC = () => {
 							</Button>
 						)}
 					</NavLink>
-					<NavLink to="/home-adm">
+					<NavLink to="/adm">
 						{({ isActive }) => (
 							<Button isActive={isActive} sx={sideBtnStyle}>
 								Administração
@@ -89,7 +89,7 @@ export const SidebarADM: React.FC = () => {
 						alt="Brasão de Campos dos Goytacazes"
 					/> */}
 					<Text fontSize={'16'} color={'white'} textAlign={'center'} maxW={'200px'}>
-						Prefeitura Municipal de Campos dos Goytacazes
+						{/* Prefeitura Municipal de Campos dos Goytacazes */}
 					</Text>
 				</Stack>
 			</Stack>

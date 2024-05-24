@@ -83,7 +83,7 @@ export const SidebarHome: React.FC = () => {
 						alt="Brasão de Campos dos Goytacazes"
 					/> */}
 					<Text fontSize={'16'} color={'white'} textAlign={'center'} maxW={'200px'}>
-						Prefeitura Municipal de Campos dos Goytacazes
+						{/* Prefeitura Municipal de Campos dos Goytacazes */}
 					</Text>
 				</Stack>
 			</Stack>

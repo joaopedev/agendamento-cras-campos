@@ -19,7 +19,6 @@ import {
   ModalBody,
   ModalCloseButton,
   useDisclosure,
-  Checkbox,
 } from '@chakra-ui/react';
 
 registerLocale('pt-BR', ptBR);
@@ -172,8 +171,37 @@ const SelecionarDiaFuncionario: React.FC = () => {
                       {selectedDate && format(selectedDate, 'dd/MM/yyyy')}
                     </strong>{' '}
                     às <strong>{horarioSelecionado}</strong> <br />
-                    <Checkbox>Atendimento concluído</Checkbox> <br />
-                    <Checkbox>Ausente</Checkbox>
+                    <br />
+                    <Box>
+                      <Button
+                        // colorScheme="green"
+                        mt={-2}
+                        bg={'#228B22'}
+                        textColor={'white'}
+                        onClick={onClose}
+                        _hover={{
+                          bg: '#1b612e',
+                        }}
+                      >
+                        Atendimento Relizado
+                      </Button>
+                      <br />
+
+                      <Button
+                        // colorScheme="green"
+                        mt={3}
+                        mb={-5}
+                        p={3}
+                        bg={'#EE4B2B'}
+                        textColor={'white'}
+                        onClick={onClose}
+                        _hover={{
+                          bg: '#A52A2A',
+                        }}
+                      >
+                        Ausente
+                      </Button>
+                    </Box>
                   </ModalBody>
                   <ModalFooter></ModalFooter>
                 </ModalContent>

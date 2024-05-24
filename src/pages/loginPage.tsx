@@ -1,4 +1,5 @@
 import React, { useState, ChangeEvent } from 'react';
+<<<<<<< Updated upstream
 
 import { Flex, Stack, Box, Input, Link, InputLeftElement, InputGroup } from '@chakra-ui/react'; // Importando componentes do Chakra UI
 import { Link as RouterLink } from 'react-router-dom'; // Importando o Link do react-router-dom
@@ -10,6 +11,26 @@ export const Login: React.FC = () => {
 	const [isLoading] = useState(false);
 	const [inputValue, setInputValue] = useState('');
 	const [inputDataNascimento, setInputDataNascimento] = useState(''); // Novo estado para data de nascimento
+=======
+import {
+  Flex,
+  Stack,
+  Box,
+  Input,
+  Link,
+  InputLeftElement,
+  InputGroup,
+} from '@chakra-ui/react';
+import { Link as RouterLink } from 'react-router-dom';
+import SidebarLogin from '../components/SidebarLogin';
+import LoadingButton from '../components/LoadingButton';
+import { HamburgerMenu } from '../components/HamburgerMenu';
+
+export const Login: React.FC = () => {
+  const [isLoading] = useState(false); // Adicionando estado para controlar o carregamento
+  const [cpf, setCpf] = useState(''); // Renomeado para cpf
+  const [dataNascimento, setDataNascimento] = useState(''); // Renomeado para dataNascimento
+>>>>>>> Stashed changes
 
 	const handleCpfChange = (e: ChangeEvent<HTMLInputElement>) => {
 		// Define o tipo do parâmetro
@@ -44,6 +65,7 @@ export const Login: React.FC = () => {
 		setInputDataNascimento(value);
 	};
 
+<<<<<<< Updated upstream
 	return (
 		<Flex h="100vh" flex={['column', '', '', '']}>
 			<SidebarLogin />
@@ -124,6 +146,89 @@ export const Login: React.FC = () => {
 					</Link>
 					<Box sx={textStyle3}></Box>
 					{/* <Link as={RouterLink} to='/home' sx={textStyle4}>
+=======
+  return (
+    <Flex h='100vh'>
+      <SidebarLogin />
+      <HamburgerMenu />
+
+      <Stack
+        pt={['60px', '0', '0', '0']}
+        m='auto'
+        paddingLeft={['0', '40%', '50%', '50%']}
+        gap={['20px', '20px', '30px', '30px']}
+        w={['60%', '60%', '60%', '80%']}
+        alignItems='center'
+      >
+        <Box
+          sx={boxStyle}
+          maxW={['500px', '500px', '500px', '950px']}
+          position={['relative', 'static', 'static', 'static']}
+        >
+          <Box
+            fontSize={['20px', '25px', '30px', '30px']}
+            fontWeight='bold'
+            mb='10px'
+            padding={0}
+            alignItems={'center'}
+          >
+            ENTRAR
+          </Box>
+
+          <InputGroup>
+            {' '}
+            {/* Envolva os elementos Input e InputLeftElement */}
+            <Input
+              placeholder='CPF'
+              value={cpf}
+              onChange={handleCpfChange}
+              size='md'
+              sx={{
+                fontSize: ['0.7rem', '0.8rem', '0.9rem', '1rem'],
+                bg: 'white',
+                borderRadius: '5px',
+                p: '4px 0',
+                mt: '0px',
+                mb: '0px',
+                paddingLeft: '16px',
+              }}
+              _placeholder={{ paddingLeft: 0 }}
+            />
+            <InputLeftElement pointerEvents='none' children={' '} />
+          </InputGroup>
+
+          <Box sx={textStyle2}></Box>
+          <InputGroup>
+            <Input // Input para data de nascimento
+              placeholder='Data de Nascimento'
+              value={dataNascimento} //
+              onChange={handleDataNascimentoChange}
+              size='md'
+              sx={{
+                fontSize: ['0.7rem', '0.8rem', '0.9rem', '1rem'],
+                bg: 'white',
+                borderRadius: '5px',
+                p: '4px 0',
+                mt: '0px',
+                mb: '0px',
+                paddingLeft: '16px',
+              }}
+            />
+            <InputLeftElement pointerEvents='none' children={' '} />
+          </InputGroup>
+          <Box sx={textStyle2}></Box>
+
+          <LoadingButton isLoading={isLoading} sx={btnStyle}>
+            CONFIRMAR
+          </LoadingButton>
+          <Box sx={textStyle2}></Box>
+          <Box sx={textStyle3}>Não possui uma conta?</Box>
+          <Link as={RouterLink} to='/cadastro' sx={textStyle4}>
+            Criar minha conta
+          </Link>
+          <Box sx={textStyle3}></Box>
+          {/* <Link as={RouterLink} to='/home' sx={textStyle4}>
+>>>>>>> Stashed changes
             Esqueci minha senha
           </Link> */}
         </Box>

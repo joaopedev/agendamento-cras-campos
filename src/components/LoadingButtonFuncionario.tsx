@@ -30,7 +30,7 @@ interface LoadingButtonProps extends ButtonProps {
   isLoading: boolean;
 }
 
-const LoadingButton: FC<LoadingButtonProps> = ({
+const LoadingButtonFuncionario: FC<LoadingButtonProps> = ({
   isLoading,
   children,
   ...rest
@@ -49,7 +49,7 @@ const LoadingButton: FC<LoadingButtonProps> = ({
           const examplePromise = new Promise<void>((resolve, reject) => {
             setTimeout(() => {
               resolve();
-              navigate('/home');
+              navigate('/home-funcionario');
             }, 3000);
           }).catch(error => {
             console.error('Promise Error:', error);
@@ -84,4 +84,4 @@ const LoadingButton: FC<LoadingButtonProps> = ({
   );
 };
 
-export default LoadingButton;
+export default LoadingButtonFuncionario;

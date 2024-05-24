@@ -1,29 +1,33 @@
 import { Flex, Stack, Box } from '@chakra-ui/react';
 import React from 'react';
 import { SidebarFuncionario } from '../components/SidebarFuncionario';
-import { HamburgerMenu } from '../components/HamburgerMenu';
+import { HamburgerMenuFuncionario } from '../components/HamburgerMenuFuncionario';
 
 export const HomeFuncionario: React.FC = () => {
-	return (
-		<Flex h="100vh">
-			<SidebarFuncionario />
-			<HamburgerMenu />
-			<Stack
-				gap={['20px', '20px', '30px', '30px']}
-				w={['60%', '60%', '60%', '80%']}
-				m={'auto'}
-				pt={['60px', '0px', '0px', '0px']}
-				pl={['0%', '30%', '25%', '20%']}
-				alignItems="center"
-			>
-				<Box
-					sx={boxStyle}
-					maxW={['500px', '500px', '500px', '950px']}
-					position={['relative', 'static', 'static', 'static']}
-				>
-					<Box fontSize={['20px', '25px', '30px', '30px']} fontWeight="bold" mb="20px">
-						SEUS DADOS
-					</Box>
+  return (
+    <Flex h='100vh'>
+      <SidebarFuncionario />
+      <HamburgerMenuFuncionario />
+      <Stack
+        gap={['20px', '20px', '30px', '30px']}
+        w={['60%', '60%', '60%', '80%']}
+        m={'auto'}
+        pt={['60px', '0px', '0px', '0px']}
+        pl={['0%', '30%', '25%', '20%']}
+        alignItems='center'
+      >
+        <Box
+          sx={boxStyle}
+          maxW={['500px', '500px', '500px', '950px']}
+          position={['relative', 'static', 'static', 'static']}
+        >
+          <Box
+            fontSize={['20px', '25px', '30px', '30px']}
+            fontWeight='bold'
+            mb='20px'
+          >
+            SEUS DADOS
+          </Box>
 
           <Box sx={textStyle2}>Nome:</Box>
           <Box w='' sx={textStyle1}>

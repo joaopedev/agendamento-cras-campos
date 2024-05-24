@@ -10,7 +10,7 @@ import {
 	Select,
 	FormControl,
 } from '@chakra-ui/react'; // Importando componentes do Chakra UI
-import { Link as RouterLink } from 'react-router-dom'; // Importando o Link do react-router-dom
+import { NavLink, Link as RouterLink } from 'react-router-dom'; // Importando o Link do react-router-dom
 import LoadingButton from '../components/LoadingButton'; // Importando o componente LoadingButton
 import SidebarLogin from '../components/SidebarLogin';
 import { FooterLogin } from '../components/FooterLogin';
@@ -332,12 +332,13 @@ export const Cadastro: React.FC = () => {
 				pb={['130px', '0', '0', '0']}
 				pt={['60px', '0', '0', '0']}
 				m="auto"
-				paddingLeft={['0', '40%', '50%', '50%']}
+				paddingLeft={['0', '45%', '50%', '50%']}
 				gap={['20px', '20px', '30px', '30px']}
 				w={['60%', '60%', '60%', '80%']}
 				alignItems="center"
 			>
 				<Box
+					w={'500px'}
 					sx={boxStyle}
 					maxW={['500px', '500px', '500px', '950px']}
 					position={['relative', 'static', 'static', 'static']}
@@ -349,7 +350,7 @@ export const Cadastro: React.FC = () => {
 						padding={0}
 						alignItems={'center'}
 					>
-						ENTRAR
+						CADASTRAR
 					</Box>
 
 					<Input
@@ -439,10 +440,11 @@ export const Cadastro: React.FC = () => {
 						</Select>
 					</FormControl>
 					<Box sx={textStyle2}></Box>
-
-					<LoadingButton isLoading={isLoading} sx={btnStyle} transform="auto">
-						CONFIRMAR
-					</LoadingButton>
+					<NavLink to="/home">
+						<LoadingButton isLoading={isLoading} sx={btnStyle} transform="auto">
+							CONFIRMAR
+						</LoadingButton>
+					</NavLink>
 					<Box sx={textStyle2}></Box>
 					<Box sx={textStyle3}>Já possui uma conta?</Box>
 					<Link as={RouterLink} to="/" sx={textStyle4}>
@@ -483,8 +485,8 @@ const textStyle4 = {
 };
 
 export const boxStyle = {
-	w: '30%',
-	maxW: ['300px', '350px', '500px', '950px'],
+	// w: '30%',
+	maxW: ['300px', '250px', '350px', '450px'],
 	minW: '250px',
 	boxShadow: '2px 2px 5px hsla(0, 28%, 0%, 0.5)',
 	p: ['10px', '10px', '10px', '10px'],

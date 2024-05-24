@@ -84,17 +84,19 @@ export const boxStyle = {
   alignContent: 'center',
 };
 export const btnStyle = {
-  w: '30%',
-  display: '-ms-grid',
-  boxShadow: '1px 1px 2px hsla(0, 28%, 0%, 0.7)',
-  color: '#fff',
-  bg: '#2CA1FF',
-  maxW: '950px',
-  minW: ['150px', '200px', '250px', '300px'],
-  fontSize: ['0.7rem', '0.8rem', '0.9rem', '1rem'],
-  _hover: {
-    bg: '#1C75BC',
-    fontWeight: 'bold',
-  },
+	p: '0',
+	w: '30%',
+	display: '-ms-grid',
+	boxShadow: '1px 1px 2px hsla(0, 28%, 0%, 0.7)',
+	color: '#fff',
+	bg: '#2CA1FF',
+	maxW: '950px',
+	minW: ['150px', '200px', '250px', '300px'],
+	fontSize: ['0.7rem', '0.8rem', '0.9rem', '1rem'],
+	_hover: {
+		bg: '#1C75BC',
+		fontWeight: 'bold',
+	},
+
 };
 export default Home;

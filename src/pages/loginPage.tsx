@@ -1,4 +1,5 @@
 import React, { useState, ChangeEvent } from 'react';
+
 import { Flex, Stack, Box, Input, Link, InputLeftElement, InputGroup } from '@chakra-ui/react'; // Importando componentes do Chakra UI
 import { Link as RouterLink } from 'react-router-dom'; // Importando o Link do react-router-dom
 import SidebarLogin from '../components/SidebarLogin'; // Importando o componente SidebarHome
@@ -125,11 +126,11 @@ export const Login: React.FC = () => {
 					{/* <Link as={RouterLink} to='/home' sx={textStyle4}>
             Esqueci minha senha
           </Link> */}
-				</Box>
-			</Stack>
-			<FooterLogin />
-		</Flex>
-	);
+        </Box>
+      </Stack>
+    </Flex>
+  );
+
 };
 
 // const textStyle1 = {
@@ -140,26 +141,27 @@ export const Login: React.FC = () => {
 // };
 
 const textStyle2 = {
-	fontSize: ['0.7rem', '0.8rem', '0.9rem', '1rem'],
-	fontWeight: 'bold',
-	mt: '10px',
-	mb: '3px',
+  fontSize: ['0.7rem', '0.8rem', '0.9rem', '1rem'],
+  fontWeight: 'bold',
+  mt: '10px',
+  mb: '3px',
 };
 
 const textStyle3 = {
-	fontSize: ['0.6rem', '0.6rem', '0.7rem'],
-	borderRadius: '5px',
-	p: '0px 0',
+  fontSize: ['0.6rem', '0.6rem', '0.7rem'],
+  borderRadius: '5px',
+  p: '0px 0',
 };
 
 const textStyle4 = {
-	fontSize: ['0.6rem', '0.6rem', '0.7rem'],
-	borderRadius: '2px',
-	p: '2px 0',
-	textDecoration: 'underline',
+  fontSize: ['0.6rem', '0.6rem', '0.7rem'],
+  borderRadius: '2px',
+  p: '2px 0',
+  textDecoration: 'underline',
 };
 
 export const boxStyle = {
+
 	// w: '30%',
 	maxW: ['300px', '350px', '500px', '950px'],
 	minW: '250px',
@@ -171,17 +173,17 @@ export const boxStyle = {
 	alignContent: 'center',
 };
 export const btnStyle = {
-	w: '30%',
-	display: '-ms-grid',
-	boxShadow: '1px 1px 2px hsla(0, 28%, 0%, 0.7)',
-	color: '#fff',
-	bg: '#2CA1FF',
-	maxW: '500px',
-	minW: ['100px', '100px', '150px', '150px'],
-	fontSize: ['0.7rem', '0.8rem', '0.9rem', '1rem'],
-	_hover: {
-		bg: '#1C75BC',
-		fontWeight: 'bold',
-	},
+  w: '30%',
+  display: '-ms-grid',
+  boxShadow: '1px 1px 2px hsla(0, 28%, 0%, 0.7)',
+  color: '#fff',
+  bg: '#2CA1FF',
+  maxW: '500px',
+  minW: ['100px', '100px', '150px', '150px'],
+  fontSize: ['0.7rem', '0.8rem', '0.9rem', '1rem'],
+  _hover: {
+    bg: '#1C75BC',
+    fontWeight: 'bold',
+  },
 };
 export default Login;

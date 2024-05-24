@@ -77,7 +77,7 @@ export const SidebarLogin: React.FC = () => {
 						textAlign={'center'}
 						maxW={'250px'}
 					>
-						Prefeitura <br /> Municipal de <br /> Campos dos <br /> Goytacazes
+						{/* Prefeitura <br /> Municipal de <br /> Campos dos <br /> Goytacazes */}
 					</Text>
 				</Flex>
 			</Stack>

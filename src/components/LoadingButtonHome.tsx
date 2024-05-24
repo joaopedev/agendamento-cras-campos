@@ -26,11 +26,11 @@ const theme = extendTheme({
 });
 
 // 2. Loading Button Component
-interface LoadingButtonProps extends ButtonProps {
+interface LoadingButtonHomeProps extends ButtonProps {
   isLoading: boolean;
 }
 
-const LoadingButton: FC<LoadingButtonProps> = ({
+const LoadingButtonHome: FC<LoadingButtonHomeProps> = ({
   isLoading,
   children,
   ...rest
@@ -49,8 +49,8 @@ const LoadingButton: FC<LoadingButtonProps> = ({
           const examplePromise = new Promise<void>((resolve, reject) => {
             setTimeout(() => {
               resolve();
-              navigate('/home');
-            }, 3000);
+              navigate('/agendamento');
+            }, 500);
           }).catch(error => {
             console.error('Promise Error:', error);
           });
@@ -84,4 +84,4 @@ const LoadingButton: FC<LoadingButtonProps> = ({
   );
 };
 
-export default LoadingButton;
+export default LoadingButtonHome;

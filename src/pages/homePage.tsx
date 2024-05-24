@@ -5,7 +5,6 @@ import { HamburgerMenu } from '../components/HamburgerMenu';
 import LoadingButtonHome from '../components/LoadingButtonHome';
 import { useUser } from '../components/UserContext';
 export const Home: React.FC = () => {
-
   const { isLoggedIn } = useUser();
 
   console.log('isLoggedIn no componente Home:', isLoggedIn);
@@ -40,8 +39,8 @@ export const Home: React.FC = () => {
           </Box>
           <Box sx={textStyle2}>CPF:</Box>
           <Box sx={textStyle1}>123.456.789-00</Box>
-          <Box sx={textStyle2}>E-mail:</Box>
-          <Box sx={textStyle1}>usuario@gmail.com</Box>
+          <Box sx={textStyle2}>Celular:</Box>
+          <Box sx={textStyle1}>(22) 98765-4321</Box>
           <Box sx={textStyle2}>Bairro:</Box>
           <Box sx={textStyle1}>VILA ROMANA</Box>
           <Box sx={textStyle2}>Unidade do CRAS:</Box>
@@ -84,19 +83,18 @@ export const boxStyle = {
   alignContent: 'center',
 };
 export const btnStyle = {
-	p: '0',
-	w: '30%',
-	display: '-ms-grid',
-	boxShadow: '1px 1px 2px hsla(0, 28%, 0%, 0.7)',
-	color: '#fff',
-	bg: '#2CA1FF',
-	maxW: '950px',
-	minW: ['150px', '200px', '250px', '300px'],
-	fontSize: ['0.7rem', '0.8rem', '0.9rem', '1rem'],
-	_hover: {
-		bg: '#1C75BC',
-		fontWeight: 'bold',
-	},
-
+  p: '0',
+  w: '30%',
+  display: '-ms-grid',
+  boxShadow: '1px 1px 2px hsla(0, 28%, 0%, 0.7)',
+  color: '#fff',
+  bg: '#2CA1FF',
+  maxW: '950px',
+  minW: ['150px', '200px', '250px', '300px'],
+  fontSize: ['0.7rem', '0.8rem', '0.9rem', '1rem'],
+  _hover: {
+    bg: '#1C75BC',
+    fontWeight: 'bold',
+  },
 };
 export default Home;

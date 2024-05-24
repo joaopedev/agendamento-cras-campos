@@ -16,7 +16,6 @@ const AppRoutes: React.FC = () => {
         <Route path='/' element={<Login />} />
         <Route path='/funcionario' element={<LoginFuncionario />} />
         <Route path='/home' element={<Home />} />
-        ;
         <Route path='/home-adm' element={<HomeADM />} />
         <Route path='/home-funcionario' element={<HomeFuncionario />} />
         <Route path='/agendamento' element={<SchedulingPage />} />

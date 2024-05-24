@@ -183,7 +183,7 @@ const SelecionarDiaFuncionario: React.FC = () => {
                           bg: '#1b612e',
                         }}
                       >
-                        Atendimento Relizado
+                        Atendimento Realizado
                       </Button>
                       <br />
 

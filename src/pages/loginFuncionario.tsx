@@ -10,7 +10,6 @@ import {
 import { useNavigate } from 'react-router-dom';
 import SidebarLogin from '../components/SidebarLogin';
 import LoadingButtonFuncionario from '../components/LoadingButtonFuncionario';
-import { HamburgerMenu } from '../components/HamburgerMenu';
 
 export const LoginFuncionario: React.FC = () => {
   const [isLoading] = useState(false); // Adicionando estado para controlar o carregamento
@@ -52,7 +51,6 @@ export const LoginFuncionario: React.FC = () => {
   return (
     <Flex h='100vh'>
       <SidebarLogin />
-      <HamburgerMenu />
       <Stack
         pt={['60px', '0', '0', '0']}
         m='auto'

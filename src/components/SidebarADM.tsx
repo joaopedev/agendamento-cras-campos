@@ -1,9 +1,9 @@
 import {
-	Button,
-	Text,
-	Stack,
-	Box,
-	// Image
+  Button,
+  Text,
+  Stack,
+  Box,
+  // Image
 } from '@chakra-ui/react';
 import { NavLink } from 'react-router-dom';
 
@@ -83,18 +83,24 @@ export const SidebarADM: React.FC = () => {
 				</Stack>
 				<Stack alignItems={'center'}>
 					{/* <Image
+
 						boxSize={'100px'}
 						objectFit="contain"
 						src="https://upload.wikimedia.org/wikipedia/commons/e/e1/Bras%C3%A3o_de_Campos_dos_Goytacazes.png"
 						alt="Brasão de Campos dos Goytacazes"
 					/> */}
-					<Text fontSize={'16'} color={'white'} textAlign={'center'} maxW={'200px'}>
-						{/* Prefeitura Municipal de Campos dos Goytacazes */}
-					</Text>
-				</Stack>
-			</Stack>
-		</Box>
-	);
+          <Text
+            fontSize={'16'}
+            color={'white'}
+            textAlign={'center'}
+            maxW={'200px'}
+          >
+            {/* Prefeitura Municipal de Campos dos Goytacazes */}
+          </Text>
+        </Stack>
+      </Stack>
+    </Box>
+  );
 };
 
 export default SidebarADM;

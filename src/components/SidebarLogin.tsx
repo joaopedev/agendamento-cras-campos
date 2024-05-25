@@ -71,6 +71,7 @@ export const SidebarLogin: React.FC = () => {
 						src="https://upload.wikimedia.org/wikipedia/commons/e/e1/Bras%C3%A3o_de_Campos_dos_Goytacazes.png"
 						alt="Brasão de Campos dos Goytacazes"
 					/> */}
+
           <Text
             textShadow='1px 1px 2px rgba(0, 0, 0, 0.5)'
             fontSize={['16px', '16px', '32px', '40']}

@@ -84,6 +84,7 @@ export const SidebarHome: React.FC = () => {
 						src="https://upload.wikimedia.org/wikipedia/commons/e/e1/Bras%C3%A3o_de_Campos_dos_Goytacazes.png"
 						alt="Brasão de Campos dos Goytacazes"
 					/> */}
+
           <Text
             fontSize={'16'}
             color={'white'}

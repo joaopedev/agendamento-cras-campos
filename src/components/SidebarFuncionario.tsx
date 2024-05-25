@@ -8,28 +8,29 @@ import {
 import { NavLink } from 'react-router-dom';
 
 export const SidebarFuncionario: React.FC = () => {
-  const sideBtnStyle = {
-    textColor: 'white',
-    fontSize: ['18', '18', '20', '28'],
-    h: 'fit-content',
-    p: ['10px 12px', '10px 12px', '10px 15px', '10px 15px'],
-    borderRadius: '0',
-    bgColor: '#ffffff50',
-    w: '100%',
-    justifyContent: 'left',
-    _hover: {
-      color: '#1C75BC',
-      bg: '#ebedf090',
-    },
-    _focus: {
-      color: '#1C75BC',
-      bg: 'white',
-    },
-    _active: {
-      color: '#1C75BC',
-      bg: 'white',
-    },
-  };
+	const sideBtnStyle = {
+		textColor: 'white',
+		fontSize: ['18', '18', '20', '28'],
+		h: 'fit-content',
+		p: ['10px 12px', '10px 12px', '10px 15px', '10px 15px'],
+		borderRadius: '0',
+		bgColor: '#ffffff50',
+		w: '100%',
+		justifyContent: 'left',
+		_hover: {
+			color: '#1C75BC',
+			bg: '#ebedf090',
+		},
+		_focus: {
+			color: '#1C75BC',
+			bg: 'white',
+		},
+		_active: {
+			color: '#1C75BC',
+			bg: 'white',
+		},
+	};
+
 
   return (
     <Box
@@ -67,7 +68,6 @@ export const SidebarFuncionario: React.FC = () => {
               </Button>
             )}
           </NavLink>
-
           <NavLink to='/agendamentos'>
             {({ isActive }) => (
               <Button isActive={isActive} sx={sideBtnStyle}>
@@ -83,6 +83,7 @@ export const SidebarFuncionario: React.FC = () => {
 						src="https://upload.wikimedia.org/wikipedia/commons/e/e1/Bras%C3%A3o_de_Campos_dos_Goytacazes.png"
 						alt="Brasão de Campos dos Goytacazes"
 					/> */}
+
           <Text
             fontSize={'16'}
             color={'white'}

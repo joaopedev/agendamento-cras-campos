@@ -13,25 +13,26 @@ export const Adm: React.FC = () => {
     setActiveComponent(componentName);
   };
 
-  const cras = useMemo(
-    () => [
-      'CODIN',
-      'CUSTODÓPOLIS',
-      'JARDIM CARIOCA',
-      ' PARQUE GUARUS',
-      ' TRAVESSÃO',
-      'GOITACAZES',
-      'FAROL',
-      'JOCKEY',
-      'MATADOURO',
-      'PENHA',
-      'MORRO DO COCO',
-      'ESPLANADA',
-      'CHATUBA',
-      'URURAÍ',
-    ],
-    []
-  );
+	const cras = useMemo(
+		() => [
+			'CODIN',
+			'CUSTODÓPOLIS',
+			'JARDIM CARIOCA',
+			' PARQUE GUARUS',
+			' TRAVESSÃO',
+			'GOITACAZES',
+			'FAROL',
+			'JOCKEY',
+			'MATADOURO',
+			'PENHA',
+			'MORRO DO COCO',
+			'ESPLANADA',
+			'CHATUBA',
+			'URURAÍ',
+		],
+		[]
+	);
+
 
   const [selectedBairro, setSelectedBairro] = useState('');
 
@@ -57,114 +58,97 @@ export const Adm: React.FC = () => {
   };
   console.log('isLoggedIn no componente Home:', isLoggedIn);
 
-  return (
-    <Flex h='100vh'>
-      <SidebarADM />
-      <HamburgerMenu />
-      <Box
-        alignItems={'center'}
-        justifyContent={'center'}
-        pl={['0%', '30%', '25%', '20%']}
-        w={'100%'}
-        display={'flex'}
-        flexDir='column'
-        gap={3}
-      >
-        {activeComponent === 'gerenciarConta' ? (
-          <InputGroup
-            w={['80%', '60%', '50%', '40%']}
-            flexDir={'column'}
-            gap={3}
-          >
-            <Box display={'flex'}>
-              <Input
-                placeholder='Nome completo'
-                size='md'
-                sx={{
-                  fontSize: ['0.7rem', '0.8rem', '0.9rem', '1rem'],
-                  bg: 'white',
-                  borderRadius: '5px',
-                  p: '4px 0',
-                  mt: '0px',
-                  mb: '0px',
-                  paddingLeft: '16px',
-                }}
-                _placeholder={{ paddingLeft: 0 }}
-              />
-              <Button
-                sx={btnStyle}
-                onClick={() => handleButtonClick('gerenciarCras')}
-              >
-                Pesquisar
-              </Button>
-            </Box>
-            <Box display={'flex'}>
-              <Input
-                value={inputValue}
-                placeholder='CPF'
-                onChange={handleCpfChange}
-                size='md'
-                sx={{
-                  fontSize: ['0.7rem', '0.8rem', '0.9rem', '1rem'],
-                  bg: 'white',
-                  borderRadius: '5px',
-                  p: '4px 0',
-                  mt: '0px',
-                  mb: '0px',
-                  paddingLeft: '16px',
-                }}
-                _placeholder={{ paddingLeft: 0 }}
-              />
-              <Button
-                sx={btnStyle}
-                onClick={() => handleButtonClick('gerenciarCras')}
-              >
-                Pesquisar
-              </Button>
-            </Box>
-          </InputGroup>
-        ) : (
-          <Button
-            sx={btnStyle}
-            onClick={() => handleButtonClick('gerenciarConta')}
-          >
-            Gerenciar conta
-          </Button>
-        )}
 
-        {activeComponent === 'gerenciarCras' ? (
-          <Box display={'flex'}>
-            <Select
-              w={['80%', '60%', '50%', '40%']}
-              placeholder='Selecionar CRAS'
-              variant='outline'
-              value={selectedBairro}
-              onChange={handleBairroChange}
-            >
-              {cras.map((bairro, index) => (
-                <option key={index} value={bairro}>
-                  {bairro}
-                </option>
-              ))}
-            </Select>
-            <Button
-              sx={btnStyle}
-              onClick={() => handleButtonClick('gerenciarCras')}
-            >
-              Confirmar
-            </Button>
-          </Box>
-        ) : (
-          <Button
-            sx={btnStyle}
-            onClick={() => handleButtonClick('gerenciarCras')}
-          >
-            Gerenciar CRAS
-          </Button>
-        )}
-      </Box>
-    </Flex>
-  );
+	return (
+		<Flex h="100vh">
+			<SidebarADM />
+			<HamburgerMenu />
+			<Box
+				alignItems={'center'}
+				justifyContent={'center'}
+				pl={['0%', '30%', '25%', '20%']}
+				w={'100%'}
+				display={'flex'}
+				flexDir="column"
+				gap={3}
+			>
+				{activeComponent === 'gerenciarConta' ? (
+					<InputGroup w={['80%', '60%', '50%', '40%']} flexDir={'column'} gap={3}>
+						<Box display={'flex'}>
+							<Input
+								placeholder="Nome completo"
+								size="md"
+								sx={{
+									fontSize: ['0.7rem', '0.8rem', '0.9rem', '1rem'],
+									bg: 'white',
+									borderRadius: '5px',
+									p: '4px 0',
+									mt: '0px',
+									mb: '0px',
+									paddingLeft: '16px',
+								}}
+								_placeholder={{ paddingLeft: 0 }}
+							/>
+							<Button sx={btnStyle} onClick={() => handleButtonClick('gerenciarCras')}>
+								Pesquisar
+							</Button>
+						</Box>
+						<Box display={'flex'}>
+							<Input
+								value={inputValue}
+								placeholder="CPF"
+								onChange={handleCpfChange}
+								size="md"
+								sx={{
+									fontSize: ['0.7rem', '0.8rem', '0.9rem', '1rem'],
+									bg: 'white',
+									borderRadius: '5px',
+									p: '4px 0',
+									mt: '0px',
+									mb: '0px',
+									paddingLeft: '16px',
+								}}
+								_placeholder={{ paddingLeft: 0 }}
+							/>
+							<Button sx={btnStyle} onClick={() => handleButtonClick('gerenciarCras')}>
+								Pesquisar
+							</Button>
+						</Box>
+					</InputGroup>
+				) : (
+					<Button sx={btnStyle} onClick={() => handleButtonClick('gerenciarConta')}>
+						Gerenciar conta
+					</Button>
+				)}
+
+				{activeComponent === 'gerenciarCras' ? (
+					<Box display={'flex'}>
+						<Select
+							w={['80%', '60%', '50%', '40%']}
+							placeholder="Selecionar CRAS"
+							variant="outline"
+							value={selectedBairro}
+							onChange={handleBairroChange}
+						>
+							{cras.map((bairro, index) => (
+								<option key={index} value={bairro}>
+									{bairro}
+								</option>
+							))}
+						</Select>
+						<Button sx={btnStyle} onClick={() => handleButtonClick('gerenciarCras')}>
+							Confirmar
+						</Button>
+					</Box>
+				) : (
+					<Button sx={btnStyle} onClick={() => handleButtonClick('gerenciarCras')}>
+						Gerenciar CRAS
+					</Button>
+				)}
+			</Box>
+		</Flex>
+	);
+
 };
 
 // const textStyle1 = {
@@ -193,19 +177,21 @@ export const boxStyle = {
   alignContent: 'center',
 };
 export const btnStyle = {
-  p: '0',
-  w: ['30%', '40%', '40%', '40%'],
-  display: '-ms-grid',
-  boxShadow: '1px 1px 2px hsla(0, 28%, 0%, 0.7)',
-  color: '#fff',
-  bg: '#2CA1FF',
-  maxW: '950px',
-  px: '10px',
-  minW: [22, 24, 26, 28],
-  fontSize: ['0.7rem', '0.8rem', '0.9rem', '1rem'],
-  _hover: {
-    bg: '#1C75BC',
-    fontWeight: 'bold',
-  },
+
+	p: '0',
+	w: ['30%', '40%', '40%', '40%'],
+	display: '-ms-grid',
+	boxShadow: '1px 1px 2px hsla(0, 28%, 0%, 0.7)',
+	color: '#fff',
+	bg: '#2CA1FF',
+	maxW: '950px',
+	px: '10px',
+	minW: [22, 24, 26, 28],
+	fontSize: ['0.7rem', '0.8rem', '0.9rem', '1rem'],
+	_hover: {
+		bg: '#1C75BC',
+		fontWeight: 'bold',
+	},
+
 };
 export default Adm;

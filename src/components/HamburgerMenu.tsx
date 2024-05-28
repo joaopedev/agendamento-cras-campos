@@ -68,7 +68,7 @@ export const HamburgerMenu: React.FC = () => {
 		currentPath.startsWith('/home-adm');
 
 	return (
-		<Box display={['flex', 'none', 'none', 'none']} pos={'fixed'}>
+		<Box display={['flex', 'none', 'none', 'none']} pos={'absolute'}>
 			<Menu>
 				<MenuButton
 					as={IconButton}
@@ -99,18 +99,33 @@ export const HamburgerMenu: React.FC = () => {
 						</MenuItem>
 					</NavLink>
 
-					<NavLink to={'/agendamento'}>
-						<MenuItem
-							bg={'none'}
-							_hover={{
-								bg: '#1C75BC',
-								fontWeight: 'bold',
-							}}
-							color={'white'}
-						>
-							{isEmployeePage ? 'Agendamentos' : 'Agendamento'}
-						</MenuItem>
-					</NavLink>
+					{isEmployeePage ? (
+						<NavLink to={'/agendamentos'}>
+							<MenuItem
+								bg={'none'}
+								_hover={{
+									bg: '#1C75BC',
+									fontWeight: 'bold',
+								}}
+								color={'white'}
+							>
+								Agendamentos
+							</MenuItem>
+						</NavLink>
+					) : (
+						<NavLink to={'/agendamento'}>
+							<MenuItem
+								bg={'none'}
+								_hover={{
+									bg: '#1C75BC',
+									fontWeight: 'bold',
+								}}
+								color={'white'}
+							>
+								Agendamento
+							</MenuItem>
+						</NavLink>
+					)}
 
 					{isAdminPage && (
 						<NavLink to={'/adm'}>

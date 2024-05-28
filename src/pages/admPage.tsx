@@ -13,7 +13,25 @@ export const Adm: React.FC = () => {
 		setActiveComponent(componentName);
 	};
 
-	const cras = useMemo(() => ['CODIN', 'CUSTODÓPOLIS', 'JARDIM CARIOCA',' PARQUE GUARUS',' TRAVESSÃO','GOITACAZES','FAROL','JOCKEY','MATADOURO','PENHA','MORRO DO COCO','ESPLANADA','CHATUBA','URURAÍ'], []);
+	const cras = useMemo(
+		() => [
+			'CODIN',
+			'CUSTODÓPOLIS',
+			'JARDIM CARIOCA',
+			' PARQUE GUARUS',
+			' TRAVESSÃO',
+			'GOITACAZES',
+			'FAROL',
+			'JOCKEY',
+			'MATADOURO',
+			'PENHA',
+			'MORRO DO COCO',
+			'ESPLANADA',
+			'CHATUBA',
+			'URURAÍ',
+		],
+		[]
+	);
 
 	const [selectedBairro, setSelectedBairro] = useState('');
 
@@ -69,7 +87,7 @@ export const Adm: React.FC = () => {
 								}}
 								_placeholder={{ paddingLeft: 0 }}
 							/>
-							<Button sx={btnStyle} w={'100px'} onClick={() => handleButtonClick('gerenciarCras')}>
+							<Button sx={btnStyle} onClick={() => handleButtonClick('gerenciarCras')}>
 								Pesquisar
 							</Button>
 						</Box>
@@ -90,7 +108,7 @@ export const Adm: React.FC = () => {
 								}}
 								_placeholder={{ paddingLeft: 0 }}
 							/>
-							<Button sx={btnStyle} w={'100px'} onClick={() => handleButtonClick('gerenciarCras')}>
+							<Button sx={btnStyle} onClick={() => handleButtonClick('gerenciarCras')}>
 								Pesquisar
 							</Button>
 						</Box>
@@ -102,19 +120,24 @@ export const Adm: React.FC = () => {
 				)}
 
 				{activeComponent === 'gerenciarCras' ? (
-					<Select
-						w={['80%', '60%', '50%', '40%']}
-						placeholder="Selecionar CRAS"
-						variant="outline"
-						value={selectedBairro}
-						onChange={handleBairroChange}
-					>
-						{cras.map((bairro, index) => (
-							<option key={index} value={bairro}>
-								{bairro}
-							</option>
-						))}
-					</Select>
+					<Box display={'flex'}>
+						<Select
+							w={['80%', '60%', '50%', '40%']}
+							placeholder="Selecionar CRAS"
+							variant="outline"
+							value={selectedBairro}
+							onChange={handleBairroChange}
+						>
+							{cras.map((bairro, index) => (
+								<option key={index} value={bairro}>
+									{bairro}
+								</option>
+							))}
+						</Select>
+						<Button sx={btnStyle} onClick={() => handleButtonClick('gerenciarCras')}>
+							Confirmar
+						</Button>
+					</Box>
 				) : (
 					<Button sx={btnStyle} onClick={() => handleButtonClick('gerenciarCras')}>
 						Gerenciar CRAS
@@ -152,13 +175,14 @@ export const boxStyle = {
 };
 export const btnStyle = {
 	p: '0',
-	w: '30%',
+	w: ['30%', '40%', '40%', '40%'],
 	display: '-ms-grid',
 	boxShadow: '1px 1px 2px hsla(0, 28%, 0%, 0.7)',
 	color: '#fff',
 	bg: '#2CA1FF',
 	maxW: '950px',
-	minW: ['150px', '200px', '250px', '300px'],
+	px: '10px',
+	minW: [22, 24, 26, 28],
 	fontSize: ['0.7rem', '0.8rem', '0.9rem', '1rem'],
 	_hover: {
 		bg: '#1C75BC',

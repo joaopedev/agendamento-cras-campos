@@ -17,6 +17,7 @@ export const FooterLogin: React.FC = () => {
 			borderRadius="0 50px 0 0 "
 			bottom={0}
 			w="100%"
+			zIndex={2}
 		>
 			<Flex justifyContent="space-between" alignItems="center">
 				<Text fontSize={'20'}>

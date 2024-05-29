@@ -31,6 +31,7 @@ export const SidebarADM: React.FC = () => {
 		},
 	};
 
+<<<<<<< Updated upstream
 	return (
 		<Box
 			position={'fixed'}
@@ -83,6 +84,61 @@ export const SidebarADM: React.FC = () => {
 				</Stack>
 				<Stack alignItems={'center'}>
 					{/* <Image
+=======
+  return (
+    <Box
+      position={'fixed'}
+      top={'0'}
+      left={'0'}
+      w={['30%', '30%', '25%', '20%']}
+      h='100vh'
+      borderRadius={['0 70px 0 0', '0 80px 0 0', '0 90px 0 0', '0 100px 0 0']}
+      // bgImage={
+      // 	'https://www.turismo.rj.gov.br/wp-content/uploads/2020/03/Rio-Para%C3%ADba-do-Sul-1.jpg'
+      // }
+      bgSize={'cover'}
+      bgPos={'20%'}
+      display={['none', 'flex', 'flex', 'flex']}
+    >
+      <Stack
+        p={'150px 0 40px '}
+        justifyContent='space-between'
+        // bg="hsla(207, 74%, 42%, 0.85)" // tranaparent
+        background={
+          'linear-gradient(41deg, rgba(28,117,188,1) 0%, rgba(44,161,255,1) 100%)'
+        }
+        w='20%'
+        h='100%'
+        borderRadius={['0 70px 0 0', '0 80px 0 0', '0 90px 0 0', '0 100px 0 0']}
+        alignItems='center'
+        boxSize={'full'}
+      >
+        <Stack p=' 0' w={'100%'}>
+          <NavLink to={'/home-adm'}>
+            {({ isActive }) => (
+              <Button isActive={isActive} sx={sideBtnStyle}>
+                Início
+              </Button>
+            )}
+          </NavLink>
+          <NavLink to='/dashboard'>
+            {({ isActive }) => (
+              <Button isActive={isActive} sx={sideBtnStyle}>
+                Dashboard
+              </Button>
+            )}
+          </NavLink>
+          <NavLink to='/gerenciamento'>
+            {({ isActive }) => (
+              <Button isActive={isActive} sx={sideBtnStyle}>
+                Gerenciamento
+              </Button>
+            )}
+          </NavLink>
+        </Stack>
+        <Stack alignItems={'center'}>
+          {/* <Image
+>>>>>>> Stashed changes
 
 						boxSize={'100px'}
 						objectFit="contain"

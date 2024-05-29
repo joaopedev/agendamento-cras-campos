@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+
 import { Flex, Box } from '@chakra-ui/react';
 import { HamburgerMenu } from '../components/HamburgerMenu';
 import SidebarADM from '../components/SidebarADM';
@@ -50,6 +51,7 @@ export const Dashboard: React.FC = () => {
 // };
 
 export const boxStyle = {
+
 	w: '60%',
 	maxW: ['300px', '350px', '500px', '950px'],
 	minW: '250px',

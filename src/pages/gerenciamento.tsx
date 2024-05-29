@@ -54,81 +54,78 @@ const FuncionarioData: React.FC = () => {
   };
 
   return (
-    <Flex>
-      <Box>
-        <HamburgerMenuADM />
-        <Grid
-          templateColumns={['1fr', '1fr', '25% 1fr', '20% 1fr']}
-          gap={6}
-          p={4}
-        >
-          <GridItem>
-            <SidebarADM />
-          </GridItem>
-          <GridItem p={4}>
-            <Flex justifyContent='space-between' mb={4}>
-              <Heading as='h2' size='lg'>
-                Gerenciamento de Funcionários
-              </Heading>
-              <Button colorScheme='blue' onClick={onOpen}>
-                Adicionar Funcionário
-              </Button>
-            </Flex>
+    <Box>
+      <HamburgerMenuADM />
+      <Grid
+        templateColumns={['1fr', '1fr', '25% 1fr', '20% 1fr']}
+        gap={6}
+        p={4}
+      >
+        <GridItem>
+          <SidebarADM />
+        </GridItem>
+        <GridItem p={4}>
+          <Flex justifyContent='space-between' mb={4}>
+            <Heading as='h2' size='lg'>
+              Gerenciamento de Funcionários
+            </Heading>
+            <Button colorScheme='blue' onClick={onOpen}>
+              Adicionar Funcionário
+            </Button>
+          </Flex>
 
-            <Table variant='simple'>
-              <Thead>
-                <Tr>
-                  <Th width='30%'>Nome</Th>{' '}
-                  {/* Largura fixa para a coluna Nome */}
-                  <Th width='20%'>CPF</Th>{' '}
-                  {/* Largura fixa para a coluna CPF */}
-                  <Th width='20%'>CRAS</Th>{' '}
-                  {/* Largura fixa para a coluna CRAS */}
-                  <Th width='20%'>Ações</Th>{' '}
-                  {/* Largura fixa para a coluna Ações */}
+          <Table variant='simple'>
+            <Thead>
+              <Tr>
+                <Th width='30%'>Nome</Th>{' '}
+                {/* Largura fixa para a coluna Nome */}
+                <Th width='20%'>CPF</Th> {/* Largura fixa para a coluna CPF */}
+                <Th width='20%'>CRAS</Th>{' '}
+                {/* Largura fixa para a coluna CRAS */}
+                <Th width='20%'>Ações</Th>{' '}
+                {/* Largura fixa para a coluna Ações */}
+              </Tr>
+            </Thead>
+            <Tbody>
+              {employees.map((employee, index) => (
+                <Tr key={index}>
+                  <Td>{employee.name}</Td>
+                  <Td>{employee.cpf}</Td>
+                  <Td>{employee.cras}</Td>
+                  <Td>
+                    <HStack spacing={2}>
+                      {' '}
+                      {/* Agrupe os elementos e adicione espaçamento */}
+                      <Checkbox
+                        isChecked={employee.active}
+                        onChange={() => handleToggleActive(index)}
+                        width='100px'
+                      >
+                        {employee.active ? 'Ativo' : 'Inativo'}
+                      </Checkbox>
+                      <Button
+                        size='sm'
+                        colorScheme='red'
+                        ml={12} // Margem à esquerda para o botão
+                        onClick={() => handleDeleteEmployee(index)}
+                      >
+                        Excluir
+                      </Button>
+                    </HStack>
+                  </Td>
                 </Tr>
-              </Thead>
-              <Tbody>
-                {employees.map((employee, index) => (
-                  <Tr key={index}>
-                    <Td>{employee.name}</Td>
-                    <Td>{employee.cpf}</Td>
-                    <Td>{employee.cras}</Td>
-                    <Td>
-                      <HStack spacing={2}>
-                        {' '}
-                        {/* Agrupe os elementos e adicione espaçamento */}
-                        <Checkbox
-                          isChecked={employee.active}
-                          onChange={() => handleToggleActive(index)}
-                          width='100px'
-                        >
-                          {employee.active ? 'Ativo' : 'Inativo'}
-                        </Checkbox>
-                        <Button
-                          size='sm'
-                          colorScheme='red'
-                          ml={12} // Margem à esquerda para o botão
-                          onClick={() => handleDeleteEmployee(index)}
-                        >
-                          Excluir
-                        </Button>
-                      </HStack>
-                    </Td>
-                  </Tr>
-                ))}
-              </Tbody>
-            </Table>
+              ))}
+            </Tbody>
+          </Table>
 
-            <ModalAddFuncionario
-              isOpen={isOpen}
-              onClose={onClose}
-              onAdd={handleAddEmployee}
-            />
-          </GridItem>
-        </Grid>
-      </Box>
-    </Flex>
+          <ModalAddFuncionario
+            isOpen={isOpen}
+            onClose={onClose}
+            onAdd={handleAddEmployee}
+          />
+        </GridItem>
+      </Grid>
+    </Box>
   );
 };
 

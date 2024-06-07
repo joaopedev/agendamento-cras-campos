@@ -1,22 +1,19 @@
-import * as React from 'react';
-import * as ReactDOM from 'react-dom/client';
-import { App } from './App';
-import { ChakraProvider } from '@chakra-ui/react';
-import { ColorModeScript } from '@chakra-ui/react';
-import reportWebVitals from './reportWebVitals';
-import * as serviceWorker from './serviceWorker';
-import { UserProvider } from './components/UserContext';
+import * as React from "react";
+import * as ReactDOM from "react-dom/client";
+import { App } from "./App";
+import { ChakraProvider } from "@chakra-ui/react";
+import { ColorModeScript } from "@chakra-ui/react";
+import reportWebVitals from "./reportWebVitals";
+import * as serviceWorker from "./serviceWorker";
 
 const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement // Asserção de tipo para HTMLElement
+  document.getElementById("root") as HTMLElement // Asserção de tipo para HTMLElement
 );
 root.render(
   <React.StrictMode>
     <ColorModeScript />
     <ChakraProvider>
-      <UserProvider>
-        <App />
-      </UserProvider>
+      <App />
     </ChakraProvider>
   </React.StrictMode>
 );

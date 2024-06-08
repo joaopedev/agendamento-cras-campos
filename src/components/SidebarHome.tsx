@@ -39,9 +39,9 @@ export const SidebarHome: React.FC = () => {
 			w={['30%', '30%', '25%', '20%']}
 			h="100vh"
 			borderRadius={['0 70px 0 0', '0 80px 0 0', '0 90px 0 0', '0 100px 0 0']}
-			// bgImage={
-			// 	'https://www.turismo.rj.gov.br/wp-content/uploads/2020/03/Rio-Para%C3%ADba-do-Sul-1.jpg'
-			// }
+			bgImage={
+				'https://www.turismo.rj.gov.br/wp-content/uploads/2020/03/Rio-Para%C3%ADba-do-Sul-1.jpg'
+			}
 			bgSize={'cover'}
 			bgPos={'20%'}
 			display={['none', 'flex', 'flex', 'flex']}
@@ -70,6 +70,29 @@ export const SidebarHome: React.FC = () => {
 						{({ isActive }) => (
 							<Button isActive={isActive} sx={sideBtnStyle}>
 								Agendamento
+							</Button>
+						)}
+					</NavLink>
+
+					<NavLink to="/agendamentos">
+						{({ isActive }) => (
+							<Button isActive={isActive} sx={sideBtnStyle}>
+								Agendamentos
+							</Button>
+						)}
+					</NavLink>
+
+					<NavLink to="/dashboard">
+						{({ isActive }) => (
+							<Button isActive={isActive} sx={sideBtnStyle}>
+								Dashboard
+							</Button>
+						)}
+					</NavLink>
+					<NavLink to="/gerenciamento">
+						{({ isActive }) => (
+							<Button isActive={isActive} sx={sideBtnStyle}>
+								Gerenciamento
 							</Button>
 						)}
 					</NavLink>

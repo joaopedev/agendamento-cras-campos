@@ -1,16 +1,16 @@
 import { Flex } from '@chakra-ui/react';
 import React from 'react';
-import { SidebarFuncionario } from '../components/SidebarFuncionario';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import { HamburgerMenuFuncionario } from '../components/HamburgerMenuFuncionario';
 import SelecionarDiaFuncionario from '../components/SelecionarDiaFuncionario';
+import { HamburgerMenu } from '../components/HamburgerMenu';
+import SidebarHome from '../components/SidebarHome';
 
 const Agendamentos: React.FC = () => {
   return (
     <>
-      <SidebarFuncionario />
+      <SidebarHome />
       <Flex className='flex' h='100vh'>
-        <HamburgerMenuFuncionario />
+        <HamburgerMenu />
         <SelecionarDiaFuncionario />
       </Flex>
     </>

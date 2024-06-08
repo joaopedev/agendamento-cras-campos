@@ -2,7 +2,7 @@ import { Flex, Input, Box, InputGroup, Button, Select } from '@chakra-ui/react';
 import React, { ChangeEvent, useState, useMemo } from 'react';
 import { HamburgerMenu } from '../components/HamburgerMenu';
 import { useUser } from '../components/UserContext';
-import SidebarADM from '../components/SidebarADM';
+import SidebarHome from '../components/SidebarHome';
 
 export const Adm: React.FC = () => {
 	const { isLoggedIn } = useUser();
@@ -59,7 +59,7 @@ export const Adm: React.FC = () => {
 
 	return (
 		<Flex h="100vh">
-			<SidebarADM />
+			<SidebarHome />
 			<HamburgerMenu />
 			<Box
 				alignItems={'center'}

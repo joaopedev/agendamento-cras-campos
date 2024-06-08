@@ -58,17 +58,6 @@ export const AuthProvider = ({ children }: IAuthProvider) => {
     setPayload(getUserFromToken(token));
   };
 
-  const signOUt = async ({ cpf, password }: SignIn) => {
-    const { data } = await loginRequest({
-      cpf,
-      password,
-    });
-    const { token } = data;
-    localStorage.setItem("token", token);
-    setToken(token);
-    setPayload(getUserFromToken(token));
-  };
-
   const registerUser = async ({
     cpf,
     cras,
@@ -115,7 +104,7 @@ export const AuthProvider = ({ children }: IAuthProvider) => {
         registerUser,
         signOut,
         getUser,
-        token
+        token,
       }}
     >
       {children}

@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 const ScrollUpButton: React.FC = () => {
 	const { isOpen, onOpen, onClose } = useDisclosure();
 	const [scrollY, setScrollY] = useState(0);
-
+	console.log(scrollY)
 	useEffect(() => {
 		const handleScroll = () => {
 			setScrollY(window.scrollY);
@@ -19,7 +19,7 @@ const ScrollUpButton: React.FC = () => {
 		return () => {
 			window.removeEventListener('scroll', handleScroll);
 		};
-	}, []);
+	}, [onOpen, onClose]);
 
 	const scrollToTop = () => {
 		window.scrollTo({ top: 0, behavior: 'smooth' });

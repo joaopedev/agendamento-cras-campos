@@ -1,11 +1,22 @@
-import { Flex, Stack, Box } from "@chakra-ui/react";
+import { Flex, Stack, Box, Button } from "@chakra-ui/react";
 import React, { useState } from "react";
 import { SidebarHome } from "../components/SidebarHome";
 import { HamburgerMenu } from "../components/HamburgerMenu";
 import LoadingButtonHome from "../components/LoadingButtonHome";
 import { useUser } from "../components/UserContext";
+import { useAuth } from "../hook/useAuth";
+import { useNavigate } from "react-router-dom";
+
 export const Home: React.FC = () => {
   const { isLoggedIn } = useUser();
+  const { signOut } = useAuth();
+  const navigate = useNavigate();
+
+  const buttonSingleOut = async () => {
+    console.log("teste");
+    await signOut();
+    navigate("/");
+  };
 
   console.log("isLoggedIn no componente Home:", isLoggedIn);
   const [isLoading] = useState(false);
@@ -21,6 +32,9 @@ export const Home: React.FC = () => {
         alignItems="center"
         pl={[0, "30%", "25%", "20%"]}
       >
+        <Box>
+          <Button onClick={buttonSingleOut}>Sair</Button>
+        </Box>
         <Box
           mt={["60px", 0, 0, 0]}
           sx={boxStyle}

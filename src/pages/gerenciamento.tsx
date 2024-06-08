@@ -5,10 +5,8 @@ import {
 	Flex,
 	Heading,
 	Table,
-	Tbody,
 	Td,
 	Th,
-	Thead,
 	Tr,
 	useDisclosure,
 	Grid,
@@ -16,9 +14,9 @@ import {
 	HStack,
 } from '@chakra-ui/react';
 import ModalAddFuncionario from '../components/ModalAddFuncionario';
-import SidebarADM from '../components/SidebarADM';
-import { HamburgerMenuADM } from '../components/HamburgerMenuADM';
 import ScrollUpButton from '../components/ScrollUpButton';
+import SidebarHome from '../components/SidebarHome';
+import { HamburgerMenu } from '../components/HamburgerMenu';
 
 interface Employee {
 	name: string;
@@ -53,8 +51,8 @@ const FuncionarioData: React.FC = () => {
 
 	return (
 		<Flex h="100vh" flexDir={'column'}>
-			<SidebarADM />
-			<HamburgerMenuADM />
+			<SidebarHome />
+			<HamburgerMenu />
 			<ScrollUpButton />
 			<Flex className="container__content" ml={['0vw', '30vw', '25vw', '20vw']} flexDir={'column'}>
 				<Flex

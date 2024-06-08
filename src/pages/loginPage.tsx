@@ -11,6 +11,7 @@ import {
   FormErrorMessage,
   FormControl,
   FormLabel,
+  InputRightElement,
 } from "@chakra-ui/react"; // Importando componentes do Chakra UI
 import { useNavigate } from "react-router-dom";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -25,8 +26,8 @@ import { loginSchema } from "../validation/auth";
 export const Login: React.FC = () => {
   const { signIn } = useAuth();
   const navigate = useNavigate();
-
-
+  const [show, setShow] = React.useState(false);
+  const handleClick = () => setShow(!show);
 
   const {
     register,
@@ -79,8 +80,6 @@ export const Login: React.FC = () => {
                 <Input
                   id="cpf"
                   placeholder="CPF"
-                  //   value={inputValue}
-                  //   onChange={handleCpfChange}
                   size="md"
                   sx={{
                     fontSize: ["0.7rem", "0.8rem", "0.9rem", "1rem"],
@@ -104,15 +103,15 @@ export const Login: React.FC = () => {
             <Box sx={textStyle2}></Box>
 
             <FormControl isInvalid={!!errors.password}>
-              <FormLabel htmlFor="password">Senha</FormLabel>
+              <FormLabel htmlFor="password">Data de nascimento</FormLabel>
               <InputGroup>
                 <Input // Input para data de nascimento
                   id="password"
-                  placeholder="Senha"
+                  placeholder="(Somente os numeros)"
                   //   value={inputDataNascimento} //
                   //   onChange={handleDataNascimentoChange}
                   size="md"
-                  type="password"
+                  type={show ? "text" : "password"}
                   sx={{
                     fontSize: ["0.7rem", "0.8rem", "0.9rem", "1rem"],
                     bg: "white",
@@ -125,6 +124,11 @@ export const Login: React.FC = () => {
                   {...register("password")}
                 />
                 <InputLeftElement pointerEvents="none" children={" "} />
+                <InputRightElement width="4.5rem">
+                  <Button h="1.75rem" size="sm" onClick={handleClick}>
+                    {show ? "Hide" : "Show"}
+                  </Button>
+                </InputRightElement>
               </InputGroup>
               <FormErrorMessage>
                 {errors.password && errors.password.message}

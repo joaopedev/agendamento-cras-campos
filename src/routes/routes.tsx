@@ -3,8 +3,6 @@ import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import Login from "../pages/loginPage";
 import LoginFuncionario from "../pages/loginFuncionario";
 import Home from "../pages/homePage";
-import HomeADM from "../pages/homeADM";
-import HomeFuncionario from "../pages/homeFuncionario";
 import SchedulingPage from "../pages/SchedulingPage";
 import Agendamentos from "../pages/agendamentosPage";
 import Cadastro from "../pages/cadastroPage";
@@ -39,8 +37,6 @@ const AppRoutes: React.FC = () => {
             <Route path="/gerenciamento" element={<Gerenciamento />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/adm" element={<Adm />} />
-            <Route path="/home-adm" element={<HomeADM />} />
-            <Route path="/home-funcionario" element={<HomeFuncionario />} />
             <Route path="/agendamento" element={<SchedulingPage />} />
             <Route path="/agendamentos" element={<Agendamentos />} />
           </Route>

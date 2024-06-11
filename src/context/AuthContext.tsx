@@ -2,12 +2,16 @@ import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { createContext, useEffect, useState } from "react";
 import { IAuthContext, IAuthProvider, IPayload } from "../interface/AuthProps";
-import { SignIn, RegisterUser } from "../types/auth-data";
+import { SignIn, RegisterUser, RegisterSchedulling } from "../types/auth-data";
 import {
   getUserRequest,
   loginRequest,
   registerRequest,
+  getSchedullingRequest,
+  registerSchedullingRequest,
 } from "../services/auth-request";
+import { IUserModel } from "../interface/User";
+import { ISchedulingModel } from "../interface/Schedulling";
 
 export const AuthContext = createContext({} as IAuthContext);
 export const AuthProvider = ({ children }: IAuthProvider) => {
@@ -82,8 +86,35 @@ export const AuthProvider = ({ children }: IAuthProvider) => {
     });
   };
 
-  const getUser = async (id: string) => {
+  const getUser = async (id: string): Promise<IUserModel> => {
     const { data } = await getUserRequest(id);
+    return data;
+  };
+
+  const registerSchedulling = async ({
+    name,
+    usuario_id,
+    servico,
+    description,
+    duracao_estimada,
+    data_hora,
+    cras,
+    status,
+  }: RegisterSchedulling) => {
+    await registerSchedullingRequest({
+      name,
+      usuario_id,
+      servico,
+      description,
+      duracao_estimada,
+      data_hora,
+      cras,
+      status,
+    });
+  };
+
+  const getSchedulling = async (): Promise<ISchedulingModel> => {
+    const { data } = await getSchedullingRequest();
     return data;
   };
 
@@ -105,6 +136,8 @@ export const AuthProvider = ({ children }: IAuthProvider) => {
         signOut,
         getUser,
         token,
+        getSchedulling,
+        registerSchedulling
       }}
     >
       {children}

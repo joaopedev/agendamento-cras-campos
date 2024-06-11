@@ -11,7 +11,6 @@ import {
   useDisclosure,
   Grid,
   GridItem,
-  HStack,
 } from '@chakra-ui/react';
 import ModalAddFuncionario from '../components/ModalAddFuncionario';
 import ScrollUpButton from '../components/ScrollUpButton';
@@ -120,30 +119,24 @@ const FuncionarioData: React.FC = () => {
               <Td>{employee.name}</Td>
               <Td>{employee.cpf}</Td>
               <Td>{employee.cras}</Td>
-              <Td>
-                <HStack
-                  alignItems={'left'}
-                  gap={['4px']}
-                  flexDir={['column', 'column', 'row', 'row']}
-                >
-                  {' '}
-                  {/* Agrupe os elementos e adicione espaçamento */}
+              <Td minWidth='180px'>
+                <Flex alignItems='center'>
                   <Checkbox
                     isChecked={employee.active}
                     onChange={() => handleToggleActive(index)}
-                    // width="100px"
+                    width='80px' // Largura fixa para o Checkbox
                   >
                     {employee.active ? 'Ativo' : 'Inativo'}
                   </Checkbox>
                   <Button
                     size='sm'
-                    w={'fit-content'}
                     colorScheme='red'
+                    ml={2}
                     onClick={() => handleDeleteEmployee(index)}
                   >
                     Excluir
                   </Button>
-                </HStack>
+                </Flex>
               </Td>
             </Tr>
           ))}

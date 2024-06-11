@@ -34,5 +34,21 @@ export const RegisterUserSchema = Yup.object().shape({
     .required("Selecione o tipo do usuário"),
   cras: Yup.mixed<Cras>()
     .oneOf(Object.values(Cras) as number[])
-    .required("Selecione o tipo do usuário"),
+    .required("Selecione o CRAS"),
+});
+
+export const RegisterSchedullingSchema = Yup.object().shape({
+  name: Yup.string().required("Nome do agendamento obrigatorio"),
+  usuario_id: Yup.string()
+    .required("CPF é obrigatório")
+    .min(11, "Insira 11 números")
+    .max(11, "Insira 11 números"),
+  servico: Yup.number(),
+  description: Yup.string().required("Telefone é obrigatório"),
+  duracao_estimada: Yup.string().required("Data e hora"),
+  data_hora: Yup.string().required("Data e hora"),
+  cras: Yup.mixed<Cras>()
+    .oneOf(Object.values(Cras) as number[])
+    .required("Selecione o CRAS"),
+  status: Yup.number()  
 });

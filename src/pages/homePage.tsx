@@ -1,24 +1,40 @@
-import { Flex, Stack, Box, Button } from "@chakra-ui/react";
-import React, { useState } from "react";
+import { Flex, Stack, Box, Button, Text } from "@chakra-ui/react";
+import React, { useContext, useEffect, useState } from "react";
 import { SidebarHome } from "../components/SidebarHome";
 import { HamburgerMenu } from "../components/HamburgerMenu";
 import LoadingButtonHome from "../components/LoadingButtonHome";
-import { useUser } from "../components/UserContext";
 import { useAuth } from "../hook/useAuth";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
+import { Cras, IUserModel } from "../interface/User";
+
+const getCrasName = (crasValue: number): string => {
+  return Cras[crasValue];
+};
 
 export const Home: React.FC = () => {
-  const { isLoggedIn } = useUser();
   const { signOut } = useAuth();
   const navigate = useNavigate();
+  const { getUser, payload } = useContext(AuthContext);
+  const [userData, setUserData] = useState<IUserModel | null>(null);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (payload) {
+        const response = await getUser(payload.id); // Supondo que o payload contenha o userId
+        setUserData(response.contas); // Ajuste aqui para acessar a propriedade 'contas'
+      }
+    };
+
+    fetchUserData();
+  }, [payload, getUser]);
 
   const buttonSingleOut = async () => {
     console.log("teste");
     await signOut();
-    navigate("/");
+    return navigate("/");
   };
 
-  console.log("isLoggedIn no componente Home:", isLoggedIn);
   const [isLoading] = useState(false);
 
   return (
@@ -48,19 +64,22 @@ export const Home: React.FC = () => {
           >
             SEUS DADOS
           </Box>
-
-          <Box sx={textStyle2}>Nome:</Box>
-          <Box w="" sx={textStyle1}>
-            José Pereira Nunes
-          </Box>
-          <Box sx={textStyle2}>CPF:</Box>
-          <Box sx={textStyle1}>123.456.789-00</Box>
-          <Box sx={textStyle2}>Celular:</Box>
-          <Box sx={textStyle1}>(22) 98765-4321</Box>
-          <Box sx={textStyle2}>Bairro:</Box>
-          <Box sx={textStyle1}>VILA ROMANA</Box>
-          <Box sx={textStyle2}>Unidade do CRAS:</Box>
-          <Box sx={textStyle1}>CRAS de Goytacazes</Box>
+          {userData ? (
+            <Box>
+              <Box sx={textStyle2}>Nome:</Box>
+              <Box sx={textStyle1}>{userData.name}</Box>
+              <Box sx={textStyle2}>CPF:</Box>
+              <Box sx={textStyle1}>{userData.cpf}</Box>
+              <Box sx={textStyle2}>Celular:</Box>
+              <Box sx={textStyle1}>{userData.telefone}</Box>
+              <Box sx={textStyle2}>Bairro:</Box>
+              <Box sx={textStyle1}>{userData.endereco.bairro}</Box>
+              <Box sx={textStyle2}>Unidade do CRAS:</Box>
+              <Box sx={textStyle1}>{getCrasName(userData.cras)}</Box>
+            </Box>
+          ) : (
+            <Text>Loading...</Text>
+          )}
         </Box>
         <LoadingButtonHome isLoading={isLoading} sx={btnStyle} transform="auto">
           AGENDAR ATENDIMENTO

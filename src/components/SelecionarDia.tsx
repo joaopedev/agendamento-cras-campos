@@ -1,10 +1,4 @@
-import 'react-datepicker/dist/react-datepicker.module.css';
-import 'react-datepicker/dist/react-datepicker.css';
-import { ptBR } from 'date-fns/locale/pt-BR';
-import { format, addDays } from 'date-fns';
-import * as React from 'react';
-import { useState } from 'react';
-import DatePicker, { registerLocale } from 'react-datepicker';
+import { useContext, useEffect, useState } from 'react';
 import {
   Button,
   Box,
@@ -23,31 +17,55 @@ import {
   RadioGroup,
   Stack,
 } from '@chakra-ui/react';
+import DatePicker, { registerLocale } from 'react-datepicker';
+import { ptBR } from 'date-fns/locale/pt-BR';
+import { format, addDays } from 'date-fns';
+import { AuthContext } from '../context/AuthContext';
+import { ISchedulingModel, ISchedulingResponse } from '../interface/Schedulling';
+import 'react-datepicker/dist/react-datepicker.css';
+import { Cras } from '../interface/User';
+// import { useForm } from 'react-hook-form';
+// import { RegisterSchedulling } from '../types/auth-data';
+// import { RegisterSchedullingSchema } from '../validation/auth';
+// import { yupResolver } from "@hookform/resolvers/yup";
 
 registerLocale('pt-BR', ptBR);
 
+const getCrasName = (crasValue: number): string => {
+  return Cras[crasValue];
+};
+
 const SelecionarDia: React.FC = () => {
-  const [horarioSelecionado, setHorarioSelecionado] = useState<string | null>(
-    null
-  );
+  const [horarioSelecionado, setHorarioSelecionado] = useState<string | null>(null);
   const [selectedOption, setSelectedOption] = useState<string>('');
   const [showErrorMessage, setShowErrorMessage] = useState(false);
   const maxDate = addDays(new Date(), 30);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const {
-    isOpen: isConfirmOpen,
-    onOpen: onConfirmOpen,
-    onClose: onConfirmClose,
-  } = useDisclosure();
+  const { isOpen: isConfirmOpen, onOpen: onConfirmOpen, onClose: onConfirmClose } = useDisclosure();
+  const { getSchedulling, payload } = useContext(AuthContext);
+  const [schedullingData, setSchedullingData] = useState<ISchedulingModel[]>([]);
+  // const {
+  //   register,
+  //   handleSubmit,
+  //   control,
+  //   formState: { errors, isSubmitting },
+  // } = useForm<RegisterSchedulling>({ resolver: yupResolver(RegisterSchedullingSchema) });
 
-  const BoxHorario = ({
-    horario,
-    onOpen,
-  }: {
-    horario: string;
-    onOpen: () => void;
-  }) => {
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (payload) {
+        const response: ISchedulingResponse = await getSchedulling();
+        setSchedullingData(response.agendamentos);
+      }
+    };
+
+    fetchUserData();
+  }, [payload, getSchedulling]);
+
+  console.log(schedullingData)
+
+  const BoxHorario = ({ horario, onOpen }: { horario: string; onOpen: () => void }) => {
     return (
       <Button
         bg='#2CA1FF'
@@ -70,11 +88,6 @@ const SelecionarDia: React.FC = () => {
 
   const handleDateChange = (date: Date | null) => {
     setSelectedDate(date);
-
-    if (date) {
-      //data selecionada
-      console.log(date);
-    }
   };
 
   return (
@@ -84,17 +97,20 @@ const SelecionarDia: React.FC = () => {
       alignItems={'center'}
       gap={'10px'}
       p={['10px', '0', '0', '0']}
-      // w={['100%', '70%', '75%', '80%']}
       pl={['0%', '30%', '25%', '20%']}
       w='100%'
       flexDir={'column'}
     >
+      {schedullingData.length > 0 ? (
+        schedullingData.map((schedulling) => (
+          <Text key={schedulling.id}>{schedulling.id} {schedulling.name} - {getCrasName(schedulling.cras) }</Text>
+        ))
+      ) : (
+        <Text>Loading...</Text>
+      )}
+
       {!selectedDate && (
-        <Box
-          className='selecionar__dia'
-          textAlign='center'
-          // mb={4}
-        >
+        <Box className='selecionar__dia' textAlign='center'>
           <Text
             alignSelf={'center'}
             fontWeight={'bold'}
@@ -164,44 +180,25 @@ const SelecionarDia: React.FC = () => {
                 <BoxHorario horario='15:00' onOpen={onOpen} />
                 <BoxHorario horario='16:00' onOpen={onOpen} />
               </SimpleGrid>
-              <Modal
-                isOpen={isOpen}
-                onClose={onClose}
-                isCentered
-                size={['xs', 'sm', 'md', 'lg']}
-              >
+              <Modal isOpen={isOpen} onClose={onClose} isCentered size={['xs', 'sm', 'md', 'lg']}>
                 <ModalOverlay />
                 <ModalContent textAlign={'center'}>
                   <ModalHeader>Confirmar Agendamento</ModalHeader>
                   <ModalCloseButton />
                   <ModalBody>
                     <Flex flexDir='column' alignItems='center'>
-                      {' '}
-                      {/* Center-align the modal body contents */}
                       <Text>
                         Deseja confirmar o agendamento <br /> para o dia{' '}
-                        <strong>
-                          {selectedDate && format(selectedDate, 'dd/MM/yyyy')}
-                        </strong>{' '}
+                        <strong>{selectedDate && format(selectedDate, 'dd/MM/yyyy')}</strong>{' '}
                         às <strong>{horarioSelecionado}</strong>?
                       </Text>
-                      <RadioGroup
-                        onChange={setSelectedOption}
-                        value={selectedOption}
-                        mt={4}
-                      >
-                        {' '}
-                        {/* Add margin-top to the RadioGroup */}
+                      <RadioGroup onChange={setSelectedOption} value={selectedOption} mt={4}>
                         <Stack direction='row' spacing={4} align='center'>
                           <Radio value='Cadastramento'>Cadastramento</Radio>
-                          <Radio value='Atualização Cadastral'>
-                            Atualização Cadastral
-                          </Radio>
+                          <Radio value='Atualização Cadastral'>Atualização Cadastral</Radio>
                         </Stack>
                       </RadioGroup>
                     </Flex>
-
-                    {/* Error Message */}
                     {showErrorMessage && (
                       <Text color='red.500' mt={2}>
                         Por favor selecione uma opção antes de confirmar.
@@ -209,12 +206,7 @@ const SelecionarDia: React.FC = () => {
                     )}
                   </ModalBody>
                   <ModalFooter>
-                    <Button
-                      colorScheme='red'
-                      variant='ghost'
-                      mr={3}
-                      onClick={onClose}
-                    >
+                    <Button colorScheme='red' variant='ghost' mr={3} onClick={onClose}>
                       Cancelar
                     </Button>
                     <Button
@@ -226,7 +218,7 @@ const SelecionarDia: React.FC = () => {
                           setShowErrorMessage(true);
                         } else {
                           setShowErrorMessage(false);
-                          handleConfirmar(); // Call the existing function
+                          handleConfirmar();
                         }
                       }}
                     >
@@ -235,28 +227,16 @@ const SelecionarDia: React.FC = () => {
                   </ModalFooter>
                 </ModalContent>
               </Modal>
-              <Modal
-                isOpen={isConfirmOpen}
-                onClose={onConfirmClose}
-                isCentered
-                size={['xs', 'sm', 'md', 'lg']}
-              >
+              <Modal isOpen={isConfirmOpen} onClose={onConfirmClose} isCentered size={['xs', 'sm', 'md', 'lg']}>
                 <ModalOverlay />
-                <ModalContent
-                  color={'white'}
-                  bg={'#1C75BC'}
-                  textAlign={'center'}
-                >
+                <ModalContent color={'white'} bg={'#1C75BC'} textAlign={'center'}>
                   <ModalHeader>Agendamento Confirmado! 🎉</ModalHeader>
                   <ModalCloseButton />
                   <ModalBody pb={5}>
                     O seu atendimento será feito
                     <br />
                     dia{' '}
-                    <strong>
-                      {selectedDate && format(selectedDate, 'dd/MM/yyyy')}{' '}
-                    </strong>
-                    às <strong>{horarioSelecionado}.</strong>
+                    <strong>{selectedDate && format(selectedDate, 'dd/MM/yyyy')}</strong> às <strong>{horarioSelecionado}</strong>.
                   </ModalBody>
                 </ModalContent>
               </Modal>
@@ -269,9 +249,7 @@ const SelecionarDia: React.FC = () => {
         locale={'pt-BR'}
         selected={selectedDate}
         inline
-        filterDate={date =>
-          date.getDay() !== 0 && date.getDay() !== 6 && date <= maxDate
-        }
+        filterDate={date => date.getDay() !== 0 && date.getDay() !== 6 && date <= maxDate}
         onSelect={handleDateChange}
         onChange={(date: Date | null) => setSelectedDate(date)}
         minDate={new Date()}

@@ -3,7 +3,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { ptBR } from 'date-fns/locale/pt-BR';
 import { format, addDays } from 'date-fns';
 import * as React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import DatePicker, { registerLocale } from 'react-datepicker';
 import {
   Button,
@@ -30,7 +30,6 @@ const SelecionarDiaFuncionario: React.FC = () => {
   const maxDate = addDays(new Date(), 30);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { isOpen: isConfirmOpen, onClose: onConfirmClose } = useDisclosure();
 
   const BoxHorario = ({
     horario,
@@ -61,6 +60,50 @@ const SelecionarDiaFuncionario: React.FC = () => {
       //data selecionada
       console.log(date);
     }
+  };
+
+  const {
+    isOpen: isAtendimentoOpen,
+    onOpen: onAtendimentoOpen,
+    onClose: onAtendimentoClose,
+  } = useDisclosure();
+  const [elapsedTime, setElapsedTime] = useState(0);
+
+  useEffect(() => {
+    let interval: NodeJS.Timer | null = null;
+    let timeout: NodeJS.Timeout | null = null;
+
+    if (isAtendimentoOpen) {
+      const initialStartTime = new Date(); // Use initialStartTime
+
+      timeout = setTimeout(() => {
+        setElapsedTime(0);
+
+        interval = setInterval(() => {
+          const now = new Date();
+          setElapsedTime(
+            Math.floor((now.getTime() - initialStartTime.getTime()) / 1000)
+          );
+        }, 1000);
+      }, 0);
+    } else {
+      clearTimeout(timeout!);
+      clearInterval(interval!);
+      setElapsedTime(0);
+    }
+
+    return () => {
+      clearTimeout(timeout!);
+      clearInterval(interval!);
+    };
+  }, [isAtendimentoOpen]);
+
+  const formatTime = (seconds: number): string => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${String(minutes).padStart(2, '0')}:${String(
+      remainingSeconds
+    ).padStart(2, '0')}`;
   };
 
   return (
@@ -178,12 +221,15 @@ const SelecionarDiaFuncionario: React.FC = () => {
                         mt={-2}
                         bg={'#228B22'}
                         textColor={'white'}
-                        onClick={onClose}
+                        onClick={() => {
+                          onClose(); // Close the first modal
+                          onAtendimentoOpen(); // Open the Atendimento modal
+                        }}
                         _hover={{
                           bg: '#1b612e',
                         }}
                       >
-                        Atendimento Realizado
+                        Iniciar Atendimento
                       </Button>
                       <br />
 
@@ -207,27 +253,26 @@ const SelecionarDiaFuncionario: React.FC = () => {
                 </ModalContent>
               </Modal>
               <Modal
-                isOpen={isConfirmOpen}
-                onClose={onConfirmClose}
+                isOpen={isAtendimentoOpen}
+                onClose={onAtendimentoClose}
                 isCentered
-                size={['xs', 'sm', 'md', 'lg']}
               >
                 <ModalOverlay />
-                <ModalContent
-                  color={'white'}
-                  bg={'#1C75BC'}
-                  textAlign={'center'}
-                >
-                  <ModalHeader>Agendamento Confirmado! 🎉</ModalHeader>
+                <ModalContent textAlign={'center'}>
+                  <ModalHeader>Atendimento em Andamento</ModalHeader>
                   <ModalCloseButton />
-                  <ModalBody pb={5}>
-                    O seu atendimento será feito
+                  <ModalBody>
+                    <Text fontSize='xl'>
+                      Tempo Decorrido: {formatTime(elapsedTime)}
+                    </Text>{' '}
                     <br />
-                    dia{' '}
-                    <strong>
-                      {selectedDate && format(selectedDate, 'dd/MM/yyyy')}{' '}
-                    </strong>
-                    às <strong>{horarioSelecionado}.</strong>
+                    <Button
+                      mt={4}
+                      colorScheme='red'
+                      onClick={onAtendimentoClose}
+                    >
+                      Encerrar Atendimento
+                    </Button>
                   </ModalBody>
                 </ModalContent>
               </Modal>

@@ -1,3 +1,12 @@
+function transformarBairrosCrasEmObjeto(
+  bairrosCras: Bairro[]
+): Record<string, string[]> {
+  return bairrosCras.reduce((acc, { cras, bairro }) => {
+    acc[cras] = bairro;
+    return acc;
+  }, {} as Record<string, string[]>);
+}
+
 export interface Bairro {
   cras: string;
   bairro: Array<string>;
@@ -352,3 +361,6 @@ export const BairroCras: Bairro[] = [
     ],
   },
 ];
+
+const bairrosPorCras = transformarBairrosCrasEmObjeto(BairroCras);
+console.log(bairrosPorCras); // Exibe o objeto no console

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   Flex,
   Stack,
@@ -12,7 +12,7 @@ import {
   FormErrorMessage,
   Button,
   useToast,
-} from '@chakra-ui/react'; // Importando componentes do Chakra UI
+} from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm, Controller } from 'react-hook-form';
@@ -21,7 +21,8 @@ import { FooterLogin } from '../components/FooterLogin';
 import { RegisterUser } from '../types/auth-data';
 import { useAuth } from '../hook/useAuth';
 import { RegisterUserSchema } from '../validation/auth';
-import { Cras, Bairros } from '../interface/User';
+import { BairroCras } from '../components/BairroCras';
+import { Cras, Bairros } from '../interface/User'; // Import Bairros enum
 
 export const Cadastro: React.FC = () => {
   const { registerUser } = useAuth();
@@ -32,8 +33,27 @@ export const Cadastro: React.FC = () => {
     register,
     handleSubmit,
     control,
+    setValue,
+    watch, // Destructure `watch`
     formState: { errors, isSubmitting },
   } = useForm<RegisterUser>({ resolver: yupResolver(RegisterUserSchema) });
+
+  const selectedBairro = watch('endereco.bairro');
+  useEffect(() => {
+    if (selectedBairro) {
+      const bairroCras = BairroCras.find(item =>
+        item.bairro.includes(selectedBairro)
+      );
+
+      if (bairroCras) {
+        const crasEnum = Cras[bairroCras.cras as keyof typeof Cras];
+        setValue('cras', crasEnum);
+      } else {
+        // Explicitly set to Cras.CODIN if no match is found
+        setValue('cras', Cras.CODIN); // Or use another default as needed
+      }
+    }
+  }, [selectedBairro, setValue]);
 
   const handleRegister = async (data: RegisterUser) => {
     try {
@@ -277,26 +297,20 @@ export const Cadastro: React.FC = () => {
               </FormErrorMessage>
             </FormControl>
             <Box sx={textStyle2}></Box>
-            <Controller // Controller for bairro
+
+            <Controller // Controlled Bairro Select
               control={control}
               name='endereco.bairro'
               render={({ field }) => (
                 <FormControl isInvalid={!!errors.endereco?.bairro}>
                   <FormLabel htmlFor='bairro'>Bairro</FormLabel>
-                  <Select
-                    id='bairro'
-                    variant='outline'
-                    {...field} // Binding form values and events
-                    onChange={e => field.onChange(e.target.value)} // Handling selection changes
-                  >
-                    {/* Map through your Bairros options here */}
-                    {Object.values(Bairros)
-                      .filter(value => typeof value === 'string') // Filter to keep only string values (the names)
-                      .map(value => (
-                        <option key={value} value={value}>
-                          {value}
-                        </option>
-                      ))}
+                  <Select id='bairro' variant='outline' {...field}>
+                    {/* Map directly over the Bairros enum values */}
+                    {Object.values(Bairros).map(bairro => (
+                      <option key={bairro} value={bairro}>
+                        {bairro}
+                      </option>
+                    ))}
                   </Select>
                   <FormErrorMessage>
                     {errors.endereco?.bairro && errors.endereco?.bairro.message}
@@ -304,35 +318,19 @@ export const Cadastro: React.FC = () => {
                 </FormControl>
               )}
             />
-            <Box sx={textStyle2}></Box>
 
-            <Controller
+            <Controller // Controlled (and read-only) CRAS Input
               control={control}
               name='cras'
               render={({ field }) => (
                 <FormControl isInvalid={!!errors.cras}>
                   <FormLabel htmlFor='cras'>Cras</FormLabel>
-                  <Select
+                  {/* Display the name (string) associated with the Cras enum value */}
+                  <Input
                     id='cras'
-                    variant='outline'
-                    {...field}
-                    onChange={e => field.onChange(Number(e.target.value))}
-                  >
-                    <option value={Cras.CODIN}>CODIN</option>
-                    <option value={Cras.CUSTODÓPOLIS}>CUSTODÓPOLIS</option>
-                    <option value={Cras.JARDIM_CARIOCA}>JARDIM CARIOCA</option>
-                    <option value={Cras.ESPLANADA}>ESPLANADA</option>
-                    <option value={Cras.CHATUBA}>CHATUBA</option>
-                    <option value={Cras.MATADOURO}>MATADOURO</option>
-                    <option value={Cras.PENHA}>PENHA</option>
-                    <option value={Cras.PARQUE_GUARUS}>PARQUE GUARUS</option>
-                    <option value={Cras.TRAVESSAO}>TRAVESSAO</option>
-                    <option value={Cras.MORRO_DO_COCO}>MORRO DO COCO</option>
-                    <option value={Cras.URURAÍ}>URURAÍ</option>
-                    <option value={Cras.GOYTACAZES}>GOYTACAZES</option>
-                    <option value={Cras.FAROL}>FAROL</option>
-                    <option value={Cras.JOCKEY}>JOCKEY</option>
-                  </Select>
+                    value={field.value ? Cras[field.value] : ''}
+                    isReadOnly
+                  />
                   <FormErrorMessage>
                     {errors.cras && errors.cras.message}
                   </FormErrorMessage>

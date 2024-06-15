@@ -97,7 +97,7 @@ export const Login: React.FC = () => {
                 placeholder='XXX.XXX.XXX-XX'
                 type='text'
                 inputMode='numeric' // Restrict input to numbers
-                pattern='[0-9]*' // Allow only numeric characters (Regex)
+                pattern='^\d{3}\.\d{3}\.\d{3}-\d{2}$' // Allow only numeric characters (Regex)
                 maxLength={11} // Limit to 11 digits for CPF
                 size='md'
                 onChange={handleCpfChange}
@@ -114,7 +114,7 @@ export const Login: React.FC = () => {
                 _placeholder={{ paddingLeft: 0 }}
               />
               <FormErrorMessage>
-                {errors.cpf && errors.cpf.message}
+                {(errors.cpf && errors.cpf.message) || 'Invalid CPF format'}
               </FormErrorMessage>
             </FormControl>
 

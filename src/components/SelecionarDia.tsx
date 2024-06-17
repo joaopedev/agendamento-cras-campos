@@ -28,6 +28,8 @@ import { Cras } from '../interface/User';
 // import { RegisterSchedulling } from '../types/auth-data';
 // import { RegisterSchedullingSchema } from '../validation/auth';
 // import { yupResolver } from "@hookform/resolvers/yup";
+// import { useAuth } from '../hook/useAuth';
+// import { useNavigate } from 'react-router-dom';
 
 registerLocale('pt-BR', ptBR);
 
@@ -44,7 +46,10 @@ const SelecionarDia: React.FC = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { isOpen: isConfirmOpen, onOpen: onConfirmOpen, onClose: onConfirmClose } = useDisclosure();
   const { getSchedulling, payload } = useContext(AuthContext);
+  // const { registerSchedulling } = useAuth();
   const [schedullingData, setSchedullingData] = useState<ISchedulingModel[]>([]);
+  // const navigate = useNavigate();
+  // const toast = useToast();
   // const {
   //   register,
   //   handleSubmit,
@@ -63,7 +68,20 @@ const SelecionarDia: React.FC = () => {
     fetchUserData();
   }, [payload, getSchedulling]);
 
-  console.log(schedullingData)
+  // const handleRegisterSchedulling = async (data: RegisterSchedulling) => {
+  //   try {
+  //     await registerSchedulling(data);
+  //     toast({
+  //       title: "Usuário cadastrado com sucesso",
+  //       duration: 5000,
+  //       isClosable: true,
+  //       position: "top-right",
+  //     });
+  //     navigate("/");
+  //   } catch (error) {
+  //     return error;
+  //   }
+  // };
 
   const BoxHorario = ({ horario, onOpen }: { horario: string; onOpen: () => void }) => {
     return (

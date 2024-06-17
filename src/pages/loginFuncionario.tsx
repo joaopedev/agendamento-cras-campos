@@ -4,54 +4,70 @@ import {
   Stack,
   Box,
   Input,
-  InputLeftElement,
   InputRightElement,
   InputGroup,
+  Button,
+  FormErrorMessage,
+  FormControl,
+  FormLabel,
   IconButton,
-} from '@chakra-ui/react';
+} from '@chakra-ui/react'; // Importando componentes do Chakra UI
 import { useNavigate } from 'react-router-dom';
-import SidebarLogin from '../components/SidebarLogin';
-import LoadingButtonFuncionario from '../components/LoadingButtonFuncionario';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { useForm } from 'react-hook-form';
+import SidebarLogin from '../components/SidebarLogin'; // Importando o componente SidebarHome
 import { FooterLogin } from '../components/FooterLogin';
-import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons'; // Add icons
+import { SignIn } from '../types/auth-data';
+import { useAuth } from '../hook/useAuth';
+import { loginSchema } from '../validation/auth';
+import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
 
-export const LoginFuncionario: React.FC = () => {
-  const [isLoading] = useState(false); // Adicionando estado para controlar o carregamento
-  const [cpf, setCpf] = useState(''); // Renomeado para cpf
-  const [showPassword, setShowPassword] = useState(false);
-  const [senha, setSenha] = useState('');
+export const Login: React.FC = () => {
+  const { signIn } = useAuth();
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
+
+  const togglePasswordVisibility = () => setShowPassword(!showPassword);
+
+  const [inputValue, setInputValue] = useState('');
+  // const [inputDataNascimento, setInputDataNascimento] = useState(''); // Novo estado para data de nascimento
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<SignIn>({ resolver: yupResolver(loginSchema) });
+
+  const handleLogin = async (data: SignIn) => {
+    try {
+      await signIn(data);
+      navigate('/home');
+    } catch (error) {
+      return error; // Retornar o erro para tratamento adequado (exibir mensagem, etc.)
+    }
+  };
 
   const handleCpfChange = (e: ChangeEvent<HTMLInputElement>) => {
-    let value = e.target.value.replace(/\D/g, '');
-    value = value.slice(0, 11);
+    let value = e.target.value.replace(/\D/g, ''); // Remove non-numeric characters
 
-    if (value.length > 3) {
-      value = value.slice(0, 3) + '.' + value.slice(3);
-    }
-    if (value.length > 7) {
-      value = value.slice(0, 7) + '.' + value.slice(7);
-    }
-    if (value.length > 11) {
-      value = value.slice(0, 11) + '-' + value.slice(11);
+    // Apply formatting only if 11 digits are present
+    if (value.length === 11) {
+      value = `${value.slice(0, 3)}.${value.slice(3, 6)}.${value.slice(
+        6,
+        9
+      )}-${value.slice(9)}`;
     }
 
-    setCpf(value); // Atualiza o estado cpf
-  };
-
-  const handleSenhaChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setSenha(e.target.value);
-  };
-
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
+    setInputValue(value); // Update state with formatted or raw value
   };
 
   return (
-    <Flex h='100vh'>
+    <Flex h='100vh' flex={['column', '', '', '']}>
       <SidebarLogin />
       <FooterLogin />
       <Stack
+        pt={['60px', '0', '0', '0']}
+        pb={['130px', '0', '0', '0']}
         m='auto'
         paddingLeft={['0', '45%', '50%', '50%']}
         gap={['20px', '20px', '30px', '30px']}
@@ -59,7 +75,6 @@ export const LoginFuncionario: React.FC = () => {
         alignItems='center'
       >
         <Box
-          mb={['130px', 0, 0, 0]}
           sx={boxStyle}
           maxW={['500px', '500px', '500px', '950px']}
           position={['relative', 'static', 'static', 'static']}
@@ -73,66 +88,86 @@ export const LoginFuncionario: React.FC = () => {
           >
             ENTRAR
           </Box>
-
-          <InputGroup>
-            <Input
-              placeholder='CPF'
-              value={cpf}
-              onChange={handleCpfChange}
-              size='md'
-              sx={{
-                fontSize: ['0.7rem', '0.8rem', '0.9rem', '1rem'],
-                bg: 'white',
-                borderRadius: '5px',
-                p: '4px 0',
-                mt: '0px',
-                mb: '0px',
-                paddingLeft: '16px',
-              }}
-              _placeholder={{ paddingLeft: 0 }}
-            />
-            <InputLeftElement pointerEvents='none' children={' '} />
-          </InputGroup>
-
-          <Box sx={textStyle2}></Box>
-          <InputGroup>
-            <Input
-              placeholder='Senha'
-              value={senha}
-              onChange={handleSenhaChange}
-              type={showPassword ? 'text' : 'password'}
-              size='md'
-              sx={inputStyle}
-              _placeholder={{ paddingLeft: 0 }}
-            />
-            <InputRightElement>
-              {' '}
-              {/* Changed to InputRightElement */}
-              <IconButton
-                aria-label='Toggle password visibility'
-                icon={showPassword ? <ViewOffIcon /> : <ViewIcon />}
-                onClick={togglePasswordVisibility}
-                size='sm'
-                variant='ghost'
+          <form onSubmit={handleSubmit(handleLogin)}>
+            <FormControl isInvalid={!!errors.cpf}>
+              <FormLabel htmlFor='cpf'>CPF</FormLabel>
+              <Input
+                {...register('cpf')}
+                id='cpf'
+                placeholder='XXX.XXX.XXX-XX'
+                type='text'
+                inputMode='numeric' // Restrict input to numbers
+                pattern='^\d{3}\.\d{3}\.\d{3}-\d{2}$' // Allow only numeric characters (Regex)
+                maxLength={11} // Limit to 11 digits for CPF
+                size='md'
+                onChange={handleCpfChange}
+                value={inputValue}
+                sx={{
+                  fontSize: ['0.7rem', '0.8rem', '0.9rem', '1rem'],
+                  bg: 'white',
+                  borderRadius: '5px',
+                  p: '4px 0',
+                  mt: '0px',
+                  mb: '0px',
+                  paddingLeft: '16px',
+                }}
+                _placeholder={{ paddingLeft: 0 }}
               />
-            </InputRightElement>
-          </InputGroup>
-          <Box sx={textStyle2}></Box>
+              <FormErrorMessage>
+                {(errors.cpf && errors.cpf.message) || 'Invalid CPF format'}
+              </FormErrorMessage>
+            </FormControl>
 
-          <LoadingButtonFuncionario
-            isLoading={isLoading}
-            sx={btnStyle}
-            onClick={() => {
-              navigate('/home');
-            }}
-          >
-            CONFIRMAR
-          </LoadingButtonFuncionario>
-          <Box sx={textStyle2}></Box>
-          <Box sx={textStyle3}></Box>
-          {/* <Link as={RouterLink} to='/home' sx={textStyle4}>
-            Esqueci minha senha
-          </Link> */}
+            <Box sx={textStyle2}></Box>
+
+            <FormControl isInvalid={!!errors.password}>
+              <FormLabel htmlFor='senha'>Senha</FormLabel>
+              <InputGroup size='md'>
+                <Input
+                  {...register('password')}
+                  id='senha'
+                  placeholder='Senha'
+                  type={showPassword ? 'text' : 'password'}
+                  size='md'
+                  maxLength={8}
+                  sx={{
+                    fontSize: ['0.7rem', '0.8rem', '0.9rem', '1rem'],
+                    bg: 'white',
+                    borderRadius: '5px',
+                    p: '4px 0',
+                    mt: '0px',
+                    mb: '0px',
+                    paddingLeft: '16px',
+                  }}
+                  _placeholder={{ paddingLeft: 0 }}
+                />
+                <InputRightElement width='4.5rem'>
+                  <IconButton
+                    aria-label='Toggle password visibility'
+                    onClick={togglePasswordVisibility}
+                    icon={showPassword ? <ViewOffIcon /> : <ViewIcon />}
+                    size='sm'
+                  />
+                </InputRightElement>
+              </InputGroup>
+              <FormErrorMessage>
+                {errors.password && errors.password.message}
+              </FormErrorMessage>
+            </FormControl>
+
+            <Box sx={textStyle2}></Box>
+
+            <Box sx={textStyle2}></Box>
+            <Button
+              type='submit'
+              style={{ backgroundColor: '#2CA1FF' }}
+              variant='solid'
+              isLoading={isSubmitting}
+            >
+              Entrar
+            </Button>
+            <Box sx={textStyle2}></Box>
+          </form>
         </Box>
       </Stack>
     </Flex>
@@ -153,24 +188,8 @@ const textStyle2 = {
   mb: '3px',
 };
 
-const textStyle3 = {
-  fontSize: ['0.6rem', '0.6rem', '0.7rem'],
-  borderRadius: '5px',
-  p: '0px 0',
-};
-
-const inputStyle = {
-  fontSize: ['0.7rem', '0.8rem', '0.9rem', '1rem'],
-  bg: 'white',
-  borderRadius: '5px',
-  p: '4px 0',
-  mt: '0px',
-  mb: '0px',
-  paddingLeft: '16px',
-};
-
 export const boxStyle = {
-  w: '30%',
+  // w: '30%',
   maxW: ['300px', '350px', '500px', '950px'],
   minW: '250px',
   boxShadow: '2px 2px 5px hsla(0, 28%, 0%, 0.5)',
@@ -194,4 +213,4 @@ export const btnStyle = {
     fontWeight: 'bold',
   },
 };
-export default LoginFuncionario;
+export default Login;

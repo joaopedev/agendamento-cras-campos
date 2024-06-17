@@ -23,7 +23,17 @@ import { format, addDays } from 'date-fns';
 import { AuthContext } from '../context/AuthContext';
 import { ISchedulingModel, ISchedulingResponse } from '../interface/Schedulling';
 import 'react-datepicker/dist/react-datepicker.css';
+import { Cras } from '../interface/User';
+// import { useForm } from 'react-hook-form';
+// import { RegisterSchedulling } from '../types/auth-data';
+// import { RegisterSchedullingSchema } from '../validation/auth';
+// import { yupResolver } from "@hookform/resolvers/yup";
+// import { useAuth } from '../hook/useAuth';
+// import { useNavigate } from 'react-router-dom';
+
+
 // import { Cras } from '../interface/User';
+
 registerLocale('pt-BR', ptBR);
 
 // const getCrasName = (crasValue: number): string => {
@@ -36,6 +46,26 @@ interface Horario {
 }
 
 const SelecionarDia: React.FC = () => {
+
+  const [horarioSelecionado, setHorarioSelecionado] = useState<string | null>(null);
+  const [selectedOption, setSelectedOption] = useState<string>('');
+  const [showErrorMessage, setShowErrorMessage] = useState(false);
+  const maxDate = addDays(new Date(), 30);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen: isConfirmOpen, onOpen: onConfirmOpen, onClose: onConfirmClose } = useDisclosure();
+  const { getSchedulling, payload } = useContext(AuthContext);
+  // const { registerSchedulling } = useAuth();
+  const [schedullingData, setSchedullingData] = useState<ISchedulingModel[]>([]);
+  // const navigate = useNavigate();
+  // const toast = useToast();
+  // const {
+  //   register,
+  //   handleSubmit,
+  //   control,
+  //   formState: { errors, isSubmitting },
+  // } = useForm<RegisterSchedulling>({ resolver: yupResolver(RegisterSchedullingSchema) });
+
 	const [horarioSelecionado, setHorarioSelecionado] = useState<string | null>(null);
 	const [selectedOption, setSelectedOption] = useState<string>('');
 	const [showErrorMessage, setShowErrorMessage] = useState(false);
@@ -86,6 +116,7 @@ const SelecionarDia: React.FC = () => {
 		setHorariosDisponiveis(horariosAtualizados);
 	};
 
+
 	useEffect(() => {
 		const fetchUserData = async () => {
 			if (payload) {
@@ -98,7 +129,23 @@ const SelecionarDia: React.FC = () => {
 		fetchUserData();
 	}, [payload, getSchedulling, selectedDate, atualizarHorariosDisponiveis]);
 
+
+  // const handleRegisterSchedulling = async (data: RegisterSchedulling) => {
+  //   try {
+  //     await registerSchedulling(data);
+  //     toast({
+  //       title: "Usuário cadastrado com sucesso",
+  //       duration: 5000,
+  //       isClosable: true,
+  //       position: "top-right",
+  //     });
+  //     navigate("/");
+  //   } catch (error) {
+  //     return error;
+  //   }
+  // };
 	console.log(schedullingData);
+
 
 	const BoxHorario = ({ horario, onOpen }: { horario: Horario; onOpen: () => void }) => {
 		const handleOpenModal = () => {

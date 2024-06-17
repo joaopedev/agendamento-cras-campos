@@ -4,7 +4,7 @@ import Login from '../pages/loginPage';
 import LoginFuncionario from '../pages/loginFuncionario';
 import Home from '../pages/homePage';
 import SchedulingPage from '../pages/SchedulingPage';
-import Agendamentos from '../pages/agendamentosPage';
+import ControleFuncionarios from '../pages/controleFuncionarios';
 import Cadastro from '../pages/cadastroPage';
 import Adm from '../pages/admPage';
 import Dashboard from '../pages/Dashboard';
@@ -47,7 +47,7 @@ const AppRoutes: React.FC = () => {
             <Route path='/dashboard' element={<Dashboard />} />
             <Route path='/adm' element={<Adm />} />
             <Route path='/agendamento' element={<SchedulingPage />} />
-            <Route path='/agendamentos' element={<Agendamentos />} />
+            <Route path='/controleFuncionarios' element={<ControleFuncionarios />} />
           </Route>
         )}
       </Routes>

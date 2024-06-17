@@ -74,10 +74,10 @@ export const SidebarHome: React.FC = () => {
 						)}
 					</NavLink>
 
-					<NavLink to="/agendamentos">
+					<NavLink to="/controleFuncionarios">
 						{({ isActive }) => (
 							<Button isActive={isActive} sx={sideBtnStyle}>
-								Agendamentos
+								Controle de Funcionarios
 							</Button>
 						)}
 					</NavLink>

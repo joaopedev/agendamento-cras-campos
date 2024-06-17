@@ -5,7 +5,7 @@ import SelecionarDiaFuncionario from '../components/SelecionarDiaFuncionario';
 import { HamburgerMenu } from '../components/HamburgerMenu';
 import SidebarHome from '../components/SidebarHome';
 
-const Agendamentos: React.FC = () => {
+const ControleFuncionarios: React.FC = () => {
   return (
     <>
       <SidebarHome />
@@ -17,4 +17,4 @@ const Agendamentos: React.FC = () => {
   );
 };
 
-export default Agendamentos;
+export default ControleFuncionarios;

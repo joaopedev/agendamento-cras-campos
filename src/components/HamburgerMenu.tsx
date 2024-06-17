@@ -60,7 +60,7 @@ export const HamburgerMenu: React.FC = () => {
             </MenuItem>
           </NavLink>
 
-		  <NavLink to={"/agendamentos"}>
+		  <NavLink to={"/controleFuncionarios"}>
             <MenuItem
               bg={"none"}
               _hover={{
@@ -69,7 +69,7 @@ export const HamburgerMenu: React.FC = () => {
               }}
               color={"white"}
             >
-              Controle de agendamentos
+              Controle de Funcionarios
             </MenuItem>
           </NavLink>
 

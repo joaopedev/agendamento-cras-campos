@@ -90,6 +90,7 @@ const ModalAddFuncionario: React.FC<AddEmployeeModalProps> = ({
             <Input
               value={senha}
               onChange={e => setSenha(e.target.value)}
+              maxLength={8}
               placeholder=''
             />
           </FormControl>
@@ -111,7 +112,6 @@ const ModalAddFuncionario: React.FC<AddEmployeeModalProps> = ({
               <option value='PENHA'>PENHA</option>
               <option value='TRAVESSÃO'>TRAVESSÃO</option>
               <option value='URURAÍ'>URURAÍ</option>
-              {/* ... outras opções ... */}
             </Select>
           </FormControl>
         </ModalBody>

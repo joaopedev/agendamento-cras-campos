@@ -128,11 +128,11 @@ export const Home: React.FC = () => {
 				alignItems="center"
 				pl={[0, '30%', '25%', '20%']}
 			>
-				<Box>
+				<Box mt={['60px', 0, 0, 0]}>
 					<Button onClick={buttonSingleOut}>Sair</Button>
 				</Box>
 				<Box
-					mt={['60px', 0, 0, 0]}
+					// mt={['60px', 0, 0, 0]}
 					sx={boxStyle}
 					maxW={['500px', '500px', '500px', '950px']}
 					position={['relative', 'static', 'static', 'static']}
@@ -219,7 +219,7 @@ export const Home: React.FC = () => {
 					)}
 				</Box>
 				{showAgendamento && !isEditing && (
-					<Button onClick={() => navigate('/agendamento')} sx={btnStyle2} mt={4}>
+					<Button onClick={() => navigate('/agendamento')} sx={btnStyle2}>
 						AGENDAR ATENDIMENTO
 					</Button>
 				)}

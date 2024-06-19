@@ -22,7 +22,7 @@ import { RegisterUser } from '../types/auth-data';
 import { useAuth } from '../hook/useAuth';
 import { RegisterUserSchema } from '../validation/auth';
 import { BairroCras } from '../components/BairroCras';
-import { Cras, Bairros } from '../interface/User'; // Import Bairros enum
+import { Cras, Bairros } from '../interface/User';
 
 export const Cadastro: React.FC = () => {
   const { registerUser } = useAuth();
@@ -34,7 +34,7 @@ export const Cadastro: React.FC = () => {
     handleSubmit,
     control,
     setValue,
-    watch, // Destructure `watch`
+    watch,
     formState: { errors, isSubmitting },
   } = useForm<RegisterUser>({ resolver: yupResolver(RegisterUserSchema) });
 
@@ -49,8 +49,7 @@ export const Cadastro: React.FC = () => {
         const crasEnum = Cras[bairroCras.cras as keyof typeof Cras];
         setValue('cras', crasEnum);
       } else {
-        // Explicitly set to Cras.CODIN if no match is found
-        setValue('cras', Cras.CODIN); // Or use another default as needed
+        setValue('cras', Cras.CODIN);
       }
     }
   }, [selectedBairro, setValue]);

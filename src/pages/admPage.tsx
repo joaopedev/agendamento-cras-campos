@@ -1,11 +1,10 @@
 import { Flex, Input, Box, InputGroup, Button, Select } from '@chakra-ui/react';
 import React, { ChangeEvent, useState, useMemo } from 'react';
 import { HamburgerMenu } from '../components/HamburgerMenu';
-import { useUser } from '../components/UserContext';
 import SidebarHome from '../components/SidebarHome';
 
 export const Adm: React.FC = () => {
-	const { isLoggedIn } = useUser();
+
 	const [activeComponent, setActiveComponent] = useState<string | null>(null);
 	const [inputValue, setInputValue] = useState('');
 
@@ -55,7 +54,7 @@ export const Adm: React.FC = () => {
 
 		setInputValue(value);
 	};
-	console.log('isLoggedIn no componente Home:', isLoggedIn);
+
 
 	return (
 		<Flex h="100vh">

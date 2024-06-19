@@ -6,8 +6,16 @@ import {
 	// Image
 } from '@chakra-ui/react';
 import { NavLink } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext';
+import { useContext, useEffect, useState } from 'react';
+import { IUserModel } from '../interface/User';
 
 export const SidebarHome: React.FC = () => {
+	const { getUser, payload } = useContext(AuthContext);
+	const [userData, setUserData] = useState<IUserModel | null>(null);
+
+	const showAgendamento = userData?.tipoUsuario === 1 || userData?.tipoUsuario === 3;
+
 	const sideBtnStyle = {
 		textColor: 'white',
 		fontSize: ['18', '18', '20', '22'],
@@ -30,6 +38,16 @@ export const SidebarHome: React.FC = () => {
 			bg: 'white',
 		},
 	};
+	useEffect(() => {
+		const fetchUserData = async () => {
+			if (payload) {
+				const response = await getUser(payload.id); // Supondo que o payload contenha o userId
+				setUserData(response.contas); // Ajuste aqui para acessar a propriedade 'contas'
+			}
+		};
+
+		fetchUserData();
+	}, [payload, getUser]);
 
 	return (
 		<Box
@@ -49,7 +67,6 @@ export const SidebarHome: React.FC = () => {
 			<Stack
 				p={['100px 0 30px', '100px 0 30px', '130px 0 35px', '150px 0 40px ']}
 				justifyContent="space-between"
-				// bg="hsla(207, 74%, 42%, 0.85)" // transparente
 				background={'linear-gradient(41deg, rgba(28,117,188,1) 0%, rgba(44,161,255,1) 100%)'}
 				w="20%"
 				h="100%"
@@ -66,13 +83,15 @@ export const SidebarHome: React.FC = () => {
 						)}
 					</NavLink>
 
-					<NavLink to="/agendamento">
-						{({ isActive }) => (
-							<Button isActive={isActive} sx={sideBtnStyle}>
-								Agendamento
-							</Button>
-						)}
-					</NavLink>
+					{showAgendamento ? (
+						<NavLink to="/agendamento">
+							{({ isActive }) => (
+								<Button isActive={isActive} sx={sideBtnStyle}>
+									Agendamento
+								</Button>
+							)}
+						</NavLink>
+					) : null}
 
 					<NavLink to="/controleFuncionarios">
 						{({ isActive }) => (
@@ -82,20 +101,24 @@ export const SidebarHome: React.FC = () => {
 						)}
 					</NavLink>
 
-					<NavLink to="/dashboard">
-						{({ isActive }) => (
-							<Button isActive={isActive} sx={sideBtnStyle}>
-								Dashboard
-							</Button>
-						)}
-					</NavLink>
-					<NavLink to="/gerenciamento">
-						{({ isActive }) => (
-							<Button isActive={isActive} sx={sideBtnStyle}>
-								Gerenciamento
-							</Button>
-						)}
-					</NavLink>
+					{userData?.tipoUsuario === 3 && (
+						<NavLink to="/dashboard">
+							{({ isActive }) => (
+								<Button isActive={isActive} sx={sideBtnStyle}>
+									Dashboard
+								</Button>
+							)}
+						</NavLink>
+					)}
+					{userData?.tipoUsuario === 3 && (
+						<NavLink to="/gerenciamento">
+							{({ isActive }) => (
+								<Button isActive={isActive} sx={sideBtnStyle}>
+									Gerenciamento
+								</Button>
+							)}
+						</NavLink>
+					)}
 				</Stack>
 				<Stack alignItems={'center'}>
 					{/* <Image

@@ -8,7 +8,6 @@ import { IUserModel } from '../interface/User';
 export const HamburgerMenu: React.FC = () => {
 	const { getUser, payload } = useContext(AuthContext);
 	const [userData, setUserData] = useState<IUserModel | null>(null);
-	const showAgendamento = userData?.tipoUsuario === 1 || userData?.tipoUsuario === 3;
 	useEffect(() => {
 		const fetchUserData = async () => {
 			if (payload) {
@@ -52,22 +51,7 @@ export const HamburgerMenu: React.FC = () => {
 						</MenuItem>
 					</NavLink>
 
-					{showAgendamento && (
-						<NavLink to={'/agendamento'}>
-							<MenuItem
-								bg={'none'}
-								_hover={{
-									bg: '#1C75BC',
-									fontWeight: 'bold',
-								}}
-								color={'white'}
-							>
-								Agendamento
-							</MenuItem>
-						</NavLink>
-					)}
-
-					<NavLink to={'/controleFuncionarios'}>
+					<NavLink to={'/agendamento'}>
 						<MenuItem
 							bg={'none'}
 							_hover={{
@@ -76,9 +60,24 @@ export const HamburgerMenu: React.FC = () => {
 							}}
 							color={'white'}
 						>
-							Controle de Funcionarios
+							Agendamento
 						</MenuItem>
 					</NavLink>
+
+					{userData?.tipoUsuario !== 1 && (
+						<NavLink to={'/controleFuncionarios'}>
+							<MenuItem
+								bg={'none'}
+								_hover={{
+									bg: '#1C75BC',
+									fontWeight: 'bold',
+								}}
+								color={'white'}
+							>
+								Controle de Funcionarios
+							</MenuItem>
+						</NavLink>
+					)}
 
 					{userData?.tipoUsuario === 3 && (
 						<NavLink to={'/dashboard'}>

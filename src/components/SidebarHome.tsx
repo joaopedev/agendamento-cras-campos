@@ -14,8 +14,6 @@ export const SidebarHome: React.FC = () => {
 	const { getUser, payload } = useContext(AuthContext);
 	const [userData, setUserData] = useState<IUserModel | null>(null);
 
-	const showAgendamento = userData?.tipoUsuario === 1 || userData?.tipoUsuario === 3;
-
 	const sideBtnStyle = {
 		textColor: 'white',
 		fontSize: ['18', '18', '20', '22'],
@@ -83,23 +81,23 @@ export const SidebarHome: React.FC = () => {
 						)}
 					</NavLink>
 
-					{showAgendamento ? (
-						<NavLink to="/agendamento">
-							{({ isActive }) => (
-								<Button isActive={isActive} sx={sideBtnStyle}>
-									Agendamento
-								</Button>
-							)}
-						</NavLink>
-					) : null}
-
-					<NavLink to="/controleFuncionarios">
+					<NavLink to="/agendamento">
 						{({ isActive }) => (
 							<Button isActive={isActive} sx={sideBtnStyle}>
-								Controle de Funcionarios
+								Agendamento
 							</Button>
 						)}
 					</NavLink>
+
+					{userData?.tipoUsuario !== 1 && (
+						<NavLink to="/controleFuncionarios">
+							{({ isActive }) => (
+								<Button isActive={isActive} sx={sideBtnStyle}>
+									Controle de Funcionarios
+								</Button>
+							)}
+						</NavLink>
+					)}
 
 					{userData?.tipoUsuario === 3 && (
 						<NavLink to="/dashboard">
@@ -110,6 +108,7 @@ export const SidebarHome: React.FC = () => {
 							)}
 						</NavLink>
 					)}
+
 					{userData?.tipoUsuario === 3 && (
 						<NavLink to="/gerenciamento">
 							{({ isActive }) => (

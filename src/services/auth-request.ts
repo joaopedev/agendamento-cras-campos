@@ -76,7 +76,7 @@ export const getSchedullingRequest = async () => {
 
 export const registerSchedullingRequest = async (data: RegisterSchedulling) => {
   try {
-    const response = await api.post("/registerUsers", data);
+    const response = await api.post("private/registerScheduling", data);
     return response;
   } catch (error) {
     const errors = error as AxiosError;

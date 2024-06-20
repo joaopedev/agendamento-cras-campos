@@ -23,7 +23,6 @@ import React, { useContext, useEffect, useState } from 'react';
 import { SidebarHome } from '../components/SidebarHome';
 import { HamburgerMenu } from '../components/HamburgerMenu';
 import { useAuth } from '../hook/useAuth';
-import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { Cras, IUserModel, Bairros } from '../interface/User';
 import { useForm, Controller } from 'react-hook-form';
@@ -31,7 +30,6 @@ import { BairroCras } from '../components/BairroCras';
 
 export const Home: React.FC = () => {
 	const { signOut } = useAuth();
-	const navigate = useNavigate();
 	const { getUser, payload } = useContext(AuthContext);
 	const [userData, setUserData] = useState<IUserModel | null>(null);
 	const { isOpen, onOpen, onClose } = useDisclosure(); // For Modal
@@ -57,18 +55,17 @@ export const Home: React.FC = () => {
 	useEffect(() => {
 		const fetchUserData = async () => {
 			if (payload) {
-				const response = await getUser(payload.id); // Supondo que o payload contenha o userId
-				setUserData(response.contas); // Ajuste aqui para acessar a propriedade 'contas'
+				const response = await getUser(payload.id);
+				setUserData(response.contas);
 			}
 		};
 
 		fetchUserData();
 	}, [payload, getUser]);
 
-	const buttonSingleOut = async () => {
-		console.log('teste');
-		await signOut();
-		return navigate('/');
+	const buttonSingleOut =  () => {
+		signOut();
+	    window.location.href = "/";
 	};
 
 	const selectedBairro = watch('endereco.bairro');

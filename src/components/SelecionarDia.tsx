@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState, useMemo } from "react";
 import {
   Button,
   Box,
@@ -16,18 +16,24 @@ import {
   Radio,
   RadioGroup,
   Stack,
-} from '@chakra-ui/react';
-import DatePicker, { registerLocale } from 'react-datepicker';
-import { ptBR } from 'date-fns/locale/pt-BR';
-import { format, addDays } from 'date-fns';
-import { AuthContext } from '../context/AuthContext';
+  useToast,
+  FormControl,
+  FormLabel,
+  Input,
+} from "@chakra-ui/react";
+import DatePicker, { registerLocale } from "react-datepicker";
+import { ptBR } from "date-fns/locale/pt-BR";
+import { format, addDays } from "date-fns";
+import { AuthContext } from "../context/AuthContext";
 import {
   ISchedulingModel,
   ISchedulingResponse,
-} from '../interface/Schedulling';
-import 'react-datepicker/dist/react-datepicker.css';
+} from "../interface/Schedulling";
+import "react-datepicker/dist/react-datepicker.css";
+import { useForm, SubmitHandler } from "react-hook-form";
+import { RegisterSchedulling } from "../types/auth-data";
 
-registerLocale('pt-BR', ptBR);
+registerLocale("pt-BR", ptBR);
 
 interface Horario {
   hora: string;
@@ -38,52 +44,92 @@ const SelecionarDia: React.FC = () => {
   const [horarioSelecionado, setHorarioSelecionado] = useState<string | null>(
     null
   );
-  const [selectedOption, setSelectedOption] = useState<string>('');
-  const [showErrorMessage, setShowErrorMessage] = useState(false);
-  const maxDate = addDays(new Date(), 30);
+  const [selectedOption, setSelectedOption] = useState<string>("");
+  const maxDate = addDays(new Date(), 31);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
     isOpen: isConfirmOpen,
-    onOpen: onConfirmOpen,
     onClose: onConfirmClose,
   } = useDisclosure();
-  const { getSchedulling, payload } = useContext(AuthContext);
+  const { getSchedulling, payload, registerSchedulling, getUser } =
+    useContext(AuthContext);
   const [schedullingData, setSchedullingData] = useState<ISchedulingModel[]>(
     []
   );
-
+  const [userData, setUserData] = useState<any | null>(null);
+  const toast = useToast();
   const horarios: Horario[] = [
-    { hora: '08:00', disponivel: true },
-    { hora: '09:00', disponivel: true },
-    { hora: '10:00', disponivel: true },
-    { hora: '11:00', disponivel: true },
-    { hora: '12:00', disponivel: true },
-    { hora: '13:00', disponivel: true },
-    { hora: '14:00', disponivel: true },
-    { hora: '15:00', disponivel: true },
-    { hora: '16:00', disponivel: true },
+    { hora: "08:00", disponivel: true },
+    { hora: "09:00", disponivel: true },
+    { hora: "10:00", disponivel: true },
+    { hora: "11:00", disponivel: true },
+    { hora: "12:00", disponivel: true },
+    { hora: "13:00", disponivel: true },
+    { hora: "14:00", disponivel: true },
+    { hora: "15:00", disponivel: true },
+    { hora: "16:00", disponivel: true },
   ];
-  const [horariosDisponiveis, setHorariosDisponiveis] =
-    useState<Horario[]>(horarios);
+  const {
+    register,
+    handleSubmit,
+	setValue,
+    formState: { errors },
+  } = useForm<RegisterSchedulling>();
+  const onSubmit: SubmitHandler<RegisterSchedulling> = async (
+    data: RegisterSchedulling
+  ) => {
+    try {
+      const response = await registerSchedulling(data);
+      console.log(response);
+      toast({
+        title: "Agendamento realizado com sucesso",
+        duration: 5000,
+        isClosable: true,
+        position: "top-right",
+      });
+      // onConfirmClose();
+    } catch (error) {
+      toast({
+        title: "Erro ao realizar agendamento",
+        description: (error as Error).message,
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+        position: "top-right",
+      });
+    }
+  };
 
   const horaParaMinutos = (horaString: string): number => {
-    const [horas, minutos] = horaString.split(':').map(Number);
+    const [horas, minutos] = horaString.split(":").map(Number);
     return horas * 60 + minutos;
   };
 
-  const atualizarHorariosDisponiveis = () => {
-    const horariosAtualizados = horarios.map(horario => {
-      if (selectedDate) {
-        const dataSelecionadaFormatada = format(selectedDate, 'yyyy-MM-dd');
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (payload) {
+        const response: ISchedulingResponse = await getSchedulling();
+        const userResponse = await getUser(payload.id);
+        setUserData(userResponse);
+        setSchedullingData(response.agendamentos);
+      }
+    };
 
+    fetchUserData();
+  }, [payload, getSchedulling, getUser]);
+
+  const horariosDisponiveis = useMemo(() => {
+    return horarios.map((horario) => {
+      if (selectedDate) {
+        const dataSelecionadaFormatada = format(selectedDate, "yyyy-MM-dd");
         const horariosAgendados = schedullingData
           .filter(
-            agendamentos =>
-              format(agendamentos.data_hora, 'yyyy-MM-dd') ===
+            (agendamentos) =>
+              format(agendamentos.data_hora, "yyyy-MM-dd") ===
               dataSelecionadaFormatada
           )
-          .map(agendamentos => format(agendamentos.data_hora, 'HH:mm'));
+          .map((agendamentos) => format(agendamentos.data_hora, "HH:mm"));
 
         return {
           ...horario,
@@ -92,35 +138,7 @@ const SelecionarDia: React.FC = () => {
       }
       return horario;
     });
-    setHorariosDisponiveis(horariosAtualizados);
-  };
-
-  useEffect(() => {
-    const fetchUserData = async () => {
-      if (payload) {
-        const response: ISchedulingResponse = await getSchedulling();
-        setSchedullingData(response.agendamentos);
-        atualizarHorariosDisponiveis();
-      }
-    };
-    fetchUserData();
-  }, [payload, getSchedulling, selectedDate, setSchedullingData]); // Include setSchedullingData here
-
-  // const handleRegisterSchedulling = async (data: RegisterSchedulling) => {
-  //   try {
-  //     await registerSchedulling(data);
-  //     toast({
-  //       title: "Usuário cadastrado com sucesso",
-  //       duration: 5000,
-  //       isClosable: true,
-  //       position: "top-right",
-  //     });
-  //     navigate("/");
-  //   } catch (error) {
-  //     return error;
-  //   }
-  // };
-  console.log(schedullingData);
+  }, [horarios, selectedDate, schedullingData]);
 
   const BoxHorario = ({
     horario,
@@ -137,16 +155,18 @@ const SelecionarDia: React.FC = () => {
         newDate.setMinutes(minutos % 60);
         setSelectedDate(newDate);
         setHorarioSelecionado(horario.hora);
+        setValue("data_hora", format(newDate, 'yyyy-MM-dd HH:mm'));
         onOpen();
       }
     };
+
     return (
       <Button
-        bg={horario.disponivel ? '#2CA1FF' : 'red'}
-        color='white'
+        bg={horario.disponivel ? "#2CA1FF" : "red"}
+        color="white"
         _hover={{
-          bg: horario.disponivel ? '#1C75BC' : 'red',
-          cursor: horario.disponivel ? 'pointer' : 'auto',
+          bg: horario.disponivel ? "#1C75BC" : "red",
+          cursor: horario.disponivel ? "pointer" : "auto",
         }}
         onClick={handleOpenModal}
       >
@@ -155,10 +175,10 @@ const SelecionarDia: React.FC = () => {
     );
   };
 
-  const handleConfirmar = () => {
-    onClose();
-    onConfirmOpen();
-  };
+//   const handleConfirmar = useCallback(() => {
+//     onClose();
+//     onConfirmOpen();
+//   }, [onClose, onConfirmOpen]);
 
   const handleDateChange = (date: Date | null) => {
     if (date && horarioSelecionado) {
@@ -171,32 +191,22 @@ const SelecionarDia: React.FC = () => {
 
   return (
     <Flex
-      className='container__date'
-      justifyContent={'center'}
-      alignItems={'center'}
-      gap={'10px'}
-      p={['10px', '0', '0', '0']}
-      pl={['0%', '30%', '25%', '20%']}
-      w='100%'
-      flexDir={'column'}
+      className="container__date"
+      justifyContent={"center"}
+      alignItems={"center"}
+      gap={"10px"}
+      p={["10px", "0", "0", "0"]}
+      pl={["0%", "30%", "25%", "20%"]}
+      w="100%"
+      flexDir={"column"}
     >
-      {/* {schedullingData.length > 0 ? (
-				schedullingData.map(schedulling => (
-					<Text key={schedulling.id}>
-						{schedulling.id} {schedulling.name} - {getCrasName(schedulling.cras)}
-					</Text>
-				))
-			) : (
-				<Text>Loading...</Text>
-			)} */}
-
       {!selectedDate && (
-        <Box className='selecionar__dia' textAlign='center'>
+        <Box className="selecionar__dia" textAlign="center">
           <Text
-            alignSelf={'center'}
-            fontWeight={'bold'}
-            fontSize={'20px'}
-            textAlign={'center'}
+            alignSelf={"center"}
+            fontWeight={"bold"}
+            fontSize={"20px"}
+            textAlign={"center"}
           >
             SELECIONE UM DIA
           </Text>
@@ -205,54 +215,54 @@ const SelecionarDia: React.FC = () => {
 
       {selectedDate && (
         <Box
-          className='box__cinza'
-          boxShadow='2px 2px 5px hsla(0, 28%, 0%, 0.5)'
-          textAlign={'center'}
+          className="box__cinza"
+          boxShadow="2px 2px 5px hsla(0, 28%, 0%, 0.5)"
+          textAlign={"center"}
           p={[2, 3, 4, 4]}
-          borderWidth='1px'
-          display={selectedDate ? 'block' : 'none'}
-          borderRadius='md'
-          bg={'#F4F4F4'}
-          h={'fit-content'}
-          alignSelf={'center'}
-          w={'80%'}
+          borderWidth="1px"
+          display={selectedDate ? "block" : "none"}
+          borderRadius="md"
+          bg={"#F4F4F4"}
+          h={"fit-content"}
+          alignSelf={"center"}
+          w={"80%"}
         >
-          <Flex gap={'5px'} flexDirection={'column'}>
+          <Flex gap={"5px"} flexDirection={"column"}>
             <Box
-              className='box__dia'
-              alignItems={'center'}
-              display={'flex'}
+              className="box__dia"
+              alignItems={"center"}
+              display={"flex"}
               p={2}
             >
               <Text
-                mr={'5px'}
-                fontWeight='bold'
-                fontSize={['12px', '12px', '15px', '15px']}
+                mr={"5px"}
+                fontWeight="bold"
+                fontSize={["12px", "12px", "15px", "15px"]}
               >
                 DIA SELECIONADO:
               </Text>
               <Box
-                bg='#fff'
-                p={'5px'}
+                bg="#fff"
+                p={"5px"}
                 flex={1}
-                textAlign='center'
-                borderRadius='5px'
+                textAlign="center"
+                borderRadius="5px"
               >
-                <Text fontSize={['12px', '12px', '15px', '15px']}>
-                  {selectedDate && format(selectedDate, 'dd/MM/yyyy')}
+                <Text fontSize={["12px", "12px", "15px", "15px"]}>
+                  {selectedDate && format(selectedDate, "dd/MM/yyyy")}
                 </Text>
               </Box>
             </Box>
-            <Box className='box__esquerda' flex={1}>
+            <Box className="box__esquerda" flex={1}>
               <Text
                 pb={1}
-                fontSize={['12px', '12px', '15px', '15px']}
-                fontWeight='bold'
+                fontSize={["12px", "12px", "15px", "15px"]}
+                fontWeight="bold"
               >
                 HORÁRIOS DISPONÍVEIS
               </Text>
-              <SimpleGrid columns={[2, null, 5]} spacing='1'>
-                {horariosDisponiveis.map(horario => (
+              <SimpleGrid columns={[2, null, 5]} spacing="1">
+                {horariosDisponiveis.map((horario) => (
                   <BoxHorario
                     key={horario.hora}
                     horario={horario}
@@ -264,63 +274,159 @@ const SelecionarDia: React.FC = () => {
                 isOpen={isOpen}
                 onClose={onClose}
                 isCentered
-                size={['xs', 'sm', 'md', 'lg']}
+                size={["xs", "sm", "md", "lg"]}
               >
                 <ModalOverlay />
-                <ModalContent textAlign={'center'}>
+                <ModalContent textAlign={"center"}>
                   <ModalHeader>Confirmar Agendamento</ModalHeader>
                   <ModalCloseButton />
                   <ModalBody>
-                    <Flex flexDir='column' alignItems='center'>
-                      <Text>
-                        Deseja confirmar o agendamento <br /> para o dia{' '}
-                        <strong>
-                          {selectedDate && format(selectedDate, 'dd/MM/yyyy')}
-                        </strong>{' '}
-                        às <strong>{horarioSelecionado}</strong>?
-                      </Text>
-                      <RadioGroup
-                        onChange={setSelectedOption}
-                        value={selectedOption}
-                        mt={4}
-                      >
-                        <Stack direction='row' spacing={4} align='center'>
-                          <Radio value='Cadastramento'>Cadastramento</Radio>
-                          <Radio value='Atualização Cadastral'>
-                            Atualização Cadastral
-                          </Radio>
-                        </Stack>
-                      </RadioGroup>
-                    </Flex>
-                    {showErrorMessage && (
-                      <Text color='red.500' mt={2}>
-                        Por favor selecione uma opção antes de confirmar.
-                      </Text>
-                    )}
+                    <form onSubmit={handleSubmit(onSubmit)}>
+                      <Flex flexDir="column" alignItems="center">
+                        <Text>
+                          Deseja confirmar o agendamento <br /> para o dia{" "}
+                          <strong>
+                            {selectedDate && format(selectedDate, "dd/MM/yyyy")}
+                          </strong>{" "}
+                          às <strong>{horarioSelecionado}</strong>?
+                        </Text>
+                        <RadioGroup
+                          onChange={setSelectedOption}
+                          value={selectedOption}
+                          mt={4}
+                        >
+                          <Stack direction="row" spacing={4} align="center">
+                            <Radio value="Cadastramento">Cadastramento</Radio>
+                            <Radio value="Atualização Cadastral">
+                              Atualização Cadastral
+                            </Radio>
+                          </Stack>
+                        </RadioGroup>
+                        <FormControl isInvalid={!!errors.name}>
+                          <FormLabel htmlFor="name">Nome</FormLabel>
+                          <Input
+                            id="name"
+                            {...register("name")}
+                            defaultValue="Agendamento do jassa"
+                          />
+                          {errors.name && (
+                            <Text color="red.500">{errors.name.message}</Text>
+                          )}
+                        </FormControl>
+
+                        <FormControl isInvalid={!!errors.usuario_id}>
+                          <FormLabel htmlFor="usuario_id">Usuário ID</FormLabel>
+                          <Input
+                            id="usuario_id"
+                            {...register("usuario_id")}
+                            defaultValue={userData?.id || ""}
+                          />
+                          {errors.usuario_id && (
+                            <Text color="red.500">
+                              {errors.usuario_id.message}
+                            </Text>
+                          )}
+                        </FormControl>
+
+                        <FormControl isInvalid={!!errors.servico}>
+                          <FormLabel htmlFor="servico">Serviço</FormLabel>
+                          <Input
+                            id="servico"
+                            {...register("servico")}
+                            defaultValue={1}
+                          />
+                          {errors.servico && (
+                            <Text color="red.500">
+                              {errors.servico.message}
+                            </Text>
+                          )}
+                        </FormControl>
+
+                        <FormControl isInvalid={!!errors.description}>
+                          <FormLabel htmlFor="description">Descrição</FormLabel>
+                          <Input
+                            id="description"
+                            {...register("description")}
+                            defaultValue="Jassa é doido"
+                          />
+                          {errors.description && (
+                            <Text color="red.500">
+                              {errors.description.message}
+                            </Text>
+                          )}
+                        </FormControl>
+
+                        <FormControl isInvalid={!!errors.duracao_estimada}>
+                          <FormLabel htmlFor="duracao_estimada">
+                            Duração Estimada
+                          </FormLabel>
+                          <Input
+                            id="duracao_estimada"
+                            {...register("duracao_estimada")}
+                            defaultValue="2024-06-26T14:00:00"
+                          />
+                          {errors.duracao_estimada && (
+                            <Text color="red.500">
+                              {errors.duracao_estimada.message}
+                            </Text>
+                          )}
+                        </FormControl>
+
+                        <FormControl isInvalid={!!errors.data_hora}>
+                          <FormLabel htmlFor="data_hora">Data e Hora</FormLabel>
+                          <Input
+                            id="data_hora"
+                            value={
+                              selectedDate
+                                ? format(selectedDate, "yyyy-MM-dd HH:mm")
+                                : ""
+                            }
+                            {...register("data_hora")}
+                            readOnly
+                          />
+                          {errors.data_hora && (
+                            <Text color="red.500">
+                              {errors.data_hora.message}
+                            </Text>
+                          )}
+                        </FormControl>
+
+                        <FormControl isInvalid={!!errors.cras}>
+                          <FormLabel htmlFor="cras">Cras</FormLabel>
+                          <Input
+                            id="cras"
+                            {...register("cras")}
+                            defaultValue={2}
+                          />
+                          {errors.cras && (
+                            <Text color="red.500">{errors.cras.message}</Text>
+                          )}
+                        </FormControl>
+
+                        <FormControl isInvalid={!!errors.status}>
+                          <FormLabel htmlFor="status">Status</FormLabel>
+                          <Input
+                            id="status"
+                            {...register("status")}
+                            defaultValue={3}
+                          />
+                          {errors.status && (
+                            <Text color="red.500">{errors.status.message}</Text>
+                          )}
+                        </FormControl>
+
+                        <Button type="submit">Confirmar</Button>
+                      </Flex>
+                    </form>
                   </ModalBody>
                   <ModalFooter>
                     <Button
-                      colorScheme='red'
-                      variant='ghost'
+                      colorScheme="red"
+                      variant="ghost"
                       mr={3}
                       onClick={onClose}
                     >
                       Cancelar
-                    </Button>
-                    <Button
-                      bg={'#2CA1FF'}
-                      textColor={'white'}
-                      _hover={{ bg: '#1C75BC' }}
-                      onClick={() => {
-                        if (!selectedOption) {
-                          setShowErrorMessage(true);
-                        } else {
-                          setShowErrorMessage(false);
-                          handleConfirmar();
-                        }
-                      }}
-                    >
-                      Confirmar
                     </Button>
                   </ModalFooter>
                 </ModalContent>
@@ -329,43 +435,57 @@ const SelecionarDia: React.FC = () => {
                 isOpen={isConfirmOpen}
                 onClose={onConfirmClose}
                 isCentered
-                size={['xs', 'sm', 'md', 'lg']}
+                size={["xs", "sm", "md", "lg"]}
               >
                 <ModalOverlay />
                 <ModalContent
-                  color={'white'}
-                  bg={'#1C75BC'}
-                  textAlign={'center'}
+                  color={"white"}
+                  bg={"#1C75BC"}
+                  textAlign={"center"}
                 >
                   <ModalHeader>Agendamento Confirmado! 🎉</ModalHeader>
                   <ModalCloseButton />
                   <ModalBody pb={5}>
                     O seu atendimento será feito
                     <br />
-                    dia{' '}
+                    dia{" "}
                     <strong>
-                      {selectedDate && format(selectedDate, 'dd/MM/yyyy')}
-                    </strong>{' '}
+                      {selectedDate && format(selectedDate, "dd/MM/yyyy")}
+                    </strong>{" "}
                     às <strong>{horarioSelecionado}</strong>.
                   </ModalBody>
                 </ModalContent>
               </Modal>
             </Box>
           </Flex>
+          {/* <form onSubmit={handleSubmit(onSubmit)}>
+						
+						<FormControl>
+						<Input id="name" {...register("name")} defaultValue="Agendamento do jassa" />
+						</FormControl>
+						<Input id="usuario_id" {...register("usuario_id")} defaultValue={userData?.id || ''} />
+						<Input id="duracao_estimada" {...register("duracao_estimada")} defaultValue="2024-06-26T14:00:00" />
+						<Input id="data_hora" value={selectedDate ? format(selectedDate, 'yyyy-MM-dd HH:mm') : ''} {...register("data_hora")} readOnly />	
+						<Input id="cras" {...register("cras")} defaultValue={2} />
+						<Input id="servico" {...register("servico")} defaultValue={1} />
+						<Input id="status" {...register("status")} defaultValue={3} />
+		
+						<button type='submit'>Enviar</button>
+					</form> */}
         </Box>
       )}
 
       <DatePicker
-        locale={'pt-BR'}
+        locale={"pt-BR"}
         selected={selectedDate}
         inline
-        filterDate={date =>
+        filterDate={(date) =>
           date.getDay() !== 0 && date.getDay() !== 6 && date <= maxDate
         }
         onSelect={handleDateChange}
         onChange={(date: Date | null) => setSelectedDate(date)}
         minDate={addDays(new Date(), 1)}
-        className='customInput'
+        className="customInput"
       />
     </Flex>
   );

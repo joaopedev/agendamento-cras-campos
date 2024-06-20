@@ -27,6 +27,7 @@ import { AuthContext } from '../context/AuthContext';
 import { Cras, IUserModel, Bairros } from '../interface/User';
 import { useForm, Controller } from 'react-hook-form';
 import { BairroCras } from '../components/BairroCras';
+import { useNavigate } from 'react-router-dom';
 
 export const Home: React.FC = () => {
 	const { signOut } = useAuth();
@@ -34,6 +35,7 @@ export const Home: React.FC = () => {
 	const [userData, setUserData] = useState<IUserModel | null>(null);
 	const { isOpen, onOpen, onClose } = useDisclosure(); // For Modal
 	const [isEditing, setIsEditing] = useState(false); // Initialize to false
+	const navigate = useNavigate();
 	const {
 		register,
 		handleSubmit,

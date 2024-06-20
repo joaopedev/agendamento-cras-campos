@@ -11,12 +11,12 @@ import {
 	FormErrorMessage,
 	FormControl,
 	FormLabel,
-} from '@chakra-ui/react'; // Importando componentes do Chakra UI
+} from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
-import { Link as RouterLink } from 'react-router-dom'; // Importando o Link do react-router-dom
-import SidebarLogin from '../components/SidebarLogin'; // Importando o componente SidebarHome
+import { Link as RouterLink } from 'react-router-dom'; 
+import SidebarLogin from '../components/SidebarLogin';
 import { FooterLogin } from '../components/FooterLogin';
 import { SignIn } from '../types/auth-data';
 import { useAuth } from '../hook/useAuth';
@@ -25,8 +25,6 @@ import { loginSchema } from '../validation/auth';
 export const Login: React.FC = () => {
 	const { signIn } = useAuth();
 	const navigate = useNavigate();
-	// const [inputValue, setInputValue] = useState('');
-	// const [inputDataNascimento, setInputDataNascimento] = useState(''); // Novo estado para data de nascimento
 
 	const {
 		register,
@@ -39,41 +37,9 @@ export const Login: React.FC = () => {
 			await signIn(data);
 			navigate('/home');
 		} catch (error) {
-			return error; // Retornar o erro para tratamento adequado (exibir mensagem, etc.)
+			return error;
 		}
 	};
-
-	// const handleCpfChange = (e: ChangeEvent<HTMLInputElement>) => {
-	//   const { value } = e.target;
-	//   let inputValue = value.replace(/\D/g, ''); // Remove non-numeric characters
-
-	//   // Apply formatting as the user types (XXX.XXX.XXX-XX)
-	//   if (inputValue.length > 3) {
-	//     inputValue = ${inputValue.slice(0, 3)}.${inputValue.slice(3)};
-	//   }
-	//   if (inputValue.length > 7) {
-	//     inputValue = ${inputValue.slice(0, 7)}.${inputValue.slice(7)};
-	//   }
-	//   if (inputValue.length > 11) {
-	//     inputValue = ${inputValue.slice(0, 11)}-${inputValue.slice(11, 13)}; // Limit to 11 digits
-	//   }
-
-	//   setInputValue(inputValue);
-	// };
-	// const handleDataNascimentoChange = (e: ChangeEvent<HTMLInputElement>) => {
-	//   const { value } = e.target;
-	//   let inputValue = value.replace(/\D/g, ''); // Remove non-numeric characters
-
-	//   // Apply formatting as the user types
-	//   if (inputValue.length > 2) {
-	//     inputValue = ${inputValue.slice(0, 2)}/${inputValue.slice(2)};
-	//   }
-	//   if (inputValue.length > 5) {
-	//     inputValue = ${inputValue.slice(0, 5)}/${inputValue.slice(5, 9)}; // Limit to 8 digits
-	//   }
-
-	//   setInputDataNascimento(inputValue);
-	// };
 
 	return (
 		<Flex h="100vh" flex={['column', '', '', '']}>
@@ -188,13 +154,6 @@ export const Login: React.FC = () => {
 		</Flex>
 	);
 };
-
-// const textStyle1 = {
-//   fontSize: ['0.7rem', '0.8rem', '0.9rem', '1rem'],
-//   bg: 'white',
-//   borderRadius: '5px',
-//   p: '8px 0',
-// };
 
 const textStyle2 = {
 	fontSize: ['0.7rem', '0.8rem', '0.9rem', '1rem'],

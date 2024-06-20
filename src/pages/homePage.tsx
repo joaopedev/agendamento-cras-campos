@@ -4,7 +4,6 @@ import { SidebarHome } from '../components/SidebarHome';
 import { HamburgerMenu } from '../components/HamburgerMenu';
 import LoadingButtonHome from '../components/LoadingButtonHome';
 import { useAuth } from '../hook/useAuth';
-import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { Cras, IUserModel } from '../interface/User';
 
@@ -14,25 +13,23 @@ const getCrasName = (crasValue: number): string => {
 
 export const Home: React.FC = () => {
 	const { signOut } = useAuth();
-	const navigate = useNavigate();
 	const { getUser, payload } = useContext(AuthContext);
 	const [userData, setUserData] = useState<IUserModel | null>(null);
 
 	useEffect(() => {
 		const fetchUserData = async () => {
 			if (payload) {
-				const response = await getUser(payload.id); // Supondo que o payload contenha o userId
-				setUserData(response.contas); // Ajuste aqui para acessar a propriedade 'contas'
+				const response = await getUser(payload.id);
+				setUserData(response.contas);
 			}
 		};
 
 		fetchUserData();
 	}, [payload, getUser]);
 
-	const buttonSingleOut = async () => {
-		console.log('teste');
-		await signOut();
-		return navigate('/');
+	const buttonSingleOut =  () => {
+		signOut();
+	    window.location.href = "/";
 	};
 
 	const [isLoading] = useState(false);

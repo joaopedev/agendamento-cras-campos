@@ -1,0 +1,53 @@
+import React from 'react';
+import { Button } from '@chakra-ui/react';
+import { format, addHours } from 'date-fns';
+import { UseFormSetValue } from 'react-hook-form';
+import { RegisterSchedulling } from '../types/auth-data';
+
+interface Horario {
+	hora: string;
+	disponivel: boolean;
+}
+
+interface BoxHorarioProps {
+	horario: Horario;
+	selectedDate: Date | null;
+	onHorarioSelect: (date: Date) => void;
+	setValue: UseFormSetValue<RegisterSchedulling>;
+}
+
+const BoxHorario: React.FC<BoxHorarioProps> = ({
+	horario,
+	selectedDate,
+	onHorarioSelect,
+	setValue,
+}) => {
+	const handleOpenModal = () => {
+		if (horario.disponivel && selectedDate) {
+			const newDate = new Date(selectedDate);
+			const [horas, minutos] = horario.hora.split(':').map(Number);
+			newDate.setHours(horas);
+			newDate.setMinutes(minutos);
+
+			onHorarioSelect(newDate); // Chama a função para atualizar a data e abrir o modal no componente pai
+			setValue('data_hora', format(newDate, 'yyyy-MM-dd HH:mm'));
+			setValue('duracao_estimada', format(addHours(newDate, 1), 'yyyy-MM-dd HH:mm'));
+		}
+	};
+
+	return (
+		<Button
+			bg={horario.disponivel ? '#2CA1FF' : 'red'}
+			color="white"
+			_hover={{
+				bg: horario.disponivel ? '#1C75BC' : 'red',
+				cursor: horario.disponivel ? 'pointer' : 'auto',
+			}}
+			onClick={handleOpenModal}
+		>
+			{horario.hora}
+		</Button>
+	);
+};
+
+export default BoxHorario;

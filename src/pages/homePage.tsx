@@ -197,8 +197,7 @@ export const Home: React.FC = () => {
 										<FormControl isInvalid={!!errors.cras}>
 											<FormLabel htmlFor="cras">Cras</FormLabel>
 											{/* Display the name (string) associated with the Cras enum value */}
-											<Input id="cras" value={field.value ? Cras[field.value] : ''} isReadOnly />
-											<FormErrorMessage>{errors.cras && errors.cras.message}</FormErrorMessage>
+											<Box sx={textStyle1}>{userData.cras}</Box> {/* CPF remains read-only */}
 										</FormControl>
 									)}
 								/>

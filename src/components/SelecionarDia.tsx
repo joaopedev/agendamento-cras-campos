@@ -31,6 +31,7 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 import { RegisterSchedulling } from '../types/auth-data';
 import { BairroCras } from './BairroCras';
 import { btnStyle } from '../pages/loginPage';
+import BoxHorario from './BoxHorario';
 
 registerLocale('pt-BR', ptBR);
 
@@ -42,11 +43,10 @@ interface Horario {
 const SelecionarDia: React.FC = () => {
 	const [showForm, setShowForm] = useState(false);
 	const [horarioSelecionado, setHorarioSelecionado] = useState<string | null>(null);
-	const [selectedOption, setSelectedOption] = useState<string>('');
+	const [, setSelectedOption] = useState<string>('');
 	const maxDate = addDays(new Date(), 31);
 	const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 	const { isOpen, onOpen, onClose } = useDisclosure();
-	const { isOpen: isConfirmOpen, onClose: onConfirmClose } = useDisclosure();
 	const { getSchedulling, payload, registerSchedulling, getUser } = useContext(AuthContext);
 	const [schedullingData, setSchedullingData] = useState<ISchedulingModel[]>([]);
 	const [userData, setUserData] = useState<any | null>(null);
@@ -78,7 +78,6 @@ const SelecionarDia: React.FC = () => {
 				isClosable: true,
 				position: 'top-right',
 			});
-			// onConfirmClose();
 		} catch (error) {
 			toast({
 				title: 'Erro ao realizar agendamento',
@@ -128,40 +127,6 @@ const SelecionarDia: React.FC = () => {
 			return horario;
 		});
 	}, [horarios, selectedDate, schedullingData]);
-
-	const BoxHorario = ({ horario, onOpen }: { horario: Horario; onOpen: () => void }) => {
-		const handleOpenModal = () => {
-			if (horario.disponivel && selectedDate) {
-				const newDate = new Date(selectedDate);
-				const minutos = horaParaMinutos(horario.hora);
-				newDate.setHours(Math.floor(minutos / 60));
-				newDate.setMinutes(minutos % 60);
-				setSelectedDate(newDate);
-				setHorarioSelecionado(horario.hora);
-				setValue('data_hora', format(newDate, 'yyyy-MM-dd HH:mm'));
-				onOpen();
-			}
-		};
-
-		return (
-			<Button
-				bg={horario.disponivel ? '#2CA1FF' : 'red'}
-				color="white"
-				_hover={{
-					bg: horario.disponivel ? '#1C75BC' : 'red',
-					cursor: horario.disponivel ? 'pointer' : 'auto',
-				}}
-				onClick={handleOpenModal}
-			>
-				{horario.hora}
-			</Button>
-		);
-	};
-
-	//   const handleConfirmar = useCallback(() => {
-	//     onClose();
-	//     onConfirmOpen();
-	//   }, [onClose, onConfirmOpen]);
 
 	const handleDateChange = (date: Date | null) => {
 		if (date && horarioSelecionado) {
@@ -222,7 +187,17 @@ const SelecionarDia: React.FC = () => {
 							</Text>
 							<SimpleGrid columns={[2, null, 5]} spacing="1">
 								{horariosDisponiveis.map(horario => (
-									<BoxHorario key={horario.hora} horario={horario} onOpen={onOpen} />
+									<BoxHorario
+										key={horario.hora}
+										horario={horario}
+										selectedDate={selectedDate}
+										onHorarioSelect={(date: Date) => {
+											setSelectedDate(date);
+											setHorarioSelecionado(horario.hora);
+											onOpen();
+										}}
+										setValue={setValue}
+									/>
 								))}
 							</SimpleGrid>
 							<Modal
@@ -235,30 +210,20 @@ const SelecionarDia: React.FC = () => {
 								size={['xs', 'sm', 'md', 'lg']}
 							>
 								<ModalOverlay />
-								<ModalContent textAlign={'center'}>
+								<ModalContent minW={['90%', '27em', '30em', '48em']} textAlign={'center'}>
 									<ModalHeader mt={5}>Selecione uma opção para continuar:</ModalHeader>
 									<ModalCloseButton />
 									<ModalBody>
 										<form onSubmit={handleSubmit(onSubmit)}>
 											<Flex flexDir="column" alignItems="center">
-												{/* <Text>
-													Deseja confirmar o agendamento <br /> para o dia{' '}
-													<strong>{selectedDate && format(selectedDate, 'dd/MM/yyyy')}</strong> às{' '}
-													<strong>{horarioSelecionado}</strong>?
-												</Text> */}
 												<FormControl isInvalid={!!errors.servico}>
 													<RadioGroup
 														onChange={value => {
 															setSelectedOption(value as string);
 															setShowForm(true);
 														}}
-														// value={selectedOption}
 													>
-														<Stack
-															direction="row"
-															//  spacing={4}
-															justifyContent="space-around"
-														>
+														<Stack direction="row" justifyContent="space-around">
 															<Radio
 																{...register('description')}
 																id="description"
@@ -278,125 +243,101 @@ const SelecionarDia: React.FC = () => {
 														</Stack>
 													</RadioGroup>
 												</FormControl>
-												{showForm && (
-													<>
-														<FormControl display={'none'} isInvalid={!!errors.name}>
-															<FormLabel htmlFor="name">Nome</FormLabel>
-															<Input
-																id="name"
-																{...register('name')}
-																defaultValue={userData?.contas.name}
-															/>
-															{errors.name && <Text color="red.500">{errors.name.message}</Text>}
-														</FormControl>
+												<Box display={'none'}>
+													<FormControl isInvalid={!!errors.name}>
+														<FormLabel htmlFor="name">Nome</FormLabel>
+														<Input
+															id="name"
+															{...register('name')}
+															defaultValue={userData?.contas.name}
+														/>
+														{errors.name && <Text color="red.500">{errors.name.message}</Text>}
+													</FormControl>
 
-														<FormControl display={'none'} isInvalid={!!errors.usuario_id}>
-															<FormLabel htmlFor="usuario_id">Usuário ID</FormLabel>
-															<Input
-																id="usuario_id"
-																{...register('usuario_id')}
-																defaultValue={userData?.contas.id}
-															/>
-															{errors.usuario_id && (
-																<Text color="red.500">{errors.usuario_id.message}</Text>
-															)}
-														</FormControl>
+													<FormControl isInvalid={!!errors.usuario_id}>
+														<FormLabel htmlFor="usuario_id">Usuário ID</FormLabel>
+														<Input
+															id="usuario_id"
+															{...register('usuario_id')}
+															defaultValue={userData?.contas.id}
+														/>
+														{errors.usuario_id && (
+															<Text color="red.500">{errors.usuario_id.message}</Text>
+														)}
+													</FormControl>
 
-														{/* <FormControl isInvalid={!!errors.servico}>
-													<FormLabel htmlFor="servico">Serviço</FormLabel>
-													<Input id="servico" {...register('servico')} defaultValue={1} />
-													{errors.servico && <Text color="red.500">{errors.servico.message}</Text>}
-												</FormControl> */}
+													<FormControl isInvalid={!!errors.duracao_estimada}>
+														<FormLabel htmlFor="duracao_estimada">Duração Estimada</FormLabel>
+														<Input
+															id="duracao_estimada"
+															{...register('duracao_estimada')}
+															defaultValue={format(addHours(selectedDate, 1), 'yyyy-MM-dd HH:mm')}
+														/>
+														{errors.duracao_estimada && (
+															<Text color="red.500">{errors.duracao_estimada.message}</Text>
+														)}
+													</FormControl>
 
-														{/* <FormControl isInvalid={!!errors.description}>
-															<FormLabel htmlFor="description">Descrição</FormLabel>
-															<Input
-																id="description"
-																{...register('description')}
-																defaultValue={'Jassa é doido'}
-															/>
-															{errors.description && (
-																<Text color="red.500">{errors.description.message}</Text>
-															)}
-														</FormControl> */}
+													<FormControl isInvalid={!!errors.data_hora}>
+														<FormLabel htmlFor="data_hora">Data e Hora</FormLabel>
+														<Input
+															id="data_hora"
+															value={selectedDate ? format(selectedDate, 'yyyy-MM-dd HH:mm') : ''}
+															{...register('data_hora')}
+															readOnly
+														/>
+														{errors.data_hora && (
+															<Text color="red.500">{errors.data_hora.message}</Text>
+														)}
+													</FormControl>
 
-														<FormControl display={'none'} isInvalid={!!errors.duracao_estimada}>
-															<FormLabel htmlFor="duracao_estimada">Duração Estimada</FormLabel>
-															<Input
-																id="duracao_estimada"
-																{...register('duracao_estimada')}
-																defaultValue={format(addHours(selectedDate, 1), 'yyyy-MM-dd HH:mm')}
-															/>
-															{errors.duracao_estimada && (
-																<Text color="red.500">{errors.duracao_estimada.message}</Text>
-															)}
-														</FormControl>
+													<FormControl isInvalid={!!errors.cras}>
+														<FormLabel htmlFor="cras">Cras</FormLabel>
+														<Input
+															id="cras"
+															{...register('cras')}
+															defaultValue={userData?.contas.cras}
+														/>
+														{errors.cras && <Text color="red.500">{errors.cras.message}</Text>}
+													</FormControl>
 
-														<FormControl display={'none'} isInvalid={!!errors.data_hora}>
-															<FormLabel htmlFor="data_hora">Data e Hora</FormLabel>
-															<Input
-																id="data_hora"
-																value={selectedDate ? format(selectedDate, 'yyyy-MM-dd HH:mm') : ''}
-																{...register('data_hora')}
-																readOnly
-															/>
-															{errors.data_hora && (
-																<Text color="red.500">{errors.data_hora.message}</Text>
-															)}
-														</FormControl>
+													<FormControl isInvalid={!!errors.cras}>
+														<FormLabel htmlFor="cras">Cras</FormLabel>
+														<Input
+															id="cras"
+															{...register('cras')}
+															defaultValue={userData?.contas.cras}
+														/>
+														{errors.cras && <Text color="red.500">{errors.cras.message}</Text>}
+													</FormControl>
 
-														<FormControl display={'none'} isInvalid={!!errors.cras}>
-															<FormLabel htmlFor="cras">Cras</FormLabel>
-															<Input
-																id="cras"
-																{...register('cras')}
-																// defaultValue={BairroCras[userData?.contas.cras - 1].cras}
-																defaultValue={userData?.contas.cras}
-															/>
-															{errors.cras && <Text color="red.500">{errors.cras.message}</Text>}
-														</FormControl>
+													<FormControl mt={5}>
+														<FormLabel>Cras</FormLabel>
+														<Input value={BairroCras[userData?.contas.cras - 1].cras} />
+														{errors.cras && <Text color="red.500">{errors.cras.message}</Text>}
+													</FormControl>
 
-														<FormControl display={'none'} isInvalid={!!errors.cras}>
-															<FormLabel htmlFor="cras">Cras</FormLabel>
-															<Input
-																id="cras"
-																{...register('cras')}
-																// defaultValue={BairroCras[userData?.contas.cras - 1].cras}
-																defaultValue={userData?.contas.cras}
-															/>
-															{errors.cras && <Text color="red.500">{errors.cras.message}</Text>}
-														</FormControl>
-
-														<FormControl mt={5}>
-															<FormLabel>Cras</FormLabel>
-															<Input
-																value={BairroCras[userData?.contas.cras - 1].cras}
-																// defaultValue={userData?.contas.cras}
-															/>
-															{errors.cras && <Text color="red.500">{errors.cras.message}</Text>}
-														</FormControl>
-
-														<FormControl display={'none'} isInvalid={!!errors.status}>
-															<FormLabel htmlFor="status">Status</FormLabel>
-															<Input id="status" {...register('status')} defaultValue={2} />
-															{errors.status && (
-																<Text color="red.500">{errors.status.message}</Text>
-															)}
-														</FormControl>
-													</>
-												)}
+													<FormControl isInvalid={!!errors.status}>
+														<FormLabel htmlFor="status">Status</FormLabel>
+														<Input id="status" {...register('status')} defaultValue={2} />
+														{errors.status && <Text color="red.500">{errors.status.message}</Text>}
+													</FormControl>
+												</Box>
 											</Flex>
+
 											{showForm && (
 												<ModalFooter justifyContent={'center'}>
 													<Text>
-														Deseja confirmar o agendamento <br /> para o dia{' '}
+														Deseja confirmar o seu agendamento para o dia{' '}
 														<strong>{selectedDate && format(selectedDate, 'dd/MM/yyyy')}</strong> às{' '}
-														<strong>{horarioSelecionado}</strong>?
+														<strong>{horarioSelecionado}</strong> no{' '}
+														<strong>CRAS - {BairroCras[userData?.contas.cras - 1].cras}</strong>?
 													</Text>
 												</ModalFooter>
 											)}
 											<ModalFooter justifyContent={'center'}>
 												<Button
+													minW={['100px', '100px', '150px', '150px']}
 													boxShadow={'1px 1px 2px hsla(0, 28%, 0%, 0.7)'}
 													fontSize={['0.8rem', '0.8rem', '0.9rem', '1rem']}
 													colorScheme="red"
@@ -407,7 +348,14 @@ const SelecionarDia: React.FC = () => {
 													Cancelar
 												</Button>
 												{showForm && (
-													<Button sx={btnStyle} type="submit">
+													<Button
+														onClick={() => {
+															onClose();
+															setShowForm(false);
+														}}
+														sx={btnStyle}
+														type="submit"
+													>
 														Confirmar
 													</Button>
 												)}
@@ -416,41 +364,8 @@ const SelecionarDia: React.FC = () => {
 									</ModalBody>
 								</ModalContent>
 							</Modal>
-							<Modal
-								isOpen={isConfirmOpen}
-								onClose={onConfirmClose}
-								isCentered
-								size={['xs', 'sm', 'md', 'lg']}
-							>
-								<ModalOverlay />
-								<ModalContent color={'white'} bg={'#1C75BC'} textAlign={'center'}>
-									<ModalHeader>Agendamento Confirmado! 🎉</ModalHeader>
-									<ModalCloseButton />
-									<ModalBody pb={5}>
-										O seu atendimento será feito
-										<br />
-										dia <strong>
-											{selectedDate && format(selectedDate, 'dd/MM/yyyy')}
-										</strong> às <strong>{horarioSelecionado}</strong>.
-									</ModalBody>
-								</ModalContent>
-							</Modal>
 						</Box>
 					</Flex>
-					{/* <form onSubmit={handleSubmit(onSubmit)}>
-						
-						<FormControl>
-						<Input id="name" {...register("name")} defaultValue="Agendamento do jassa" />
-						</FormControl>
-						<Input id="usuario_id" {...register("usuario_id")} defaultValue={userData?.id || ''} />
-						<Input id="duracao_estimada" {...register("duracao_estimada")} defaultValue="2024-06-26T14:00:00" />
-						<Input id="data_hora" value={selectedDate ? format(selectedDate, 'yyyy-MM-dd HH:mm') : ''} {...register("data_hora")} readOnly />	
-						<Input id="cras" {...register("cras")} defaultValue={2} />
-						<Input id="servico" {...register("servico")} defaultValue={1} />
-						<Input id="status" {...register("status")} defaultValue={3} />
-		
-						<button type='submit'>Enviar</button>
-					</form> */}
 				</Box>
 			)}
 

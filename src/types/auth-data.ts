@@ -1,5 +1,5 @@
-import { Status, TipoServico } from "../interface/Schedulling";
-import { TipoUsuario, Cras, IEndereco } from "../interface/User";
+import { Status, TipoServico } from '../interface/Schedulling';
+import { TipoUsuario, Cras, IEndereco } from '../interface/User';
 
 export type SignIn = {
   cpf: string;
@@ -13,7 +13,7 @@ export type RegisterUser = {
   cpf: string;
   dataNascimento: string;
   telefone: string;
-  email: string;
+  email?: string;
   password: string;
   endereco: IEndereco;
 };
@@ -28,4 +28,3 @@ export interface RegisterSchedulling {
   duracao_estimada: string;
   data_hora: string;
 }
-

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useState, ChangeEvent, useEffect } from 'react';
 import {
   Flex,
   Stack,
@@ -7,12 +7,14 @@ import {
   InputLeftElement,
   InputGroup,
   Select,
+  Link,
   FormControl,
   FormLabel,
   FormErrorMessage,
   Button,
   useToast,
-} from '@chakra-ui/react';
+} from '@chakra-ui/react'; // Importando componentes do Chakra UI
+import { Link as RouterLink } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm, Controller } from 'react-hook-form';
@@ -21,14 +23,17 @@ import { FooterLogin } from '../components/FooterLogin';
 import { RegisterUser } from '../types/auth-data';
 import { useAuth } from '../hook/useAuth';
 import { RegisterUserSchema } from '../validation/auth';
+import { TipoUsuario, Cras, Bairros } from '../interface/User';
 import { BairroCras } from '../components/BairroCras';
-import { Cras, Bairros } from '../interface/User';
 
-export const Cadastro: React.FC = () => {
+export const Cadastro2: React.FC = () => {
+  const [inputDataNascimento, setInputDataNascimento] = useState(''); // Novo estado para data de nascimento
+  const [inputTelefone, setInputTelefone] = useState(''); // New state for telefone
+  const [inputCpf, setInputCpf] = useState(''); // New state for formatted CPF
+
   const { registerUser } = useAuth();
   const navigate = useNavigate();
   const toast = useToast();
-
   const {
     register,
     handleSubmit,
@@ -36,7 +41,12 @@ export const Cadastro: React.FC = () => {
     setValue,
     watch,
     formState: { errors, isSubmitting },
-  } = useForm<RegisterUser>({ resolver: yupResolver(RegisterUserSchema) });
+  } = useForm<RegisterUser>({
+    resolver: yupResolver(RegisterUserSchema),
+    defaultValues: {
+      tipoUsuario: TipoUsuario.comum, // Default to "Comum"
+    },
+  });
 
   const selectedBairro = watch('endereco.bairro');
   useEffect(() => {
@@ -49,10 +59,11 @@ export const Cadastro: React.FC = () => {
         const crasEnum = Cras[bairroCras.cras as keyof typeof Cras];
         setValue('cras', crasEnum);
       } else {
-        setValue('cras', Cras.CODIN);
+        // Explicitly set to Cras.Erro if no match is found
+        setValue('cras', Cras.Erro); // Or use another default as needed
       }
     }
-  }, [selectedBairro, setValue]);
+  }, [selectedBairro, setValue]); // Include setValue in the dependency array
 
   const handleRegister = async (data: RegisterUser) => {
     try {
@@ -67,6 +78,64 @@ export const Cadastro: React.FC = () => {
     } catch (error) {
       return error;
     }
+  };
+
+  // Change Handler for CPF (without formatting in the state)
+  const handleCpfChange = (e: ChangeEvent<HTMLInputElement>) => {
+    let value = e.target.value.replace(/\D/g, '');
+    setInputCpf(value.slice(0, 11)); // Store unformatted value in state
+    setValue('cpf', value.slice(0, 11)); // Update form value with unformatted CPF
+  };
+
+  // Helper to format CPF for display only
+  const formatCpf = (cpf: string) => {
+    if (cpf.length > 3) {
+      cpf = cpf.slice(0, 3) + '.' + cpf.slice(3);
+    }
+    if (cpf.length > 7) {
+      cpf = cpf.slice(0, 7) + '.' + cpf.slice(7);
+    }
+    if (cpf.length > 11) {
+      cpf = cpf.slice(0, 11) + '-' + cpf.slice(11);
+    }
+    return cpf;
+  };
+
+  const handleDataNascimentoAndPasswordChange = (
+    e: ChangeEvent<HTMLInputElement>
+  ) => {
+    let value = e.target.value.replace(/\D/g, ''); // Remove non-digits
+    setInputDataNascimento(value.slice(0, 8)); // Store unformatted value in state
+    setValue('dataNascimento', value.slice(0, 8)); // Update form value with unformatted date
+
+    setValue('password', value.slice(0, 8)); // Update form value for password
+  };
+
+  // Helper to format Date of Birth for display only
+  const formatDataNascimento = (data: string) => {
+    if (data.length > 2) {
+      data = data.slice(0, 2) + '/' + data.slice(2);
+    }
+    if (data.length > 5) {
+      data = data.slice(0, 5) + '/' + data.slice(5);
+    }
+    return data;
+  };
+
+  // Change Handler for Telefone (with formatting)
+  const handleTelefoneChange = (e: ChangeEvent<HTMLInputElement>) => {
+    let value = e.target.value.replace(/\D/g, '');
+    value = value.slice(0, 11);
+
+    if (value.length > 2) {
+      value = '(' + value.slice(0, 2) + ') ' + value.slice(2);
+    }
+    if (value.length > 10) {
+      value = value.slice(0, 10) + '-' + value.slice(10);
+    }
+
+    setInputTelefone(value);
+    setValue('telefone', value);
   };
 
   return (
@@ -128,12 +197,12 @@ export const Cadastro: React.FC = () => {
             <FormControl isInvalid={!!errors.cpf}>
               <FormLabel htmlFor='cpf'>CPF</FormLabel>
               <InputGroup>
-                {' '}
-                {/* Envolva os elementos Input e InputLeftElement */}
                 <Input
                   id='cpf'
                   placeholder='CPF'
                   size='md'
+                  value={formatCpf(inputCpf)} // Format for display only
+                  onChange={handleCpfChange}
                   sx={{
                     fontSize: ['0.7rem', '0.8rem', '0.9rem', '1rem'],
                     bg: 'white',
@@ -143,7 +212,7 @@ export const Cadastro: React.FC = () => {
                     mb: '0px',
                     paddingLeft: '16px',
                   }}
-                  {...register('cpf')}
+                  // {...register('cpf')}
                   _placeholder={{ paddingLeft: 0 }}
                   // value={inputValue}
                   // onChange={handleCpfChange}
@@ -160,11 +229,13 @@ export const Cadastro: React.FC = () => {
                 Data de nascimento
               </FormLabel>
               <InputGroup>
-                <Input // Input para data de nascimento
+                <Input
                   id='data-de-nascimento'
-                  placeholder='Data de Nascimento'
-                  // value={inputDataNascimento} //
-                  // onChange={handleDataNascimentoChange}
+                  placeholder='DD/MM/AAAA'
+                  value={formatDataNascimento(inputDataNascimento)} // Format for display only
+                  {...register('dataNascimento', {
+                    onChange: handleDataNascimentoAndPasswordChange,
+                  })}
                   size='md'
                   sx={{
                     fontSize: ['0.7rem', '0.8rem', '0.9rem', '1rem'],
@@ -187,12 +258,12 @@ export const Cadastro: React.FC = () => {
             <FormControl isInvalid={!!errors.telefone}>
               <FormLabel htmlFor='telefone'>Celular</FormLabel>
               <InputGroup>
-                {' '}
-                {/* Envolva os elementos Input e InputLeftElement */}
                 <Input
                   id='telefone'
-                  placeholder='(99) 90000-00000'
+                  placeholder='(22) 98765-4321'
                   size='md'
+                  value={inputTelefone} // Bind to formatted input
+                  onChange={handleTelefoneChange} // Use new handler
                   sx={{
                     fontSize: ['0.7rem', '0.8rem', '0.9rem', '1rem'],
                     bg: 'white',
@@ -202,7 +273,6 @@ export const Cadastro: React.FC = () => {
                     mb: '0px',
                     paddingLeft: '16px',
                   }}
-                  {...register('telefone')}
                   _placeholder={{ paddingLeft: 0 }}
                 />
                 <InputLeftElement pointerEvents='none' children={' '} />
@@ -296,20 +366,20 @@ export const Cadastro: React.FC = () => {
               </FormErrorMessage>
             </FormControl>
             <Box sx={textStyle2}></Box>
-
-            <Controller // Controlled Bairro Select
+            <Controller
               control={control}
               name='endereco.bairro'
               render={({ field }) => (
                 <FormControl isInvalid={!!errors.endereco?.bairro}>
                   <FormLabel htmlFor='bairro'>Bairro</FormLabel>
                   <Select id='bairro' variant='outline' {...field}>
-                    {/* Map directly over the Bairros enum values */}
-                    {Object.values(Bairros).map(bairro => (
-                      <option key={bairro} value={bairro}>
-                        {bairro}
-                      </option>
-                    ))}
+                    {Object.values(Bairros)
+                      .filter(bairro => typeof bairro === 'string') // Filter out numeric values
+                      .map(bairro => (
+                        <option key={bairro} value={bairro}>
+                          {bairro}
+                        </option>
+                      ))}
                   </Select>
                   <FormErrorMessage>
                     {errors.endereco?.bairro && errors.endereco?.bairro.message}
@@ -336,6 +406,11 @@ export const Cadastro: React.FC = () => {
                 </FormControl>
               )}
             />
+            <Box sx={textStyle2}></Box>
+
+            <Box sx={textStyle2}></Box>
+            <input type='hidden' {...register('tipoUsuario')} />
+
             <Button
               type='submit'
               style={{ backgroundColor: '#2CA1FF' }}
@@ -352,9 +427,9 @@ export const Cadastro: React.FC = () => {
             </LoadingButton>
           </NavLink> */}
           <Box sx={textStyle3}>Já possui uma conta?</Box>
-          {/* <Link as={RouterLink} to="/" sx={textStyle4}>
-            Entrar
-          </Link> */}
+          <Link as={RouterLink} to='/' sx={textStyle4}>
+            Voltar para o início
+          </Link>
         </Box>
       </Stack>
       <FooterLogin />
@@ -382,12 +457,12 @@ const textStyle3 = {
   p: '0px 0',
 };
 
-// const textStyle4 = {
-//   fontSize: ["0.6rem", "0.6rem", "0.7rem"],
-//   borderRadius: "2px",
-//   p: "2px 0",
-//   textDecoration: "underline",
-// };
+const textStyle4 = {
+  fontSize: ['0.6rem', '0.6rem', '0.7rem'],
+  borderRadius: '2px',
+  p: '2px 0',
+  textDecoration: 'underline',
+};
 
 export const boxStyle = {
   // w: '30%',
@@ -414,4 +489,4 @@ export const btnStyle = {
     fontWeight: 'bold',
   },
 };
-export default Cadastro;
+export default Cadastro2;

@@ -80,7 +80,7 @@ export const Home: React.FC = () => {
 				setValue('cras', crasEnum);
 			} else {
 				// Explicitly set to Cras.CODIN if no match is found
-				setValue('cras', Cras.CODIN); // Or use another default as needed
+				setValue('cras', Cras.Codin); // Or use another default as needed
 			}
 		}
 	}, [selectedBairro, setValue]);

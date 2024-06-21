@@ -23,6 +23,7 @@ const AppRoutes: React.FC = () => {
             isAuthenticated ? <Navigate to='/home' replace /> : <Login />
           }
         />
+
         <Route
           path='/cadastro'
           element={
@@ -35,8 +36,15 @@ const AppRoutes: React.FC = () => {
             <Route path='/gerenciamento' element={<Gerenciamento />} />
             <Route path='/dashboard' element={<Dashboard />} />
             <Route path='/adm' element={<Adm />} />
+            <Route
+              path='/controleFuncionarios'
+              element={<ControleFuncionarios />}
+            />
             <Route path='/agendamento' element={<SchedulingPage />} />
-            <Route path='/controleFuncionarios' element={<ControleFuncionarios />} />
+            <Route
+              path='/controleFuncionarios'
+              element={<ControleFuncionarios />}
+            />
           </Route>
         )}
       </Routes>

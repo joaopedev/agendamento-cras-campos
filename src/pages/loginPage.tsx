@@ -15,7 +15,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink } from 'react-router-dom'; 
 import SidebarLogin from '../components/SidebarLogin';
 import { FooterLogin } from '../components/FooterLogin';
 import { SignIn } from '../types/auth-data';
@@ -194,7 +194,7 @@ export const btnStyle = {
 	bg: '#2CA1FF',
 	maxW: '500px',
 	minW: ['100px', '100px', '150px', '150px'],
-	fontSize: ['0.8rem', '0.8rem', '0.9rem', '1rem'],
+	fontSize: ['0.7rem', '0.8rem', '0.9rem', '1rem'],
 	_hover: {
 		bg: '#1C75BC',
 		fontWeight: 'bold',

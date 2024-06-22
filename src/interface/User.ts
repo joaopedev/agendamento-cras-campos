@@ -25,7 +25,6 @@ export enum Cras {
   'Farol',
   'Jockey',
   'Ururaí',
-  'Erro',
 }
 
 export interface IUserModel {

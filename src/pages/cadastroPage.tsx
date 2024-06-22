@@ -26,7 +26,7 @@ import { RegisterUserSchema } from '../validation/auth';
 import { TipoUsuario, Cras, Bairros } from '../interface/User';
 import { BairroCras } from '../components/BairroCras';
 
-export const Cadastro2: React.FC = () => {
+export const Cadastro: React.FC = () => {
   const [inputDataNascimento, setInputDataNascimento] = useState(''); // Novo estado para data de nascimento
   const [inputTelefone, setInputTelefone] = useState(''); // New state for telefone
   const [inputCpf, setInputCpf] = useState(''); // New state for formatted CPF
@@ -58,9 +58,6 @@ export const Cadastro2: React.FC = () => {
       if (bairroCras) {
         const crasEnum = Cras[bairroCras.cras as keyof typeof Cras];
         setValue('cras', crasEnum);
-      } else {
-        // Explicitly set to Cras.Erro if no match is found
-        setValue('cras', Cras.Erro); // Or use another default as needed
       }
     }
   }, [selectedBairro, setValue]); // Include setValue in the dependency array
@@ -366,15 +363,17 @@ export const Cadastro2: React.FC = () => {
               </FormErrorMessage>
             </FormControl>
             <Box sx={textStyle2}></Box>
-            <Controller
+            <Controller // Controlled (and read-only) CRAS Input
               control={control}
               name='endereco.bairro'
               render={({ field }) => (
                 <FormControl isInvalid={!!errors.endereco?.bairro}>
                   <FormLabel htmlFor='bairro'>Bairro</FormLabel>
                   <Select id='bairro' variant='outline' {...field}>
+                    <option value=''>Selecione seu bairro</option>{' '}
+                    {/* Placeholder */}
                     {Object.values(Bairros)
-                      .filter(bairro => typeof bairro === 'string') // Filter out numeric values
+                      .filter(bairro => typeof bairro === 'string')
                       .map(bairro => (
                         <option key={bairro} value={bairro}>
                           {bairro}
@@ -489,4 +488,4 @@ export const btnStyle = {
     fontWeight: 'bold',
   },
 };
-export default Cadastro2;
+export default Cadastro;

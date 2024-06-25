@@ -1,4 +1,5 @@
 import * as Yup from 'yup';
+import { isValidCPF } from './cpf';
 import { TipoUsuario, Cras } from '../interface/User';
 
 export const loginSchema = Yup.object().shape({
@@ -19,11 +20,24 @@ export const RegisterUserSchema = Yup.object().shape({
   name: Yup.string().required('Nome completo é obrigatório'),
   cpf: Yup.string()
     .required('CPF é obrigatório')
-    .min(11, 'Insira 11 números')
-    .max(11, 'Insira 11 números'),
+    .test('cpf', 'CPF inválido', value => isValidCPF(value)),
   dataNascimento: Yup.string()
     .transform(value => value.replace(/\D/g, '')) // Remove non-digits
     .required('Data de nascimento é obrigatória')
+    .length(8, 'Insira a data no formato DDMMAAAA')
+    .test('valid-date', 'Data de nascimento inválida', value => {
+      const day = parseInt(value.slice(0, 2));
+      const month = parseInt(value.slice(2, 4)) - 1; // Months are 0-indexed in JavaScript
+      const year = parseInt(value.slice(4));
+
+      const date = new Date(year, month, day);
+      return (
+        date.getFullYear() === year &&
+        date.getMonth() === month &&
+        date.getDate() === day &&
+        date <= new Date() // Ensure the date is in the past
+      );
+    })
     .test('age', 'A idade deve estar entre 14 e 120 anos', value => {
       const dob = new Date(
         parseInt(value.slice(4)),

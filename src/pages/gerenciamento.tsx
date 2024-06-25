@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import {
   Button,
   Checkbox,
@@ -17,12 +18,15 @@ import ScrollUpButton from '../components/ScrollUpButton';
 import SidebarHome from '../components/SidebarHome';
 import { HamburgerMenu } from '../components/HamburgerMenu';
 import ConfirmationModal from '../components/ConfirmationModal';
+import { Cras } from '../interface/User';
 
 interface Employee {
   name: string;
   cpf: string;
-  cras: string;
+  cras: Cras;
   active: boolean;
+  dataNascimento: string;
+  senha: string;
 }
 
 // Removido as declarações repetidas de employees e setEmployees
@@ -52,9 +56,22 @@ const FuncionarioData: React.FC = () => {
     onConfirmationClose();
   };
 
-  const [employees, setEmployees] = useState<Employee[]>(
-    generateInitialEmployees()
-  );
+  const [employees, setEmployees] = useState<Employee[]>([]);
+
+  useEffect(() => {
+    const fetchFuncionarios = async () => {
+      try {
+        const response = await axios.get('/api/users', {
+          params: { tipoUsuario: 2 }, // Filtrando por tipo de usuário (funcionário)
+        });
+        setEmployees(response.data);
+      } catch (error) {
+        console.error('Error fetching users:', error);
+      }
+    };
+
+    fetchFuncionarios();
+  }, []); // Executa apenas uma vez ao montar o componente
 
   const handleToggleActive = (index: number) => {
     setEmployees(prevEmployees =>
@@ -67,7 +84,6 @@ const FuncionarioData: React.FC = () => {
   // Ajustado o tipo do parâmetro newEmployee
   const handleAddEmployee = (newEmployee: Employee) => {
     setEmployees(prevEmployees => [...prevEmployees, newEmployee]);
-    onClose();
   };
 
   return (
@@ -148,11 +164,7 @@ const FuncionarioData: React.FC = () => {
           p={4}
         >
           <GridItem p={4}>
-            <ModalAddFuncionario
-              isOpen={isOpen}
-              onClose={onClose}
-              onAdd={handleAddEmployee}
-            />
+            <ModalAddFuncionario isOpen={isOpen} onClose={onClose} />
           </GridItem>
         </Grid>
       </Flex>
@@ -164,43 +176,5 @@ const FuncionarioData: React.FC = () => {
     </Flex>
   );
 };
-
-function generateInitialEmployees(): {
-  name: string;
-  cpf: string;
-  cras: string;
-  active: boolean;
-}[] {
-  const crasOptions = [
-    'CODIN',
-    'CUSTODÓPOLIS',
-    'JARDIM CARIOCA',
-    'PARQUE GUARUS',
-    'TRAVESSÃO',
-    'GOITACAZES',
-    'FAROL',
-    'JOCKEY',
-    'MATADOURO',
-    'PENHA',
-    'MORRO DO COCO',
-    'ESPLANADA',
-    'CHATUBA',
-    'URURAÍ',
-  ];
-
-  const employees = [];
-  for (const cras of crasOptions) {
-    for (let i = 0; i < 2; i++) {
-      // Pelo menos 2 funcionários por CRAS
-      employees.push({
-        name: `Funcionário ${i + 1} ${cras}`, // Substitua por nomes reais
-        cpf: `CPF Funcionário ${i + 1}`, // Substitua por CPFs reais
-        cras,
-        active: true,
-      });
-    }
-  }
-  return employees;
-}
 
 export default FuncionarioData;

@@ -1,55 +1,80 @@
-import axios from "axios";
-import { jwtDecode } from "jwt-decode";
-import { createContext, useEffect, useState } from "react";
-import { IAuthContext, IAuthProvider, IPayload } from "../interface/AuthProps";
-import { SignIn, RegisterUser, RegisterSchedulling } from "../types/auth-data";
+import axios from 'axios';
+import { jwtDecode } from 'jwt-decode'; // Remove this line
+import { createContext, useEffect, useState, useCallback } from 'react';
+import { IAuthContext, IAuthProvider, IPayload } from '../interface/AuthProps';
+import {
+  SignIn,
+  RegisterUser,
+  RegisterSchedulling,
+  RegisterEmployee,
+} from '../types/auth-data';
 import {
   getUserRequest,
   loginRequest,
   registerRequest,
+  registerEmployeeRequest,
   getSchedullingRequest,
   registerSchedullingRequest,
-} from "../services/auth-request";
-import { IUserModel } from "../interface/User";
-import { ISchedulingModel } from "../interface/Schedulling";
+} from '../services/auth-request';
+import { IUserModel } from '../interface/User';
+import { ISchedulingModel } from '../interface/Schedulling';
 
 export const AuthContext = createContext({} as IAuthContext);
 export const AuthProvider = ({ children }: IAuthProvider) => {
   const [payload, setPayload] = useState<IPayload | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [funcionarios, setFuncionarios] = useState<IUserModel[]>([]); // Inside useEffect to prevent re-creation on every render
 
-  const getUserFromToken = (token: string) => {
+  function getUserFromToken(token: string): IPayload | null {
     try {
-      const decoded = jwtDecode<any>(token);
-      return decoded;
+      // Decode the token and extract the payload
+      return jwtDecode(token);
     } catch (error) {
+      // Handle invalid tokens (e.g., expired or malformed)
+      console.error('Error decoding token:', error);
       return null;
     }
-  };
-
-  const getToken = async () => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      const payload = getUserFromToken(token);
-      if (payload) {
-        setToken(token);
-        setPayload(payload);
-        setIsAuthenticated(true);
-        axios.defaults.headers.common["Authorization"] = "Bearer " + token;
-      } else {
-        localStorage.removeItem("token");
-        setToken(null);
-        setPayload(null);
-        setIsAuthenticated(false);
-        delete axios.defaults.headers.common["Authorization"];
-      }
-    }
-  };
+  }
 
   useEffect(() => {
+    const getToken = async () => {
+      const token = localStorage.getItem('token');
+      if (token) {
+        const payload = getUserFromToken(token);
+        if (payload) {
+          setToken(token);
+          setPayload(payload);
+          setIsAuthenticated(true);
+          axios.defaults.headers.common['Authorization'] = 'Bearer ' + token;
+        } else {
+          localStorage.removeItem('token');
+          setToken(null);
+          setPayload(null);
+          setIsAuthenticated(false);
+          delete axios.defaults.headers.common['Authorization'];
+        }
+      }
+    };
     getToken();
-  }, [token]);
+  }, []); // Empty dependency array ensures this runs only once on mount
+
+  const fetchFuncionarios = useCallback(async () => {
+    try {
+      const response = await axios.get('/api/users', {
+        params: { tipoUsuario: 2 },
+      });
+      setFuncionarios(response.data);
+    } catch (error) {
+      console.error('Error fetching users:', error);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchFuncionarios();
+    }
+  }, [isAuthenticated, fetchFuncionarios]);
 
   const signIn = async ({ cpf, password }: SignIn) => {
     const { data } = await loginRequest({
@@ -57,7 +82,7 @@ export const AuthProvider = ({ children }: IAuthProvider) => {
       password,
     });
     const { token } = data;
-    localStorage.setItem("token", token);
+    localStorage.setItem('token', token);
     setToken(token);
     setPayload(getUserFromToken(token));
   };
@@ -79,6 +104,28 @@ export const AuthProvider = ({ children }: IAuthProvider) => {
       dataNascimento,
       email,
       endereco,
+      name,
+      password,
+      telefone,
+      tipoUsuario,
+    });
+  };
+
+  const registerEmployee = async ({
+    cpf,
+    cras,
+    dataNascimento,
+    email,
+    name,
+    password,
+    telefone,
+    tipoUsuario,
+  }: RegisterEmployee) => {
+    await registerEmployeeRequest({
+      cpf,
+      cras,
+      dataNascimento,
+      email,
       name,
       password,
       telefone,
@@ -119,10 +166,10 @@ export const AuthProvider = ({ children }: IAuthProvider) => {
   };
 
   const signOut = async () => {
-    localStorage.removeItem("token");
+    localStorage.removeItem('token');
     setToken(null);
     setPayload(null);
-    delete axios.defaults.headers.common["Authorization"];
+    delete axios.defaults.headers.common['Authorization'];
   };
 
   return (
@@ -133,11 +180,14 @@ export const AuthProvider = ({ children }: IAuthProvider) => {
         isAuthenticated,
         signIn,
         registerUser,
+        registerEmployee,
         signOut,
         getUser,
         token,
         getSchedulling,
-        registerSchedulling
+        registerSchedulling,
+        funcionarios,
+        fetchFuncionarios,
       }}
     >
       {children}

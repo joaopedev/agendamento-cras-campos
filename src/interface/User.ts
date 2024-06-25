@@ -27,6 +27,22 @@ export enum Cras {
   'Ururaí',
 }
 
+export interface Employee {
+  id?: string;
+  name: string;
+  email?: string;
+  cpf: string;
+  dataNascimento: string;
+  password: string;
+  telefone: string;
+  tipoUsuario: TipoUsuario;
+  cras: Cras;
+  ativo: boolean;
+  passwordResetToken?: string;
+  passwordResetExpires?: Date;
+  [key: string]: any;
+}
+
 export interface IUserModel {
   id?: string;
   name: string;

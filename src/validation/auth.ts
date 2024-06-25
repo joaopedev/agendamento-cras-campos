@@ -69,6 +69,45 @@ export const RegisterUserSchema = Yup.object().shape({
     .required('Selecione o CRAS'),
 });
 
+export const RegisterEmployeeSchema = Yup.object().shape({
+  name: Yup.string().required('Nome completo é obrigatório'),
+  cpf: Yup.string()
+    .required('CPF é obrigatório')
+    .min(11, 'Insira 11 números')
+    .max(11, 'Insira 11 números'),
+  dataNascimento: Yup.string()
+    .transform(value => value.replace(/\D/g, '')) // Remove non-digits
+    .required('Data de nascimento é obrigatória')
+    .test('age', 'A idade deve estar entre 14 e 120 anos', value => {
+      const dob = new Date(
+        parseInt(value.slice(4)),
+        parseInt(value.slice(2, 4)) - 1,
+        parseInt(value.slice(0, 2))
+      );
+      const today = new Date();
+      const age =
+        today.getFullYear() -
+        dob.getFullYear() -
+        (today.getMonth() < dob.getMonth() ||
+        (today.getMonth() === dob.getMonth() && today.getDate() < dob.getDate())
+          ? 1
+          : 0);
+      return age >= 14 && age <= 120;
+    }),
+  telefone: Yup.string().required('Telefone é obrigatório'),
+  email: Yup.string().email('Email inválido'),
+  password: Yup.string()
+    .required('Senha é obrigatória')
+    .min(8, 'Insira no minímo 8 caracteres')
+    .max(16, 'Insira no máximo 16 caracteres'),
+  tipoUsuario: Yup.mixed<TipoUsuario>()
+    .oneOf(Object.values(TipoUsuario) as number[])
+    .required('Selecione o tipo do usuário'),
+  cras: Yup.mixed<Cras>()
+    .oneOf(Object.values(Cras) as number[])
+    .required('Selecione o CRAS'),
+});
+
 export const RegisterSchedullingSchema = Yup.object().shape({
   name: Yup.string().required('Nome do agendamento obrigatorio'),
   usuario_id: Yup.string()

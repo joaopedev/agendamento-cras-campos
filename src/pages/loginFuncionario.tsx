@@ -68,17 +68,6 @@ export const LoginFuncionario: React.FC = () => {
     return cpf;
   };
 
-  // Helper to format Date of Birth for display only
-  const formatDataNascimento = (data: string) => {
-    if (data.length > 2) {
-      data = data.slice(0, 2) + '/' + data.slice(2);
-    }
-    if (data.length > 5) {
-      data = data.slice(0, 5) + '/' + data.slice(5);
-    }
-    return data;
-  };
-
   return (
     <Flex h='100vh' flex={['column', '', '', '']}>
       <SidebarLogin />

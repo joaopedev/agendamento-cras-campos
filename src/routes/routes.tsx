@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
 import Login from '../pages/loginPage';
+import LoginFuncionario from '../pages/loginFuncionario';
 import Home from '../pages/homePage';
 import SchedulingPage from '../pages/SchedulingPage';
 import ControleFuncionarios from '../pages/controleFuncionarios';
@@ -23,11 +24,20 @@ const AppRoutes: React.FC = () => {
             isAuthenticated ? <Navigate to='/home' replace /> : <Login />
           }
         />
-
         <Route
           path='/cadastro'
           element={
             isAuthenticated ? <Navigate to='/home' replace /> : <Cadastro />
+          }
+        />{' '}
+        <Route
+          path='/funcionario'
+          element={
+            isAuthenticated ? (
+              <Navigate to='/home' replace />
+            ) : (
+              <LoginFuncionario />
+            )
           }
         />
         {isAuthenticated && (

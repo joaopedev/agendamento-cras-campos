@@ -24,9 +24,8 @@ import { SidebarHome } from '../components/SidebarHome';
 import { HamburgerMenu } from '../components/HamburgerMenu';
 import { useAuth } from '../hook/useAuth';
 import { AuthContext } from '../context/AuthContext';
-import { Cras, IUserModel, Bairros } from '../interface/User';
+import { IUserModel, Bairros } from '../interface/User';
 import { useForm, Controller } from 'react-hook-form';
-import { BairroCras } from '../components/BairroCras';
 import { useNavigate } from 'react-router-dom';
 
 export const Home: React.FC = () => {
@@ -41,10 +40,8 @@ export const Home: React.FC = () => {
 		handleSubmit,
 		control,
 		setValue,
-		watch,
 		formState: { errors },
 	} = useForm<IUserModel>({
-		// Use optional chaining to handle null userData
 		defaultValues: userData || {},
 	});
 	const showAgendamento = userData?.tipoUsuario === 1 || userData?.tipoUsuario === 3;
@@ -70,21 +67,6 @@ export const Home: React.FC = () => {
 	    window.location.href = "/";
 	};
 
-	const selectedBairro = watch('endereco.bairro');
-	useEffect(() => {
-		if (selectedBairro) {
-			const bairroCras = BairroCras.find(item => item.bairro.includes(selectedBairro));
-
-			if (bairroCras) {
-				const crasEnum = Cras[bairroCras.cras as keyof typeof Cras];
-				setValue('cras', crasEnum);
-			} else {
-				// Explicitly set to Cras.CODIN if no match is found
-				setValue('cras', Cras.Codin); // Or use another default as needed
-			}
-		}
-	}, [selectedBairro, setValue]);
-
 	const handleEdit = () => {
 		onOpen(); // Open the modal for confirmation
 	};
@@ -96,7 +78,6 @@ export const Home: React.FC = () => {
 
 	const handleSave = async (data: IUserModel) => {
 		// TODO: Implement your logic to save the updated data to the backend
-		console.log('Saving updated user data:', data);
 		setIsEditing(false);
 	};
 

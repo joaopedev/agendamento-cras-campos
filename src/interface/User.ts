@@ -27,6 +27,24 @@ export enum Cras {
   'Ururaí',
 }
 
+export interface PieChartData {
+  name: string;
+  value: number;
+  color: string;
+}
+
+export interface CrasData {
+  nome: string;
+  data: PieChartData[];
+}
+
+
+export interface IUsersModule {
+  message: string;
+  contas: IUserModel[];
+}
+
+
 export interface IUserModel {
   id?: string;
   name: string;

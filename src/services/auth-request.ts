@@ -1,5 +1,5 @@
 import { api } from "../api";
-import { SignIn, RegisterUser, RegisterSchedulling } from "../types/auth-data";
+import { SignIn, RegisterUserModel, RegisterSchedullingModel, UpdateStatusSchedullingModel } from "../types/auth-data";
 import { AxiosError } from "axios";
 import { IErrorResponse } from "../interface/Feedeback";
 
@@ -21,7 +21,7 @@ export const loginRequest = async (data: SignIn) => {
   }
 };
 
-export const registerRequest = async (data: RegisterUser) => {
+export const registerRequest = async (data: RegisterUserModel) => {
   try {
     const response = await api.post("/registerUsers", data);
     return response;
@@ -56,6 +56,24 @@ export const getUserRequest = async (id: string) => {
   }
 };
 
+export const getAllUserRequest = async () => {
+  try {
+    const response = await api.get(`private/account`);
+    return response;
+  } catch (error) {
+    const errors = error as AxiosError;
+    let errorMessage = "";
+    if (errors.response && errors.response.data) {
+      errorMessage = (errors.response.data as IErrorResponse).message;
+      alert(errorMessage);
+      throw new Error(errorMessage);
+    } else {
+      alert(errors?.message);
+      throw new Error(errors?.message);
+    }
+  }
+};
+
 export const getSchedullingRequest = async () => {
   try {
     const response = await api.get(`/private/scheduling`);
@@ -74,7 +92,7 @@ export const getSchedullingRequest = async () => {
   }
 };
 
-export const registerSchedullingRequest = async (data: RegisterSchedulling) => {
+export const registerSchedullingRequest = async (data: RegisterSchedullingModel) => {
   try {
     const response = await api.post("private/registerScheduling", data);
     return response;
@@ -90,3 +108,21 @@ export const registerSchedullingRequest = async (data: RegisterSchedulling) => {
     }
   }
 };
+
+export const updateSchedullingStatusRegister = async (id: UpdateStatusSchedullingModel) => {
+  try {
+    const response = await api.post(`private/updateScheduling/${id}`);
+    return response;
+  } catch (error) {
+    const errors = error as AxiosError;
+    let errorMessage = "";
+    if (errors.response && errors.response.data) {
+      errorMessage = (errors.response.data as IErrorResponse).message;
+      throw new Error(errorMessage);
+    } else {
+      alert(errors?.message);
+      throw new Error(errors?.message);
+    }
+  }
+};
+

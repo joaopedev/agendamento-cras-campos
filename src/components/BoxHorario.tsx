@@ -2,7 +2,7 @@ import React from 'react';
 import { Button } from '@chakra-ui/react';
 import { format, addHours } from 'date-fns';
 import { UseFormSetValue } from 'react-hook-form';
-import { RegisterSchedulling } from '../types/auth-data';
+import { RegisterSchedullingModel } from '../types/auth-data';
 
 interface Horario {
 	hora: string;
@@ -13,7 +13,7 @@ interface BoxHorarioProps {
 	horario: Horario;
 	selectedDate: Date | null;
 	onHorarioSelect: (date: Date) => void;
-	setValue: UseFormSetValue<RegisterSchedulling>;
+	setValue: UseFormSetValue<RegisterSchedullingModel>;
 }
 
 const BoxHorario: React.FC<BoxHorarioProps> = ({
@@ -31,7 +31,6 @@ const BoxHorario: React.FC<BoxHorarioProps> = ({
 
 			onHorarioSelect(newDate); // Chama a função para atualizar a data e abrir o modal no componente pai
 			setValue('data_hora', format(newDate, 'yyyy-MM-dd HH:mm'));
-			setValue('duracao_estimada', format(addHours(newDate, 1), 'yyyy-MM-dd HH:mm'));
 		}
 	};
 

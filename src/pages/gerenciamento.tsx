@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect, useContext } from 'react';
 import {
   Button,
   Checkbox,
@@ -14,24 +13,17 @@ import {
   GridItem,
 } from '@chakra-ui/react';
 import ModalAddFuncionario from '../components/ModalAddFuncionario';
-import ScrollUpButton from '../components/ScrollUpButton';
 import SidebarHome from '../components/SidebarHome';
 import { HamburgerMenu } from '../components/HamburgerMenu';
 import ConfirmationModal from '../components/ConfirmationModal';
-import { Cras } from '../interface/User';
-
-interface Employee {
-  name: string;
-  cpf: string;
-  cras: Cras;
-  active: boolean;
-  dataNascimento: string;
-  senha: string;
-}
+import { IEmployee, TipoUsuario, Cras } from '../interface/User';
+import { AuthContext } from '../context/AuthContext';
 
 // Removido as declarações repetidas de employees e setEmployees
-const FuncionarioData: React.FC = () => {
+const Gerenciamento: React.FC = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { getAllUsers: getEmployee, payload } = useContext(AuthContext);
+  const [employeeData, setEmployeeData] = useState<IEmployee[]>([]);
   const [employeeToDeleteIndex, setEmployeeToDeleteIndex] = useState<
     number | null
   >(null);
@@ -41,6 +33,39 @@ const FuncionarioData: React.FC = () => {
     onClose: onConfirmationClose,
   } = useDisclosure();
 
+  useEffect(() => {
+    const fetchEmployeeData = async () => {
+      if (payload) {
+        try {
+          const response = await getEmployee();
+
+          // Directly filter and map to IEmployee type
+          const employees: IEmployee[] = (response.contas || []) // Handle potential undefined
+            .filter(user => user.tipoUsuario === TipoUsuario.admin)
+            .map(user => ({
+              id: user.id,
+              name: user.name,
+              email: user.email,
+              cpf: user.cpf,
+              dataNascimento: user.dataNascimento,
+              password: user.password, // This might be sensitive, handle with care
+              telefone: user.telefone,
+              tipoUsuario: user.tipoUsuario,
+              cras: user.cras,
+              ativo: user.ativo,
+            }));
+
+          setEmployeeData(employees);
+        } catch (error) {
+          console.error('Error fetching employee data:', error);
+          setEmployeeData([]);
+        }
+      }
+    };
+
+    fetchEmployeeData();
+  }, [payload, getEmployee]);
+
   const handleDeleteEmployee = (index: number) => {
     setEmployeeToDeleteIndex(index);
     onConfirmationOpen();
@@ -48,49 +73,19 @@ const FuncionarioData: React.FC = () => {
 
   const confirmDelete = () => {
     if (employeeToDeleteIndex !== null) {
-      setEmployees(prevEmployees =>
-        prevEmployees.filter((_, i) => i !== employeeToDeleteIndex)
+      // Update employeeData state directly
+      setEmployeeData(prevEmployeeData =>
+        prevEmployeeData.filter((_, i) => i !== employeeToDeleteIndex)
       );
       setEmployeeToDeleteIndex(null);
     }
     onConfirmationClose();
   };
 
-  const [employees, setEmployees] = useState<Employee[]>([]);
-
-  useEffect(() => {
-    const fetchFuncionarios = async () => {
-      try {
-        const response = await axios.get('/api/users', {
-          params: { tipoUsuario: 2 }, // Filtrando por tipo de usuário (funcionário)
-        });
-        setEmployees(response.data);
-      } catch (error) {
-        console.error('Error fetching users:', error);
-      }
-    };
-
-    fetchFuncionarios();
-  }, []); // Executa apenas uma vez ao montar o componente
-
-  const handleToggleActive = (index: number) => {
-    setEmployees(prevEmployees =>
-      prevEmployees.map((employee, i) =>
-        i === index ? { ...employee, active: !employee.active } : employee
-      )
-    );
-  };
-
-  // Ajustado o tipo do parâmetro newEmployee
-  const handleAddEmployee = (newEmployee: Employee) => {
-    setEmployees(prevEmployees => [...prevEmployees, newEmployee]);
-  };
-
   return (
     <Flex h='100vh' flexDir={'column'}>
       <SidebarHome />
       <HamburgerMenu />
-      <ScrollUpButton />
       <Flex
         className='container__content'
         ml={['0vw', '30vw', '25vw', '20vw']}
@@ -124,38 +119,46 @@ const FuncionarioData: React.FC = () => {
           variant='striped'
           colorScheme='blue'
         >
-          <Tr>
-            <Th width='30%'>Nome</Th> {/* Largura fixa para a coluna Nome */}
-            <Th width='20%'>CPF</Th> {/* Largura fixa para a coluna CPF */}
-            <Th width='20%'>CRAS</Th> {/* Largura fixa para a coluna CRAS */}
-            <Th width='20%'>Ações</Th> {/* Largura fixa para a coluna Ações */}
-          </Tr>
-          {employees.map((employee, index) => (
-            <Tr key={index}>
-              <Td>{employee.name}</Td>
-              <Td>{employee.cpf}</Td>
-              <Td>{employee.cras}</Td>
-              <Td minWidth='180px'>
-                <Flex alignItems='center'>
-                  <Checkbox
-                    isChecked={employee.active}
-                    onChange={() => handleToggleActive(index)}
-                    width='80px' // Largura fixa para o Checkbox
-                  >
-                    {employee.active ? 'Ativo' : 'Inativo'}
-                  </Checkbox>
-                  <Button
-                    size='sm'
-                    colorScheme='red'
-                    ml={2}
-                    onClick={() => handleDeleteEmployee(index)}
-                  >
-                    Excluir
-                  </Button>
-                </Flex>
-              </Td>
+          <thead>
+            <Tr>
+              <Th width='30%'>Nome</Th>
+              <Th width='20%'>CPF</Th>
+              <Th width='20%'>CRAS</Th>
+              <Th width='20%'>Ações</Th>
             </Tr>
-          ))}
+          </thead>
+          <tbody>
+            {employeeData && employeeData.length > 0 ? (
+              employeeData.map((employee, index) => (
+                <Tr key={index}>
+                  <Td>{employee.name}</Td>
+                  <Td>{employee.cpf}</Td>
+                  {/* Access cras directly from the employee object */}
+                  <Td>{Cras[employee.cras]}</Td>
+                  <Td minWidth='180px'>
+                    <Flex alignItems='center'>
+                      {/* Use a Box or Span instead of nesting buttons */}
+                      <Checkbox isChecked={employee.Ativo} width='80px'>
+                        {employee.Ativo ? 'Ativo' : 'Inativo'}
+                      </Checkbox>
+                      <Button
+                        size='sm'
+                        colorScheme='red'
+                        ml={2}
+                        onClick={() => handleDeleteEmployee(index)}
+                      >
+                        Excluir
+                      </Button>
+                    </Flex>
+                  </Td>
+                </Tr>
+              ))
+            ) : (
+              <Tr>
+                <Td colSpan={4}>Nenhum funcionário encontrado.</Td>
+              </Tr>
+            )}
+          </tbody>
         </Table>
         <Grid
           className='grid'
@@ -177,4 +180,4 @@ const FuncionarioData: React.FC = () => {
   );
 };
 
-export default FuncionarioData;
+export default Gerenciamento;

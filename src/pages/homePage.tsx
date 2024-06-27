@@ -96,7 +96,6 @@ export const Home: React.FC = () => {
 
 	const handleSave = async (data: IUserModel) => {
 		// TODO: Implement your logic to save the updated data to the backend
-		console.log('Saving updated user data:', data);
 		setIsEditing(false);
 	};
 

@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode'; // Remove this line
-import { createContext, useEffect, useState, useCallback } from 'react';
+import { createContext, useEffect, useState } from 'react';
 import { IAuthContext, IAuthProvider, IPayload } from '../interface/AuthProps';
 import {
   SignIn,
@@ -10,13 +10,14 @@ import {
 } from '../types/auth-data';
 import {
   getUserRequest,
+  getAllUsers,
   loginRequest,
   registerRequest,
   registerEmployeeRequest,
   getSchedullingRequest,
   registerSchedullingRequest,
 } from '../services/auth-request';
-import { IUserModel } from '../interface/User';
+import { IUserModel, IAllUsers } from '../interface/User';
 import { ISchedulingModel } from '../interface/Schedulling';
 
 export const AuthContext = createContext({} as IAuthContext);
@@ -24,7 +25,6 @@ export const AuthProvider = ({ children }: IAuthProvider) => {
   const [payload, setPayload] = useState<IPayload | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [funcionarios, setFuncionarios] = useState<IUserModel[]>([]); // Inside useEffect to prevent re-creation on every render
 
   function getUserFromToken(token: string): IPayload | null {
     try {
@@ -58,23 +58,6 @@ export const AuthProvider = ({ children }: IAuthProvider) => {
     };
     getToken();
   }, []); // Empty dependency array ensures this runs only once on mount
-
-  const fetchFuncionarios = useCallback(async () => {
-    try {
-      const response = await axios.get('/api/users', {
-        params: { tipoUsuario: 2 },
-      });
-      setFuncionarios(response.data);
-    } catch (error) {
-      console.error('Error fetching users:', error);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      fetchFuncionarios();
-    }
-  }, [isAuthenticated, fetchFuncionarios]);
 
   const signIn = async ({ cpf, password }: SignIn) => {
     const { data } = await loginRequest({
@@ -138,6 +121,11 @@ export const AuthProvider = ({ children }: IAuthProvider) => {
     return data;
   };
 
+  const getEmployee = async (): Promise<IAllUsers> => {
+    const { data } = await getAllUsers();
+    return data;
+  };
+
   const registerSchedulling = async ({
     name,
     usuario_id,
@@ -183,11 +171,10 @@ export const AuthProvider = ({ children }: IAuthProvider) => {
         registerEmployee,
         signOut,
         getUser,
+        getAllUsers: getEmployee,
         token,
         getSchedulling,
         registerSchedulling,
-        funcionarios,
-        fetchFuncionarios,
       }}
     >
       {children}

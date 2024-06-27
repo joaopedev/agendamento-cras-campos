@@ -383,7 +383,9 @@ const SelecionarDia: React.FC = () => {
                           <FormControl mt={5}>
                             <FormLabel>Cras</FormLabel>
                             <Input
-                              value={BairroCras[userData?.contas.cras - 1].cras}
+                              defaultValue={
+                                BairroCras[userData?.contas.cras].cras
+                              }
                             />
                             {errors.cras && (
                               <Text color='red.500'>{errors.cras.message}</Text>
@@ -416,8 +418,7 @@ const SelecionarDia: React.FC = () => {
                             </strong>{' '}
                             às <strong>{horarioSelecionado}</strong> no{' '}
                             <strong>
-                              CRAS -{' '}
-                              {BairroCras[userData?.contas.cras - 1].cras}
+                              CRAS - {BairroCras[userData?.contas.cras].cras}
                             </strong>
                             ?
                           </Text>

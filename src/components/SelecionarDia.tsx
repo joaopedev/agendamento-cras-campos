@@ -227,7 +227,7 @@ const SelecionarDia: React.FC = () => {
 															<Radio
 																{...register('description')}
 																id="description"
-																value="1"
+																defaultValue="1"
 																{...register('servico')}
 															>
 																Cadastramento
@@ -235,7 +235,7 @@ const SelecionarDia: React.FC = () => {
 															<Radio
 																{...register('description')}
 																id="description"
-																value="2"
+																defaultValue="2"
 																{...register('servico')}
 															>
 																Atualização Cadastral
@@ -282,9 +282,10 @@ const SelecionarDia: React.FC = () => {
 														<FormLabel htmlFor="data_hora">Data e Hora</FormLabel>
 														<Input
 															id="data_hora"
-															value={selectedDate ? format(selectedDate, 'yyyy-MM-dd HH:mm') : ''}
+															defaultValue={
+																selectedDate ? format(selectedDate, 'yyyy-MM-dd HH:mm') : ''
+															}
 															{...register('data_hora')}
-															readOnly
 														/>
 														{errors.data_hora && (
 															<Text color="red.500">{errors.data_hora.message}</Text>
@@ -313,7 +314,7 @@ const SelecionarDia: React.FC = () => {
 
 													<FormControl mt={5}>
 														<FormLabel>Cras</FormLabel>
-														<Input value={BairroCras[userData?.contas.cras - 1].cras} />
+														<Input defaultValue={BairroCras[userData?.contas.cras - 1].cras} />
 														{errors.cras && <Text color="red.500">{errors.cras.message}</Text>}
 													</FormControl>
 

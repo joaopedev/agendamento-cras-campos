@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext } from "react";
 import {
   Button,
   Checkbox,
@@ -11,15 +11,14 @@ import {
   useDisclosure,
   Grid,
   GridItem,
-} from '@chakra-ui/react';
-import ModalAddFuncionario from '../components/ModalAddFuncionario';
-import SidebarHome from '../components/SidebarHome';
-import { HamburgerMenu } from '../components/HamburgerMenu';
-import ConfirmationModal from '../components/ConfirmationModal';
-import { IEmployee, TipoUsuario, Cras } from '../interface/User';
-import { AuthContext } from '../context/AuthContext';
+} from "@chakra-ui/react";
+import ModalAddFuncionario from "../components/ModalAddFuncionario";
+import SidebarHome from "../components/SidebarHome";
+import { HamburgerMenu } from "../components/HamburgerMenu";
+import ConfirmationModal from "../components/ConfirmationModal";
+import { IEmployee, TipoUsuario, Cras } from "../interface/User";
+import { AuthContext } from "../context/AuthContext";
 
-// Removido as declarações repetidas de employees e setEmployees
 const Gerenciamento: React.FC = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { getAllUsers: getEmployee, payload } = useContext(AuthContext);
@@ -38,11 +37,9 @@ const Gerenciamento: React.FC = () => {
       if (payload) {
         try {
           const response = await getEmployee();
-
-          // Directly filter and map to IEmployee type
-          const employees: IEmployee[] = (response.contas || []) // Handle potential undefined
-            .filter(user => user.tipoUsuario === TipoUsuario.admin)
-            .map(user => ({
+          const employees: IEmployee[] = (response.contas || [])
+            .filter((user) => user.tipoUsuario === TipoUsuario.admin)
+            .map((user) => ({
               id: user.id,
               name: user.name,
               email: user.email,
@@ -57,7 +54,7 @@ const Gerenciamento: React.FC = () => {
 
           setEmployeeData(employees);
         } catch (error) {
-          console.error('Error fetching employee data:', error);
+          console.error("Error fetching employee data:", error);
           setEmployeeData([]);
         }
       }
@@ -73,8 +70,7 @@ const Gerenciamento: React.FC = () => {
 
   const confirmDelete = () => {
     if (employeeToDeleteIndex !== null) {
-      // Update employeeData state directly
-      setEmployeeData(prevEmployeeData =>
+      setEmployeeData((prevEmployeeData) =>
         prevEmployeeData.filter((_, i) => i !== employeeToDeleteIndex)
       );
       setEmployeeToDeleteIndex(null);
@@ -83,31 +79,31 @@ const Gerenciamento: React.FC = () => {
   };
 
   return (
-    <Flex h='100vh' flexDir={'column'}>
+    <Flex h="100vh" flexDir={"column"}>
       <SidebarHome />
       <HamburgerMenu />
       <Flex
-        className='container__content'
-        ml={['0vw', '30vw', '25vw', '20vw']}
-        flexDir={'column'}
+        className="container__content"
+        ml={["0vw", "30vw", "25vw", "20vw"]}
+        flexDir={"column"}
       >
         <Flex
-          className='top__elements'
-          p={'50px 30px 20px 30px'}
-          justifyContent='space-around'
-          alignItems={'center'}
-          ml={['20px', '0', '0', '0']}
-          w={['110%', '100%', '100%', '100%']}
+          className="top__elements"
+          p={"50px 30px 20px 30px"}
+          justifyContent="space-around"
+          alignItems={"center"}
+          ml={["20px", "0", "0", "0"]}
+          w={["110%", "100%", "100%", "100%"]}
         >
-          <Heading size={['lg']} fontSize={['18', '20', '22', '24']}>
+          <Heading size={["lg"]} fontSize={["18", "20", "22", "24"]}>
             Gerenciamento de Funcionários
           </Heading>
           <Button
-            minW='max-content'
-            colorScheme='blue'
-            bg={'#2CA1FF'}
+            minW="max-content"
+            colorScheme="blue"
+            bg={"#2CA1FF"}
             _hover={{
-              bg: '#1C75BC',
+              bg: "#1C75BC",
             }}
             onClick={onOpen}
           >
@@ -115,16 +111,16 @@ const Gerenciamento: React.FC = () => {
           </Button>
         </Flex>
         <Table
-          size={['sm', 'sm', 'md', 'md']}
-          variant='striped'
-          colorScheme='blue'
+          size={["sm", "sm", "md", "md"]}
+          variant="striped"
+          colorScheme="blue"
         >
           <thead>
             <Tr>
-              <Th width='30%'>Nome</Th>
-              <Th width='20%'>CPF</Th>
-              <Th width='20%'>CRAS</Th>
-              <Th width='20%'>Ações</Th>
+              <Th width="30%">Nome</Th>
+              <Th width="20%">CPF</Th>
+              <Th width="20%">CRAS</Th>
+              <Th width="20%">Ações</Th>
             </Tr>
           </thead>
           <tbody>
@@ -135,15 +131,15 @@ const Gerenciamento: React.FC = () => {
                   <Td>{employee.cpf}</Td>
                   {/* Access cras directly from the employee object */}
                   <Td>{Cras[employee.cras]}</Td>
-                  <Td minWidth='180px'>
-                    <Flex alignItems='center'>
+                  <Td minWidth="180px">
+                    <Flex alignItems="center">
                       {/* Use a Box or Span instead of nesting buttons */}
-                      <Checkbox isChecked={employee.Ativo} width='80px'>
-                        {employee.Ativo ? 'Ativo' : 'Inativo'}
+                      <Checkbox isChecked={employee.Ativo} width="80px">
+                        {employee.Ativo ? "Ativo" : "Inativo"}
                       </Checkbox>
                       <Button
-                        size='sm'
-                        colorScheme='red'
+                        size="sm"
+                        colorScheme="red"
                         ml={2}
                         onClick={() => handleDeleteEmployee(index)}
                       >
@@ -161,7 +157,7 @@ const Gerenciamento: React.FC = () => {
           </tbody>
         </Table>
         <Grid
-          className='grid'
+          className="grid"
           // templateColumns={['1fr', '1fr', '25% 1fr', '20% 1fr']}
           gap={6}
           p={4}

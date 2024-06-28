@@ -9,7 +9,6 @@ import { Cras } from "../interface/User";
 import { ISchedulingModel } from "../interface/Schedulling";
 import SidebarHome from "../components/SidebarHome";
 import { HamburgerMenu } from "../components/HamburgerMenu";
-import ScrollUpButton from "../components/ScrollUpButton";
 
 export const Dashboard: React.FC = () => {
   const { getAllSchedulling: getSchedulling, payload } = useContext(AuthContext);
@@ -80,7 +79,6 @@ export const Dashboard: React.FC = () => {
     <Flex h="100vh" flexDir={"column"}>
       <SidebarHome />
       <HamburgerMenu />
-      <ScrollUpButton />
       <Box pl={["0%", "30%", "25%", "20%"]} w="100%">
         <CrasPieChart crasData={[{ nome: "Total", data: totalData }]} crasNome="Total" />
         {crasData.map((cras) => (

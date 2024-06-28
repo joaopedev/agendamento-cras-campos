@@ -23,12 +23,12 @@ import {
 } from '@chakra-ui/react';
 import DatePicker, { registerLocale } from 'react-datepicker';
 import { ptBR } from 'date-fns/locale/pt-BR';
-import { format, addDays, addHours } from 'date-fns';
+import { format, addDays } from 'date-fns';
 import { AuthContext } from '../context/AuthContext';
 import { ISchedulingModel, ISchedulingResponse } from '../interface/Schedulling';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useForm, SubmitHandler } from 'react-hook-form';
-import { RegisterSchedulling } from '../types/auth-data';
+import { RegisterSchedullingModel } from '../types/auth-data';
 import { BairroCras } from './BairroCras';
 import { btnStyle } from '../pages/loginPage';
 import BoxHorario from './BoxHorario';
@@ -47,7 +47,7 @@ const SelecionarDia: React.FC = () => {
 	const maxDate = addDays(new Date(), 31);
 	const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 	const { isOpen, onOpen, onClose } = useDisclosure();
-	const { getSchedulling, payload, registerSchedulling, getUser } = useContext(AuthContext);
+	const { getAllSchedulling, payload, registerSchedulling, getUser } = useContext(AuthContext);
 	const [schedullingData, setSchedullingData] = useState<ISchedulingModel[]>([]);
 	const [userData, setUserData] = useState<any | null>(null);
 	const toast = useToast();
@@ -67,8 +67,8 @@ const SelecionarDia: React.FC = () => {
 		handleSubmit,
 		setValue,
 		formState: { errors },
-	} = useForm<RegisterSchedulling>();
-	const onSubmit: SubmitHandler<RegisterSchedulling> = async (data: RegisterSchedulling) => {
+	} = useForm<RegisterSchedullingModel>();
+	const onSubmit: SubmitHandler<RegisterSchedullingModel> = async (data: RegisterSchedullingModel) => {
 		try {
 			const response = await registerSchedulling(data);
 			console.log(response);
@@ -98,7 +98,7 @@ const SelecionarDia: React.FC = () => {
 	useEffect(() => {
 		const fetchUserData = async () => {
 			if (payload) {
-				const response: ISchedulingResponse = await getSchedulling();
+				const response: ISchedulingResponse = await getAllSchedulling();
 				const userResponse = await getUser(payload.id);
 				setUserData(userResponse);
 				setSchedullingData(response.agendamentos);
@@ -106,7 +106,7 @@ const SelecionarDia: React.FC = () => {
 		};
 
 		fetchUserData();
-	}, [payload, getSchedulling, getUser]);
+	}, [payload, getAllSchedulling, getUser]);
 
 	const horariosDisponiveis = useMemo(() => {
 		return horarios.map(horario => {
@@ -263,18 +263,6 @@ const SelecionarDia: React.FC = () => {
 														/>
 														{errors.usuario_id && (
 															<Text color="red.500">{errors.usuario_id.message}</Text>
-														)}
-													</FormControl>
-
-													<FormControl isInvalid={!!errors.duracao_estimada}>
-														<FormLabel htmlFor="duracao_estimada">Duração Estimada</FormLabel>
-														<Input
-															id="duracao_estimada"
-															{...register('duracao_estimada')}
-															defaultValue={format(addHours(selectedDate, 1), 'yyyy-MM-dd HH:mm')}
-														/>
-														{errors.duracao_estimada && (
-															<Text color="red.500">{errors.duracao_estimada.message}</Text>
 														)}
 													</FormControl>
 

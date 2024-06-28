@@ -7,7 +7,7 @@ export interface IEndereco {
 export enum TipoUsuario {
   comum = 1,
   admin,
-  superAdmin,
+  superAmin,
 }
 
 export enum Cras {
@@ -25,27 +25,6 @@ export enum Cras {
   'Farol',
   'Jockey',
   'Ururaí',
-}
-
-export interface IEmployee {
-  id?: string;
-  name: string;
-  email?: string;
-  cpf: string;
-  dataNascimento: string;
-  password: string;
-  telefone: string;
-  tipoUsuario: TipoUsuario;
-  cras: Cras;
-  ativo: boolean;
-  passwordResetToken?: string;
-  passwordResetExpires?: Date;
-  [key: string]: any;
-}
-
-export interface IAllUsers {
-  message: string;
-  contas: [IUserModel];
 }
 
 export interface IUserModel {

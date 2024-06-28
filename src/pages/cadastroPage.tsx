@@ -20,7 +20,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm, Controller } from 'react-hook-form';
 import SidebarLogin from '../components/SidebarLogin';
 import { FooterLogin } from '../components/FooterLogin';
-import { RegisterUser } from '../types/auth-data';
+import { RegisterUserModel } from '../types/auth-data';
 import { useAuth } from '../hook/useAuth';
 import { RegisterUserSchema } from '../validation/auth';
 import { TipoUsuario, Cras, Bairros } from '../interface/User';
@@ -41,7 +41,7 @@ export const Cadastro: React.FC = () => {
     setValue,
     watch,
     formState: { errors, isSubmitting },
-  } = useForm<RegisterUser>({
+  } = useForm<RegisterUserModel>({
     resolver: yupResolver(RegisterUserSchema),
     defaultValues: {
       tipoUsuario: TipoUsuario.comum, // Default to "Comum"
@@ -62,7 +62,7 @@ export const Cadastro: React.FC = () => {
     }
   }, [selectedBairro, setValue]); // Include setValue in the dependency array
 
-  const handleRegister = async (data: RegisterUser) => {
+  const handleRegister = async (data: RegisterUserModel) => {
     try {
       await registerUser(data);
       toast({

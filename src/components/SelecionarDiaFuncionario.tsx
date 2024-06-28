@@ -1,7 +1,7 @@
 import { ptBR } from 'date-fns/locale/pt-BR';
 import { format, addDays } from 'date-fns';
 import * as React from 'react';
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext, useRef } from 'react';
 import DatePicker, { registerLocale } from 'react-datepicker';
 import {
 	Button,
@@ -46,29 +46,55 @@ const SelecionarDiaFuncionario: React.FC = () => {
 	const [userData, setUserData] = useState<IUserModel[]>([]);
 	const maxDate = addDays(new Date(), 30);
 	const [activeCardId, setActiveCardId] = useState<number | null>(null);
-	const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+	const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+	const [loading, setLoading] = useState(true);
+	const isMounted = useRef(true);
 
 	const handleAtendimentoClick = (schedullingId: number) => {
-		setActiveCardId(schedullingId === activeCardId ? null : schedullingId); // Alterna entre ativo e inativo
+		setActiveCardId(schedullingId === activeCardId ? null : schedullingId);
 		onAtendimentoOpen();
 	};
 
-	const handleDateChange = (date: Date | null) => {
-		setSelectedDate(date);
-	};
-
-	const {
-		isOpen: isAtendimentoOpen,
-		onOpen: onAtendimentoOpen,
-	} = useDisclosure();
+	const { isOpen: isAtendimentoOpen, onOpen: onAtendimentoOpen } = useDisclosure();
 	const [elapsedTime, setElapsedTime] = useState(0);
+
+	useEffect(() => {
+		isMounted.current = true;
+		const fetchUserData = async () => {
+			if (payload) {
+				try {
+					setLoading(true);
+					const responseSchedulling: ISchedulingResponse = await getAllSchedulling();
+					const responseUser: IAllUsers = await getAllUsers();
+					if (isMounted.current) {
+						setUserData(responseUser.contas);
+						setSchedullingData(responseSchedulling.agendamentos);
+					}
+				} catch (error) {
+					if (isMounted.current) {
+						console.error('Failed to fetch data', error);
+					}
+				} finally {
+					if (isMounted.current) {
+						setLoading(false);
+					}
+				}
+			}
+		};
+
+		fetchUserData();
+
+		return () => {
+			isMounted.current = false;
+		};
+	}, [payload, getAllSchedulling, getAllUsers]);
 
 	useEffect(() => {
 		let interval: NodeJS.Timer | null = null;
 		let timeout: NodeJS.Timeout | null = null;
 
 		if (isAtendimentoOpen) {
-			const initialStartTime = new Date(); // Use initialStartTime
+			const initialStartTime = new Date();
 
 			timeout = setTimeout(() => {
 				setElapsedTime(0);
@@ -96,19 +122,6 @@ const SelecionarDiaFuncionario: React.FC = () => {
 		return `${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`;
 	};
 
-	useEffect(() => {
-		const fetchUserData = async () => {
-			if (payload) {
-				const responseSchedulling: ISchedulingResponse = await getAllSchedulling();
-				const responseUser: IAllUsers = await getAllUsers();
-				setUserData(responseUser.contas);
-				setSchedullingData(responseSchedulling.agendamentos);
-			}
-		};
-
-		fetchUserData();
-	}, [payload, getAllSchedulling, getAllUsers]);
-
 	const getStatusColor = (status: Status) => {
 		switch (status) {
 			case Status.cancelado:
@@ -127,6 +140,15 @@ const SelecionarDiaFuncionario: React.FC = () => {
 	const findUserById = (id: string) => {
 		return userData.find(user => user.id === id);
 	};
+
+	if (loading) {
+		return (
+			<Flex justifyContent="center" alignItems="center" height="100vh">
+				<Text>Loading...</Text>
+			</Flex>
+		);
+	}
+
 	return (
 		<Flex
 			className="container__date"
@@ -146,16 +168,16 @@ const SelecionarDiaFuncionario: React.FC = () => {
 				</Box>
 			)}
 
-			<DatePicker
-				locale={'pt-BR'}
-				selected={selectedDate}
-				inline
-				filterDate={date => date.getDay() !== 0 && date.getDay() !== 6 && date <= maxDate}
-				onSelect={handleDateChange}
-				onChange={(date: Date | null) => setSelectedDate(date)}
-				minDate={new Date()}
-				className="customInput"
-			/>
+			<Box borderRadius={5} border={'1px solid #000'} p={'1px'}>
+				<DatePicker
+					isClearable
+					locale={'pt-BR'}
+					filterDate={date => date.getDay() !== 0 && date.getDay() !== 6 && date <= maxDate}
+					minDate={new Date()}
+					selected={selectedDate}
+					onChange={(date: Date) => setSelectedDate(date)}
+				/>
+			</Box>
 
 			{selectedDate && (
 				<Box
@@ -200,7 +222,7 @@ const SelecionarDiaFuncionario: React.FC = () => {
 									const user = findUserById(schedulling.usuario_id);
 									return (
 										<Card key={schedulling.id} mt={1}>
-											<CardBody>
+											<CardBody minH={'171px'}>
 												<Flex
 													minH={'102px'}
 													justifyContent={'space-between'}
@@ -224,7 +246,9 @@ const SelecionarDiaFuncionario: React.FC = () => {
 															flexDir={'column'}
 														>
 															<Flex gap={2} alignItems={'center'}>
-																<Heading size="lg">{format(schedulling.data_hora, 'HH:mm')}</Heading>
+																<Heading size="lg">
+																	{format(schedulling.data_hora, 'HH:mm')}
+																</Heading>
 																<Tag colorScheme={getStatusColor(schedulling.status)}>
 																	{Status[schedulling.status]}
 																</Tag>

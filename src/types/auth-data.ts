@@ -6,7 +6,7 @@ export type SignIn = {
   password: string;
 };
 
-export type RegisterUser = {
+export type RegisterUserModel = {
   tipoUsuario: TipoUsuario;
   cras: Cras;
   name: string;
@@ -18,7 +18,18 @@ export type RegisterUser = {
   endereco: IEndereco;
 };
 
-export interface RegisterSchedulling {
+export type RegisterEmployee = {
+  tipoUsuario: TipoUsuario;
+  cras: Cras;
+  name: string;
+  cpf: string;
+  dataNascimento: string;
+  telefone: string;
+  email?: string;
+  password: string;
+};
+
+export interface RegisterSchedullingModel {
   servico?: number;
   status?: number;
   name: string;

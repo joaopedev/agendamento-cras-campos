@@ -2,15 +2,17 @@ import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { createContext, useEffect, useState } from "react";
 import { IAuthContext, IAuthProvider, IPayload } from "../interface/AuthProps";
-import { SignIn, RegisterUser, RegisterSchedulling } from "../types/auth-data";
+import { SignIn, RegisterUserModel, RegisterSchedullingModel, RegisterEmployee } from "../types/auth-data";
 import {
   getUserRequest,
   loginRequest,
   registerRequest,
   getSchedullingRequest,
   registerSchedullingRequest,
+  getAllUsersRequest,
+  registerEmployeeRequest,
 } from "../services/auth-request";
-import { IUserModel } from "../interface/User";
+import { IAllUsers, IUserModel } from "../interface/User";
 import { ISchedulingModel } from "../interface/Schedulling";
 
 export const AuthContext = createContext({} as IAuthContext);
@@ -72,7 +74,7 @@ export const AuthProvider = ({ children }: IAuthProvider) => {
     password,
     telefone,
     tipoUsuario,
-  }: RegisterUser) => {
+  }: RegisterUserModel) => {
     await registerRequest({
       cpf,
       cras,
@@ -100,7 +102,7 @@ export const AuthProvider = ({ children }: IAuthProvider) => {
     data_hora,
     cras,
     status,
-  }: RegisterSchedulling) => {
+  }: RegisterSchedullingModel) => {
     await registerSchedullingRequest({
       name,
       usuario_id,
@@ -113,11 +115,38 @@ export const AuthProvider = ({ children }: IAuthProvider) => {
     });
   };
 
-  const getSchedulling = async (): Promise<ISchedulingModel> => {
+  const registerEmployee = async ({
+    cpf,
+    cras,
+    dataNascimento,
+    email,
+    name,
+    password,
+    telefone,
+    tipoUsuario,
+  }: RegisterEmployee) => {
+    await registerEmployeeRequest({
+      cpf,
+      cras,
+      dataNascimento,
+      email,
+      name,
+      password,
+      telefone,
+      tipoUsuario,
+    });
+  };
+
+  const getAllSchedulling = async (): Promise<ISchedulingModel> => {
     const { data } = await getSchedullingRequest();
     return data;
   };
 
+  const getEmployee = async (): Promise<IAllUsers> => {
+    const { data } = await getAllUsersRequest();
+    return data;
+  };
+  
   const signOut = async () => {
     localStorage.removeItem("token");
     setToken(null);
@@ -128,6 +157,7 @@ export const AuthProvider = ({ children }: IAuthProvider) => {
   return (
     <AuthContext.Provider
       value={{
+        registerEmployee,
         payload,
         setPayload,
         isAuthenticated,
@@ -135,8 +165,9 @@ export const AuthProvider = ({ children }: IAuthProvider) => {
         registerUser,
         signOut,
         getUser,
+        getAllUsers: getEmployee,
         token,
-        getSchedulling,
+        getAllSchedulling,
         registerSchedulling
       }}
     >

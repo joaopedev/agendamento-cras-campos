@@ -24,7 +24,7 @@ import { SidebarHome } from '../components/SidebarHome';
 import { HamburgerMenu } from '../components/HamburgerMenu';
 import { useAuth } from '../hook/useAuth';
 import { AuthContext } from '../context/AuthContext';
-import { IUserModel, Bairros } from '../interface/User';
+import { IUserModel, Bairros, Cras } from '../interface/User';
 import { useForm, Controller } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 
@@ -44,7 +44,7 @@ export const Home: React.FC = () => {
 	} = useForm<IUserModel>({
 		defaultValues: userData || {},
 	});
-	const showAgendamento = userData?.tipoUsuario === 1 || userData?.tipoUsuario === 3;
+	const showAgendamento = userData?.tipo_usuario === 1 || userData?.tipo_usuario === 3;
 	useEffect(() => {
 		if (userData) {
 			setValue('endereco.bairro', userData.endereco.bairro); // Set default bairro
@@ -62,9 +62,9 @@ export const Home: React.FC = () => {
 		fetchUserData();
 	}, [payload, getUser]);
 
-	const buttonSingleOut =  () => {
+	const buttonSingleOut = () => {
 		signOut();
-	    window.location.href = "/";
+		window.location.href = '/';
 	};
 
 	const handleEdit = () => {
@@ -178,7 +178,7 @@ export const Home: React.FC = () => {
 										<FormControl isInvalid={!!errors.cras}>
 											<FormLabel htmlFor="cras">Cras</FormLabel>
 											{/* Display the name (string) associated with the Cras enum value */}
-											<Box sx={textStyle1}>{userData.cras}</Box> {/* CPF remains read-only */}
+											<Box sx={textStyle1}>{Cras[userData.cras]}</Box> {/* CPF remains read-only */}
 										</FormControl>
 									)}
 								/>

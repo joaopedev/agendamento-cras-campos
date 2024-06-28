@@ -60,11 +60,11 @@ export const HamburgerMenu: React.FC = () => {
 							}}
 							color={'white'}
 						>
-							Agendamento
+							Agendar
 						</MenuItem>
 					</NavLink>
 
-					{userData?.tipoUsuario !== 1 && (
+					{userData?.tipo_usuario !== 1 && (
 						<NavLink to={'/controleFuncionarios'}>
 							<MenuItem
 								bg={'none'}
@@ -74,12 +74,12 @@ export const HamburgerMenu: React.FC = () => {
 								}}
 								color={'white'}
 							>
-								Controle de Funcionarios
+								Agendamentos
 							</MenuItem>
 						</NavLink>
 					)}
 
-					{userData?.tipoUsuario === 3 && (
+					{userData?.tipo_usuario === 3 && (
 						<NavLink to={'/dashboard'}>
 							<MenuItem
 								bg={'none'}
@@ -94,7 +94,7 @@ export const HamburgerMenu: React.FC = () => {
 						</NavLink>
 					)}
 
-					{userData?.tipoUsuario === 3 && (
+					{userData?.tipo_usuario === 3 && (
 						<NavLink to={'/gerenciamento'}>
 							<MenuItem
 								bg={'none'}

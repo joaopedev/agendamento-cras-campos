@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState, useMemo } from 'react';
+import { useContext, useEffect, useState, useMemo, useRef } from 'react';
 import {
 	Button,
 	Box,
@@ -50,6 +50,8 @@ const SelecionarDia: React.FC = () => {
 	const { getAllSchedulling, payload, registerSchedulling, getUser } = useContext(AuthContext);
 	const [schedullingData, setSchedullingData] = useState<ISchedulingModel[]>([]);
 	const [userData, setUserData] = useState<any | null>(null);
+	const [loading, setLoading] = useState(true);
+	const isMounted = useRef(true);
 	const toast = useToast();
 	const horarios: Horario[] = [
 		{ hora: '08:00', disponivel: true },
@@ -68,7 +70,9 @@ const SelecionarDia: React.FC = () => {
 		setValue,
 		formState: { errors },
 	} = useForm<RegisterSchedullingModel>();
-	const onSubmit: SubmitHandler<RegisterSchedullingModel> = async (data: RegisterSchedullingModel) => {
+	const onSubmit: SubmitHandler<RegisterSchedullingModel> = async (
+		data: RegisterSchedullingModel
+	) => {
 		try {
 			const response = await registerSchedulling(data);
 			console.log(response);
@@ -96,16 +100,34 @@ const SelecionarDia: React.FC = () => {
 	};
 
 	useEffect(() => {
+		isMounted.current = true;
 		const fetchUserData = async () => {
 			if (payload) {
-				const response: ISchedulingResponse = await getAllSchedulling();
-				const userResponse = await getUser(payload.id);
-				setUserData(userResponse);
-				setSchedullingData(response.agendamentos);
+				try {
+					setLoading(true);
+					const response: ISchedulingResponse = await getAllSchedulling();
+					const userResponse = await getUser(payload.id);
+					if (isMounted.current) {
+						setUserData(userResponse);
+						setSchedullingData(response.agendamentos);
+					}
+				} catch (error) {
+					if (isMounted.current) {
+						console.error('Failed to fetch data', error);
+					}
+				} finally {
+					if (isMounted.current) {
+						setLoading(false);
+					}
+				}
 			}
 		};
 
 		fetchUserData();
+
+		return () => {
+			isMounted.current = false;
+		};
 	}, [payload, getAllSchedulling, getUser]);
 
 	const horariosDisponiveis = useMemo(() => {
@@ -136,6 +158,14 @@ const SelecionarDia: React.FC = () => {
 		}
 		setSelectedDate(date);
 	};
+
+	if (loading) {
+		return (
+			<Flex justifyContent="center" alignItems="center" height="100vh">
+				<Text>Loading...</Text>
+			</Flex>
+		);
+	}
 
 	return (
 		<Flex
@@ -270,7 +300,9 @@ const SelecionarDia: React.FC = () => {
 														<FormLabel htmlFor="data_hora">Data e Hora</FormLabel>
 														<Input
 															id="data_hora"
-															defaultValue={selectedDate ? format(selectedDate, 'yyyy-MM-dd HH:mm') : ''}
+															defaultValue={
+																selectedDate ? format(selectedDate, 'yyyy-MM-dd HH:mm') : ''
+															}
 															{...register('data_hora')}
 															readOnly
 														/>

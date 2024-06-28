@@ -173,105 +173,132 @@ const SelecionarDia: React.FC = () => {
         </Box>
       )}
 
-
-			{selectedDate && (
-				<Box
-					className="box__cinza"
-					boxShadow="2px 2px 5px hsla(0, 28%, 0%, 0.5)"
-					textAlign={'center'}
-					p={[2, 3, 4, 4]}
-					borderWidth="1px"
-					display={selectedDate ? 'block' : 'none'}
-					borderRadius="md"
-					bg={'#F4F4F4'}
-					h={'fit-content'}
-					alignSelf={'center'}
-					w={'80%'}
-				>
-					<Flex gap={'5px'} flexDirection={'column'}>
-						<Box className="box__dia" alignItems={'center'} display={'flex'} p={2}>
-							<Text mr={'5px'} fontWeight="bold" fontSize={['12px', '12px', '15px', '15px']}>
-								DIA SELECIONADO:
-							</Text>
-							<Box bg="#fff" p={'5px'} flex={1} textAlign="center" borderRadius="5px">
-								<Text fontSize={['12px', '12px', '15px', '15px']}>
-									{selectedDate && format(selectedDate, 'dd/MM/yyyy')}
-								</Text>
-							</Box>
-						</Box>
-						<Box className="box__esquerda" flex={1}>
-							<Text pb={1} fontSize={['12px', '12px', '15px', '15px']} fontWeight="bold">
-								HORÁRIOS DISPONÍVEIS
-							</Text>
-							<SimpleGrid columns={[2, null, 5]} spacing="1">
-								{horariosDisponiveis.map(horario => (
-									<BoxHorario
-										key={horario.hora}
-										horario={horario}
-										selectedDate={selectedDate}
-										onHorarioSelect={(date: Date) => {
-											setSelectedDate(date);
-											setHorarioSelecionado(horario.hora);
-											onOpen();
-										}}
-										setValue={setValue}
-									/>
-								))}
-							</SimpleGrid>
-							<Modal
-								isOpen={isOpen}
-								onClose={() => {
-									onClose();
-									setShowForm(false);
-								}}
-								isCentered
-								size={['xs', 'sm', 'md', 'lg']}
-							>
-								<ModalOverlay />
-								<ModalContent minW={['90%', '27em', '30em', '48em']} textAlign={'center'}>
-									<ModalHeader mt={5}>Selecione uma opção para continuar:</ModalHeader>
-									<ModalCloseButton />
-									<ModalBody>
-										<form onSubmit={handleSubmit(onSubmit)}>
-											<Flex flexDir="column" alignItems="center">
-												<FormControl isInvalid={!!errors.servico}>
-													<RadioGroup
-														onChange={value => {
-															setSelectedOption(value as string);
-															setShowForm(true);
-														}}
-													>
-														<Stack direction="row" justifyContent="space-around">
-															<Radio
-																{...register('description')}
-																id="description"
-																defaultValue="1"
-																{...register('servico')}
-															>
-																Cadastramento
-															</Radio>
-															<Radio
-																{...register('description')}
-																id="description"
-																defaultValue="2"
-																{...register('servico')}
-															>
-																Atualização Cadastral
-															</Radio>
-														</Stack>
-													</RadioGroup>
-												</FormControl>
-												<Box display={'none'}>
-													<FormControl isInvalid={!!errors.name}>
-														<FormLabel htmlFor="name">Nome</FormLabel>
-														<Input
-															id="name"
-															{...register('name')}
-															defaultValue={userData?.contas.name}
-														/>
-														{errors.name && <Text color="red.500">{errors.name.message}</Text>}
-													</FormControl>
-
+      {selectedDate && (
+        <Box
+          className='box__cinza'
+          boxShadow='2px 2px 5px hsla(0, 28%, 0%, 0.5)'
+          textAlign={'center'}
+          p={[2, 3, 4, 4]}
+          borderWidth='1px'
+          display={selectedDate ? 'block' : 'none'}
+          borderRadius='md'
+          bg={'#F4F4F4'}
+          h={'fit-content'}
+          alignSelf={'center'}
+          w={'80%'}
+        >
+          <Flex gap={'5px'} flexDirection={'column'}>
+            <Box
+              className='box__dia'
+              alignItems={'center'}
+              display={'flex'}
+              p={2}
+            >
+              <Text
+                mr={'5px'}
+                fontWeight='bold'
+                fontSize={['12px', '12px', '15px', '15px']}
+              >
+                DIA SELECIONADO:
+              </Text>
+              <Box
+                bg='#fff'
+                p={'5px'}
+                flex={1}
+                textAlign='center'
+                borderRadius='5px'
+              >
+                <Text fontSize={['12px', '12px', '15px', '15px']}>
+                  {selectedDate && format(selectedDate, 'dd/MM/yyyy')}
+                </Text>
+              </Box>
+            </Box>
+            <Box className='box__esquerda' flex={1}>
+              <Text
+                pb={1}
+                fontSize={['12px', '12px', '15px', '15px']}
+                fontWeight='bold'
+              >
+                HORÁRIOS DISPONÍVEIS
+              </Text>
+              <SimpleGrid columns={[2, null, 5]} spacing='1'>
+                {horariosDisponiveis.map(horario => (
+                  <BoxHorario
+                    key={horario.hora}
+                    horario={horario}
+                    selectedDate={selectedDate}
+                    onHorarioSelect={(date: Date) => {
+                      setSelectedDate(date);
+                      setHorarioSelecionado(horario.hora);
+                      onOpen();
+                    }}
+                    setValue={setValue}
+                  />
+                ))}
+              </SimpleGrid>
+              <Modal
+                isOpen={isOpen}
+                onClose={() => {
+                  onClose();
+                  setShowForm(false);
+                }}
+                isCentered
+                size={['xs', 'sm', 'md', 'lg']}
+              >
+                <ModalOverlay />
+                <ModalContent
+                  minW={['90%', '27em', '30em', '48em']}
+                  textAlign={'center'}
+                >
+                  <ModalHeader mt={5}>
+                    Selecione uma opção para continuar:
+                  </ModalHeader>
+                  <ModalCloseButton />
+                  <ModalBody>
+                    <form onSubmit={handleSubmit(onSubmit)}>
+                      <Flex flexDir='column' alignItems='center'>
+                        <FormControl isInvalid={!!errors.servico}>
+                          <RadioGroup
+                            onChange={value => {
+                              setSelectedOption(value as string);
+                              setShowForm(true);
+                            }}
+                          >
+                            <Stack
+                              direction='row'
+                              justifyContent='space-around'
+                            >
+                              <Radio
+                                {...register('description')}
+                                id='description'
+                                value='1'
+                                {...register('servico')}
+                              >
+                                Cadastramento
+                              </Radio>
+                              <Radio
+                                {...register('description')}
+                                id='description'
+                                value='2'
+                                {...register('servico')}
+                              >
+                                Atualização Cadastral
+                              </Radio>
+                            </Stack>
+                          </RadioGroup>
+                        </FormControl>
+                        <Box display={'none'}>
+                          <FormControl isInvalid={!!errors.name}>
+                            <FormLabel htmlFor='name'>Nome</FormLabel>
+                            <Input
+                              id='name'
+                              {...register('name')}
+                              defaultValue={userData?.contas.name}
+                            />
+                            {errors.name && (
+                              <Text color='red.500'>{errors.name.message}</Text>
+                            )}
+                          </FormControl>
 
                           <FormControl isInvalid={!!errors.usuario_id}>
                             <FormLabel htmlFor='usuario_id'>
@@ -308,30 +335,24 @@ const SelecionarDia: React.FC = () => {
                             )}
                           </FormControl>
 
-
-													<FormControl isInvalid={!!errors.data_hora}>
-														<FormLabel htmlFor="data_hora">Data e Hora</FormLabel>
-														<Input
-															id="data_hora"
-															defaultValue={
-																selectedDate ? format(selectedDate, 'yyyy-MM-dd HH:mm') : ''
-															}
-															{...register('data_hora')}
-														/>
-														{errors.data_hora && (
-															<Text color="red.500">{errors.data_hora.message}</Text>
-														)}
-													</FormControl>
-
-                          <FormControl isInvalid={!!errors.cras}>
-                            <FormLabel htmlFor='cras'>Cras</FormLabel>
+                          <FormControl isInvalid={!!errors.data_hora}>
+                            <FormLabel htmlFor='data_hora'>
+                              Data e Hora
+                            </FormLabel>
                             <Input
-                              id='cras'
-                              {...register('cras')}
-                              defaultValue={userData?.contas.cras}
+                              id='data_hora'
+                              value={
+                                selectedDate
+                                  ? format(selectedDate, 'yyyy-MM-dd HH:mm')
+                                  : ''
+                              }
+                              {...register('data_hora')}
+                              readOnly
                             />
-                            {errors.cras && (
-                              <Text color='red.500'>{errors.cras.message}</Text>
+                            {errors.data_hora && (
+                              <Text color='red.500'>
+                                {errors.data_hora.message}
+                              </Text>
                             )}
                           </FormControl>
 
@@ -347,12 +368,29 @@ const SelecionarDia: React.FC = () => {
                             )}
                           </FormControl>
 
-													<FormControl mt={5}>
-														<FormLabel>Cras</FormLabel>
-														<Input defaultValue={BairroCras[userData?.contas.cras - 1].cras} />
-														{errors.cras && <Text color="red.500">{errors.cras.message}</Text>}
-													</FormControl>
+                          <FormControl isInvalid={!!errors.cras}>
+                            <FormLabel htmlFor='cras'>Cras</FormLabel>
+                            <Input
+                              id='cras'
+                              {...register('cras')}
+                              defaultValue={userData?.contas.cras}
+                            />
+                            {errors.cras && (
+                              <Text color='red.500'>{errors.cras.message}</Text>
+                            )}
+                          </FormControl>
 
+                          <FormControl mt={5}>
+                            <FormLabel>Cras</FormLabel>
+                            <Input
+                              defaultValue={
+                                BairroCras[userData?.contas.cras].cras
+                              }
+                            />
+                            {errors.cras && (
+                              <Text color='red.500'>{errors.cras.message}</Text>
+                            )}
+                          </FormControl>
 
                           <FormControl isInvalid={!!errors.status}>
                             <FormLabel htmlFor='status'>Status</FormLabel>
@@ -380,8 +418,7 @@ const SelecionarDia: React.FC = () => {
                             </strong>{' '}
                             às <strong>{horarioSelecionado}</strong> no{' '}
                             <strong>
-                              CRAS -{' '}
-                              {BairroCras[userData?.contas.cras - 1].cras}
+                              CRAS - {BairroCras[userData?.contas.cras].cras}
                             </strong>
                             ?
                           </Text>

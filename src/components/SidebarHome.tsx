@@ -81,25 +81,25 @@ export const SidebarHome: React.FC = () => {
 						)}
 					</NavLink>
 
-					<NavLink to="/agendamento">
+					<NavLink to="/agendar">
 						{({ isActive }) => (
 							<Button isActive={isActive} sx={sideBtnStyle}>
-								Agendamento
+								Agendar
 							</Button>
 						)}
 					</NavLink>
 
-					{userData?.tipoUsuario !== 1 && (
-						<NavLink to="/controleFuncionarios">
+					{userData?.tipo_usuario !== 1 && (
+						<NavLink to="/agendamentos">
 							{({ isActive }) => (
 								<Button isActive={isActive} sx={sideBtnStyle}>
-									Controle de Funcionarios
+									Agendamentos
 								</Button>
 							)}
 						</NavLink>
 					)}
 
-					{userData?.tipoUsuario === 3 && (
+					{userData?.tipo_usuario === 3 && (
 						<NavLink to="/dashboard">
 							{({ isActive }) => (
 								<Button isActive={isActive} sx={sideBtnStyle}>
@@ -109,7 +109,7 @@ export const SidebarHome: React.FC = () => {
 						</NavLink>
 					)}
 
-					{userData?.tipoUsuario === 3 && (
+					{userData?.tipo_usuario === 3 && (
 						<NavLink to="/gerenciamento">
 							{({ isActive }) => (
 								<Button isActive={isActive} sx={sideBtnStyle}>

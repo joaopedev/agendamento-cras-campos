@@ -2,17 +2,15 @@ import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { createContext, useEffect, useState } from "react";
 import { IAuthContext, IAuthProvider, IPayload } from "../interface/AuthProps";
-import { SignIn, RegisterUserModel, RegisterSchedullingModel, UpdateStatusSchedullingModel } from "../types/auth-data";
+import { SignIn, RegisterUser, RegisterSchedulling } from "../types/auth-data";
 import {
   getUserRequest,
-  getAllUserRequest,
   loginRequest,
   registerRequest,
   getSchedullingRequest,
   registerSchedullingRequest,
-  updateSchedullingStatusRegister,
 } from "../services/auth-request";
-import { IUserModel, IUsersModule } from "../interface/User";
+import { IUserModel } from "../interface/User";
 import { ISchedulingModel } from "../interface/Schedulling";
 
 export const AuthContext = createContext({} as IAuthContext);
@@ -74,7 +72,7 @@ export const AuthProvider = ({ children }: IAuthProvider) => {
     password,
     telefone,
     tipoUsuario,
-  }: RegisterUserModel) => {
+  }: RegisterUser) => {
     await registerRequest({
       cpf,
       cras,
@@ -98,27 +96,19 @@ export const AuthProvider = ({ children }: IAuthProvider) => {
     usuario_id,
     servico,
     description,
+    duracao_estimada,
     data_hora,
     cras,
     status,
-  }: RegisterSchedullingModel) => {
+  }: RegisterSchedulling) => {
     await registerSchedullingRequest({
       name,
       usuario_id,
       servico,
       description,
+      duracao_estimada,
       data_hora,
       cras,
-      status,
-    });
-  };
-
-  const updateSchedullingStatus = async ({
-    usuario_id,
-    status,
-  }: UpdateStatusSchedullingModel) => {
-    await updateSchedullingStatusRegister({
-      usuario_id,
       status,
     });
   };
@@ -127,12 +117,6 @@ export const AuthProvider = ({ children }: IAuthProvider) => {
     const { data } = await getSchedullingRequest();
     return data;
   };
-
-  const getUserAll = async (): Promise<IUsersModule> => {
-    const { data } = await getAllUserRequest();
-    return data;
-  };
-
 
   const signOut = async () => {
     localStorage.removeItem("token");
@@ -151,11 +135,9 @@ export const AuthProvider = ({ children }: IAuthProvider) => {
         registerUser,
         signOut,
         getUser,
-        getUserAll,
         token,
-        getAllSchedulling: getSchedulling,
-        registerSchedulling,
-        updateSchedullingStatus
+        getSchedulling,
+        registerSchedulling
       }}
     >
       {children}

@@ -1,3 +1,4 @@
+import { Status, TipoServico } from '../interface/Schedulling';
 import { TipoUsuario, Cras, IEndereco } from '../interface/User';
 
 export type SignIn = {
@@ -5,7 +6,7 @@ export type SignIn = {
   password: string;
 };
 
-export type RegisterUserModel = {
+export type RegisterUser = {
   tipoUsuario: TipoUsuario;
   cras: Cras;
   name: string;
@@ -17,17 +18,13 @@ export type RegisterUserModel = {
   endereco: IEndereco;
 };
 
-export interface RegisterSchedullingModel {
+export interface RegisterSchedulling {
   servico?: number;
   status?: number;
   name: string;
-  cras: NonNullable<Cras>;
+  cras: NonNullable<Cras>; // Ensure this matches your Yup schema type
   usuario_id: string;
   description: string;
+  duracao_estimada: string;
   data_hora: string;
-}
-
-export interface UpdateStatusSchedullingModel {
-  status?: number;
-  usuario_id: string;
 }

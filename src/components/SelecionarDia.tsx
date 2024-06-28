@@ -28,7 +28,7 @@ import { AuthContext } from '../context/AuthContext';
 import { ISchedulingModel, ISchedulingResponse } from '../interface/Schedulling';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useForm, SubmitHandler } from 'react-hook-form';
-import { RegisterSchedullingModel } from '../types/auth-data';
+import { RegisterSchedulling } from '../types/auth-data';
 import { BairroCras } from './BairroCras';
 import { btnStyle } from '../pages/loginPage';
 import BoxHorario from './BoxHorario';
@@ -47,7 +47,7 @@ const SelecionarDia: React.FC = () => {
 	const maxDate = addDays(new Date(), 31);
 	const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 	const { isOpen, onOpen, onClose } = useDisclosure();
-	const { getAllSchedulling, payload, registerSchedulling, getUser } = useContext(AuthContext);
+	const { getSchedulling, payload, registerSchedulling, getUser } = useContext(AuthContext);
 	const [schedullingData, setSchedullingData] = useState<ISchedulingModel[]>([]);
 	const [userData, setUserData] = useState<any | null>(null);
 	const toast = useToast();
@@ -67,10 +67,11 @@ const SelecionarDia: React.FC = () => {
 		handleSubmit,
 		setValue,
 		formState: { errors },
-	} = useForm<RegisterSchedullingModel>();
-	const onSubmit: SubmitHandler<RegisterSchedullingModel> = async (data: RegisterSchedullingModel) => {
+	} = useForm<RegisterSchedulling>();
+	const onSubmit: SubmitHandler<RegisterSchedulling> = async (data: RegisterSchedulling) => {
 		try {
 			const response = await registerSchedulling(data);
+			console.log(response);
 			toast({
 				title: 'Agendamento realizado com sucesso',
 				duration: 5000,
@@ -97,8 +98,7 @@ const SelecionarDia: React.FC = () => {
 	useEffect(() => {
 		const fetchUserData = async () => {
 			if (payload) {
-				const response: ISchedulingResponse = await getAllSchedulling();
-				console.log(response)
+				const response: ISchedulingResponse = await getSchedulling();
 				const userResponse = await getUser(payload.id);
 				setUserData(userResponse);
 				setSchedullingData(response.agendamentos);
@@ -106,7 +106,7 @@ const SelecionarDia: React.FC = () => {
 		};
 
 		fetchUserData();
-	}, [payload, getAllSchedulling, getUser]);
+	}, [payload, getSchedulling, getUser]);
 
 	const horariosDisponiveis = useMemo(() => {
 		return horarios.map(horario => {
@@ -266,11 +266,23 @@ const SelecionarDia: React.FC = () => {
 														)}
 													</FormControl>
 
+													<FormControl isInvalid={!!errors.duracao_estimada}>
+														<FormLabel htmlFor="duracao_estimada">Duração Estimada</FormLabel>
+														<Input
+															id="duracao_estimada"
+															{...register('duracao_estimada')}
+															defaultValue={format(addHours(selectedDate, 1), 'yyyy-MM-dd HH:mm')}
+														/>
+														{errors.duracao_estimada && (
+															<Text color="red.500">{errors.duracao_estimada.message}</Text>
+														)}
+													</FormControl>
+
 													<FormControl isInvalid={!!errors.data_hora}>
 														<FormLabel htmlFor="data_hora">Data e Hora</FormLabel>
 														<Input
 															id="data_hora"
-															value={selectedDate ? format(selectedDate, 'yyyy-MM-dd HH:mm') : ''}
+															defaultValue={selectedDate ? format(selectedDate, 'yyyy-MM-dd HH:mm') : ''}
 															{...register('data_hora')}
 															readOnly
 														/>
@@ -301,7 +313,7 @@ const SelecionarDia: React.FC = () => {
 
 													<FormControl mt={5}>
 														<FormLabel>Cras</FormLabel>
-														<Input value={BairroCras[userData?.contas.cras - 1].cras} />
+														<Input defaultValue={BairroCras[userData?.contas.cras].cras} />
 														{errors.cras && <Text color="red.500">{errors.cras.message}</Text>}
 													</FormControl>
 
@@ -319,7 +331,7 @@ const SelecionarDia: React.FC = () => {
 														Deseja confirmar o seu agendamento para o dia{' '}
 														<strong>{selectedDate && format(selectedDate, 'dd/MM/yyyy')}</strong> às{' '}
 														<strong>{horarioSelecionado}</strong> no{' '}
-														<strong>CRAS - {BairroCras[userData?.contas.cras - 1].cras}</strong>?
+														<strong>CRAS - {BairroCras[userData?.contas.cras].cras}</strong>?
 													</Text>
 												</ModalFooter>
 											)}

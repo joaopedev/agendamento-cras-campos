@@ -369,7 +369,20 @@ export const Cadastro: React.FC = () => {
               render={({ field }) => (
                 <FormControl isInvalid={!!errors.endereco?.bairro}>
                   <FormLabel htmlFor='bairro'>Bairro</FormLabel>
-                  <Select id='bairro' variant='outline' {...field}>
+                  <Select
+                    sx={{
+                      fontSize: ['0.7rem', '0.8rem', '0.9rem', '1rem'],
+                      bg: 'white',
+                      borderRadius: '5px',
+                      p: '4px 0',
+                      mt: '0px',
+                      mb: '0px',
+                      paddingLeft: '16px',
+                    }}
+                    id='bairro'
+                    variant='outline'
+                    {...field}
+                  >
                     <option value=''>Selecione seu bairro</option>{' '}
                     {/* Placeholder */}
                     {Object.values(Bairros)
@@ -396,6 +409,15 @@ export const Cadastro: React.FC = () => {
                   {/* Display the name (string) associated with the Cras enum value */}
                   <Input
                     id='cras'
+                    sx={{
+                      fontSize: ['0.7rem', '0.8rem', '0.9rem', '1rem'],
+                      bg: 'white',
+                      borderRadius: '5px',
+                      p: '4px 0',
+                      mt: '0px',
+                      mb: '0px',
+                      paddingLeft: '16px',
+                    }}
                     value={field.value ? Cras[field.value] : ''}
                     isReadOnly
                   />

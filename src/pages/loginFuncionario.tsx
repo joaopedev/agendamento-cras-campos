@@ -241,4 +241,5 @@ export const btnStyle = {
     fontWeight: 'bold',
   },
 };
+
 export default LoginFuncionario;

@@ -1,23 +1,11 @@
 import { Menu, MenuButton, MenuList, MenuItem, Box, IconButton } from '@chakra-ui/react';
 import { NavLink } from 'react-router-dom';
 import { HamburgerIcon } from '@chakra-ui/icons';
-import { useContext, useEffect, useState } from 'react';
+import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
-import { IUserModel } from '../interface/User';
 
 export const HamburgerMenu: React.FC = () => {
-	const { getUser, payload } = useContext(AuthContext);
-	const [userData, setUserData] = useState<IUserModel | null>(null);
-	useEffect(() => {
-		const fetchUserData = async () => {
-			if (payload) {
-				const response = await getUser(payload.id); // Supondo que o payload contenha o userId
-				setUserData(response.contas); // Ajuste aqui para acessar a propriedade 'contas'
-			}
-		};
-
-		fetchUserData();
-	}, [payload, getUser]);
+	const { payload } = useContext(AuthContext);
 
 	return (
 		<Box display={['flex', 'none', 'none', 'none']} zIndex={200} top={0} pos={'fixed'}>
@@ -64,7 +52,7 @@ export const HamburgerMenu: React.FC = () => {
 						</MenuItem>
 					</NavLink>
 
-					{userData?.tipo_usuario !== 1 && (
+					{payload?.tipo_usuario !== 1 && (
 						<NavLink to={'/controleFuncionarios'}>
 							<MenuItem
 								bg={'none'}
@@ -79,7 +67,7 @@ export const HamburgerMenu: React.FC = () => {
 						</NavLink>
 					)}
 
-					{userData?.tipo_usuario === 3 && (
+					{payload?.tipo_usuario === 3 && (
 						<NavLink to={'/dashboard'}>
 							<MenuItem
 								bg={'none'}
@@ -94,7 +82,7 @@ export const HamburgerMenu: React.FC = () => {
 						</NavLink>
 					)}
 
-					{userData?.tipo_usuario === 3 && (
+					{payload?.tipo_usuario === 3 && (
 						<NavLink to={'/gerenciamento'}>
 							<MenuItem
 								bg={'none'}

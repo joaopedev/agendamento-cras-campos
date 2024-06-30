@@ -7,12 +7,10 @@ import {
 } from '@chakra-ui/react';
 import { NavLink } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
-import { useContext, useEffect, useState } from 'react';
-import { IUserModel } from '../interface/User';
+import { useContext } from 'react';
 
 export const SidebarHome: React.FC = () => {
-	const { getUser, payload } = useContext(AuthContext);
-	const [userData, setUserData] = useState<IUserModel | null>(null);
+	const { payload } = useContext(AuthContext);
 
 	const sideBtnStyle = {
 		textColor: 'white',
@@ -36,16 +34,6 @@ export const SidebarHome: React.FC = () => {
 			bg: 'white',
 		},
 	};
-	useEffect(() => {
-		const fetchUserData = async () => {
-			if (payload) {
-				const response = await getUser(payload.id); // Supondo que o payload contenha o userId
-				setUserData(response.contas); // Ajuste aqui para acessar a propriedade 'contas'
-			}
-		};
-
-		fetchUserData();
-	}, [payload, getUser]);
 
 	return (
 		<Box
@@ -89,7 +77,7 @@ export const SidebarHome: React.FC = () => {
 						)}
 					</NavLink>
 
-					{userData?.tipo_usuario !== 1 && (
+					{payload?.tipo_usuario !== 1 && (
 						<NavLink to="/agendamentos">
 							{({ isActive }) => (
 								<Button isActive={isActive} sx={sideBtnStyle}>
@@ -99,7 +87,7 @@ export const SidebarHome: React.FC = () => {
 						</NavLink>
 					)}
 
-					{userData?.tipo_usuario === 3 && (
+					{payload?.tipo_usuario === 3 && (
 						<NavLink to="/dashboard">
 							{({ isActive }) => (
 								<Button isActive={isActive} sx={sideBtnStyle}>
@@ -109,7 +97,7 @@ export const SidebarHome: React.FC = () => {
 						</NavLink>
 					)}
 
-					{userData?.tipo_usuario === 3 && (
+					{payload?.tipo_usuario === 3 && (
 						<NavLink to="/gerenciamento">
 							{({ isActive }) => (
 								<Button isActive={isActive} sx={sideBtnStyle}>

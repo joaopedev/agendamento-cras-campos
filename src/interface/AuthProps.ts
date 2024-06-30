@@ -10,8 +10,15 @@ export interface IAuthProvider {
 export interface IPayload {
   email: string;
   id: string;
+  tipo_usuario: number;
+  cras: number;
   exp: number;
   iat: number;
+  endereco: {
+    rua: string,
+    numero: number,
+    bairro: string
+  }
 }
 
 export interface IAuthContext {

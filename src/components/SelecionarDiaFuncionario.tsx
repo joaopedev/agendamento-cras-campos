@@ -14,10 +14,10 @@ import {
 	useDisclosure,
 	Image,
 	Tag,
+	useToast
 } from '@chakra-ui/react';
 import { AuthContext } from '../context/AuthContext';
 import { ISchedulingModel, ISchedulingResponse } from '../interface/Schedulling';
-import { IUserModel, IAllUsers } from '../interface/User';
 
 registerLocale('pt-BR', ptBR);
 
@@ -41,21 +41,20 @@ const SelecionarDiaFuncionario: React.FC = () => {
 			fontWeight: 'bold',
 		},
 	};
-	const { getAllSchedulling, payload, getAllUsers } = useContext(AuthContext);
+	const { payload, updateScheduling, getAllSchedullingCras } = useContext(AuthContext);
 	const [schedullingData, setSchedullingData] = useState<ISchedulingModel[]>([]);
-	const [userData, setUserData] = useState<IUserModel[]>([]);
 	const maxDate = addDays(new Date(), 30);
 	const [activeCardId, setActiveCardId] = useState<number | null>(null);
 	const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 	const [loading, setLoading] = useState(true);
 	const isMounted = useRef(true);
+	const toast = useToast();
 
 	const handleAtendimentoClick = (schedullingId: number) => {
 		setActiveCardId(schedullingId === activeCardId ? null : schedullingId);
-		onAtendimentoOpen();
 	};
 
-	const { isOpen: isAtendimentoOpen, onOpen: onAtendimentoOpen } = useDisclosure();
+	const { isOpen: isAtendimentoOpen} = useDisclosure();
 	const [elapsedTime, setElapsedTime] = useState(0);
 
 	useEffect(() => {
@@ -64,11 +63,9 @@ const SelecionarDiaFuncionario: React.FC = () => {
 			if (payload) {
 				try {
 					setLoading(true);
-					const responseSchedulling: ISchedulingResponse = await getAllSchedulling();
-					const responseUser: IAllUsers = await getAllUsers();
+					const response: ISchedulingResponse = await getAllSchedullingCras(payload.cras)
 					if (isMounted.current) {
-						setUserData(responseUser.contas);
-						setSchedullingData(responseSchedulling.agendamentos);
+						setSchedullingData(response.agendamentos);
 					}
 				} catch (error) {
 					if (isMounted.current) {
@@ -87,7 +84,7 @@ const SelecionarDiaFuncionario: React.FC = () => {
 		return () => {
 			isMounted.current = false;
 		};
-	}, [payload, getAllSchedulling, getAllUsers]);
+	}, [payload, getAllSchedullingCras]);
 
 	useEffect(() => {
 		let interval: NodeJS.Timer | null = null;
@@ -117,9 +114,10 @@ const SelecionarDiaFuncionario: React.FC = () => {
 	}, [isAtendimentoOpen]);
 
 	const formatTime = (seconds: number): string => {
-		const minutes = Math.floor(seconds / 60);
+		const hours = Math.floor(seconds / 3600);
+		const minutes = Math.floor((seconds % 3600) / 60);
 		const remainingSeconds = seconds % 60;
-		return `${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`;
+		return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`;
 	};
 
 	const getStatusColor = (status: Status) => {
@@ -137,10 +135,6 @@ const SelecionarDiaFuncionario: React.FC = () => {
 		}
 	};
 
-	const findUserById = (id: string) => {
-		return userData.find(user => user.id === id);
-	};
-
 	if (loading) {
 		return (
 			<Flex justifyContent="center" alignItems="center" height="100vh">
@@ -148,6 +142,41 @@ const SelecionarDiaFuncionario: React.FC = () => {
 			</Flex>
 		);
 	}
+
+	const handleUpdateScheduling = async (
+        id: number,
+        usuario_id: string,
+        newStatus: Status,
+        duracaoAtendimento: number
+    ) => {
+        try {
+            await updateScheduling(id, usuario_id, {
+                status: newStatus,
+                duracao_atendimento: duracaoAtendimento || 0,
+            });
+            toast({
+                title: 'Status atualizado com sucesso',
+                status: 'success',
+                duration: 5000,
+                isClosable: true,
+                position: 'top-right',
+            });
+            setSchedullingData(prevData =>
+                prevData.map(agendamento =>
+                    agendamento.id === id ? { ...agendamento, status: newStatus, duracao_atendimento: duracaoAtendimento } : agendamento
+                )
+            );
+        } catch (error) {
+            toast({
+                title: 'Erro ao atualizar o status',
+                description: (error as Error).message,
+                status: 'error',
+                duration: 5000,
+                isClosable: true,
+                position: 'top-right',
+            });
+        }
+    };
 
 	return (
 		<Flex
@@ -219,7 +248,6 @@ const SelecionarDiaFuncionario: React.FC = () => {
 								})
 								.sort((a, b) => new Date(a.data_hora).getTime() - new Date(b.data_hora).getTime())
 								.map(schedulling => {
-									const user = findUserById(schedulling.usuario_id);
 									return (
 										<Card key={schedulling.id} mt={1}>
 											<CardBody minH={'171px'}>
@@ -254,10 +282,10 @@ const SelecionarDiaFuncionario: React.FC = () => {
 																</Tag>
 															</Flex>
 															<Text textAlign={'left'} pt="2" fontSize="sm">
-																{user?.name}
+																{payload?.name}
 															</Text>
 															<Text textAlign={'left'} pt="2" fontSize="sm">
-																{user?.email}
+																{payload?.email}
 															</Text>
 															<Text my="2" fontSize="sm">
 																<strong>{schedulling.description}</strong>
@@ -271,18 +299,28 @@ const SelecionarDiaFuncionario: React.FC = () => {
 															</Text>
 														)}
 														<Flex gap={2} flexDir={['row', 'row', 'column', 'column']}>
-															<Button
-																sx={btnStyle}
-																onClick={() => handleAtendimentoClick(Number(schedulling.id))}
-																isDisabled={
-																	activeCardId !== null && activeCardId !== Number(schedulling.id)
+														<Button
+															sx={btnStyle}
+															onClick={() => {
+																handleAtendimentoClick(Number(schedulling.id));
+																if (activeCardId === Number(schedulling.id)) {
+																	handleUpdateScheduling(
+																		schedulling.id as number,
+																		schedulling.usuario_id,
+																		Status.realizado,
+																		elapsedTime
+																	);
 																}
-															>
-																{activeCardId === Number(schedulling.id) ? 'Encerrar' : 'Atender'}
-															</Button>
+															}}
+															isDisabled={
+																activeCardId !== null && activeCardId !== Number(schedulling.id)
+															}
+														>
+															{activeCardId === Number(schedulling.id) ? 'Encerrar' : 'Atender'}
+                                            			</Button>
 															{activeCardId !== Number(schedulling.id) && (
-																<Button
-																	isDisabled={activeCardId !== null}
+																 <Button
+																	onClick={() => handleUpdateScheduling(schedulling.id as number, schedulling.usuario_id, Status.ausente, elapsedTime)}
 																	boxShadow={'1px 1px 2px hsla(0, 28%, 0%, 0.7)'}
 																	minW={['80px', '80px', '90px', '100px']}
 																	fontSize={['0.8rem', '0.8rem', '0.9rem', '0.9rem']}

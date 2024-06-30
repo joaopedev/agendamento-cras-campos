@@ -11,8 +11,10 @@ import SidebarHome from "../components/SidebarHome";
 import { HamburgerMenu } from "../components/HamburgerMenu";
 
 export const Dashboard: React.FC = () => {
-  const { getAllSchedulling: getSchedulling, payload } = useContext(AuthContext);
-  const [schedullingData, setSchedullingData] = useState<ISchedulingModel[]>([]);
+  const { getAllSchedulling, payload } = useContext(AuthContext);
+  const [schedullingData, setSchedullingData] = useState<ISchedulingModel[]>(
+    []
+  );
   const [crasData, setCrasData] = useState<CrasData[]>([]);
   const [totalData, setTotalData] = useState<PieChartData[]>([
     { name: "Agendamentos Pendentes", value: 0, color: "#2CA1FF" },
@@ -23,13 +25,13 @@ export const Dashboard: React.FC = () => {
   useEffect(() => {
     const fetchSchedullingData = async () => {
       if (payload) {
-        const response = await getSchedulling();
+        const response = await getAllSchedulling();
         setSchedullingData(response.agendamentos);
       }
     };
 
     fetchSchedullingData();
-  }, [payload, getSchedulling]);
+  }, [payload, getAllSchedulling]);
 
   useEffect(() => {
     const processCrasData = () => {
@@ -80,9 +82,16 @@ export const Dashboard: React.FC = () => {
       <SidebarHome />
       <HamburgerMenu />
       <Box pl={["0%", "30%", "25%", "20%"]} w="100%">
-        <CrasPieChart crasData={[{ nome: "Total", data: totalData }]} crasNome="Total" />
+        <CrasPieChart
+          crasData={[{ nome: "Total", data: totalData }]}
+          crasNome="Total"
+        />
         {crasData.map((cras) => (
-          <CrasPieChart key={cras.nome} crasData={[cras]} crasNome={cras.nome} />
+          <CrasPieChart
+            key={cras.nome}
+            crasData={[cras]}
+            crasNome={cras.nome}
+          />
         ))}
       </Box>
     </Flex>

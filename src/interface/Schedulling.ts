@@ -1,12 +1,12 @@
 import { Cras } from "./User";
 
 export interface ISchedulingModel {
-  id?: string;
+  id?: number;
   name: string;
   usuario_id: string;
   servico: TipoServico;
   description: string;
-  duracao_estimada: Date;
+  duracao_atendimento: number;
   data_hora: Date;
   cras: Cras;
   status: Status;
@@ -16,7 +16,7 @@ export interface ISchedulingModel {
 
 export interface ISchedulingResponse {
   message: string;
-  agendamentos: ISchedulingModel[];
+  agendamentos: [];
 }
 
 export enum Status {

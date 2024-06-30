@@ -19,7 +19,7 @@ import {
 	ModalCloseButton,
 	useDisclosure,
 } from '@chakra-ui/react';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { SidebarHome } from '../components/SidebarHome';
 import { HamburgerMenu } from '../components/HamburgerMenu';
 import { useAuth } from '../hook/useAuth';
@@ -27,40 +27,30 @@ import { AuthContext } from '../context/AuthContext';
 import { IUserModel, Bairros, Cras } from '../interface/User';
 import { useForm, Controller } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query'
 
 export const Home: React.FC = () => {
 	const { signOut } = useAuth();
 	const { getUser, payload } = useContext(AuthContext);
 	const [userData, setUserData] = useState<IUserModel | null>(null);
-	const { isOpen, onOpen, onClose } = useDisclosure(); // For Modal
-	const [isEditing, setIsEditing] = useState(false); // Initialize to false
+	const { isOpen, onOpen, onClose } = useDisclosure();
+	const [isEditing, setIsEditing] = useState(false);
 	const navigate = useNavigate();
+	const id: string | undefined =payload?.id;
+	const { data } = useQuery({
+		queryKey: ['todos', payload?.id],
+		queryFn: () => getUser(id as string)
+	  })
+	console.log(setUserData)
 	const {
 		register,
 		handleSubmit,
 		control,
-		setValue,
 		formState: { errors },
 	} = useForm<IUserModel>({
 		defaultValues: userData || {},
 	});
-	const showAgendamento = userData?.tipo_usuario === 1 || userData?.tipo_usuario === 3;
-	useEffect(() => {
-		if (userData) {
-			setValue('endereco.bairro', userData.endereco.bairro); // Set default bairro
-		}
-	}, [userData, setValue]);
-
-	useEffect(() => {
-		const fetchUserData = async () => {
-			if (payload) {
-				const response = await getUser(payload.id);
-				setUserData(response.contas);
-			}
-		};
-
-		fetchUserData();
-	}, [payload, getUser]);
+	const showAgendamento = payload?.tipo_usuario === 1 || payload?.tipo_usuario === 3;
 
 	const buttonSingleOut = () => {
 		signOut();
@@ -68,16 +58,15 @@ export const Home: React.FC = () => {
 	};
 
 	const handleEdit = () => {
-		onOpen(); // Open the modal for confirmation
+		onOpen();
 	};
 
 	const handleConfirmEdit = () => {
 		setIsEditing(true);
-		onClose(); // Close the modal after confirmation
+		onClose();
 	};
 
-	const handleSave = async (data: IUserModel) => {
-		// TODO: Implement your logic to save the updated data to the backend
+	const handleSave = async () => {
 		setIsEditing(false);
 	};
 
@@ -120,13 +109,13 @@ export const Home: React.FC = () => {
 					<Box fontSize={['15px', '20px', '25px', '30px']} fontWeight="bold" mb="20px">
 						SEUS DADOS
 					</Box>
-					{userData && (
+					{data && (
 						<form onSubmit={handleSubmit(handleSave)}>
 							<Box>
 								<Box sx={textStyle2}>Nome:</Box>
-								<Box sx={textStyle1}>{userData.name}</Box> {/* Nome remains read-only */}
+								<Box sx={textStyle1}>{data?.contas.name}</Box> {/* Nome remains read-only */}
 								<Box sx={textStyle2}>CPF:</Box>
-								<Box sx={textStyle1}>{userData.cpf}</Box> {/* CPF remains read-only */}
+								<Box sx={textStyle1}>{data?.contas.cpf}</Box> {/* CPF remains read-only */}
 								<FormControl
 									isInvalid={!!errors.telefone}
 									mt="10px"
@@ -178,7 +167,7 @@ export const Home: React.FC = () => {
 										<FormControl isInvalid={!!errors.cras}>
 											<FormLabel htmlFor="cras">Cras</FormLabel>
 											{/* Display the name (string) associated with the Cras enum value */}
-											<Box sx={textStyle1}>{Cras[userData.cras]}</Box> {/* CPF remains read-only */}
+											<Box sx={textStyle1}>{Cras[data?.contas.cras]}</Box> {/* CPF remains read-only */}
 										</FormControl>
 									)}
 								/>

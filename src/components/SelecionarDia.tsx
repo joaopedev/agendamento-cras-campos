@@ -47,9 +47,8 @@ const SelecionarDia: React.FC = () => {
 	const maxDate = addDays(new Date(), 31);
 	const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 	const { isOpen, onOpen, onClose } = useDisclosure();
-	const { getAllSchedulling, payload, registerSchedulling, getUser } = useContext(AuthContext);
+	const { payload, registerSchedulling, getAllSchedullingCras } = useContext(AuthContext);
 	const [schedullingData, setSchedullingData] = useState<ISchedulingModel[]>([]);
-	const [userData, setUserData] = useState<any | null>(null);
 	const [loading, setLoading] = useState(true);
 	const isMounted = useRef(true);
 	const toast = useToast();
@@ -70,12 +69,10 @@ const SelecionarDia: React.FC = () => {
 		setValue,
 		formState: { errors },
 	} = useForm<RegisterSchedullingModel>();
-	const onSubmit: SubmitHandler<RegisterSchedullingModel> = async (
-		data: RegisterSchedullingModel
-	) => {
+
+	const onSubmit: SubmitHandler<RegisterSchedullingModel> = async (data: RegisterSchedullingModel) => {
 		try {
-			const response = await registerSchedulling(data);
-			console.log(response);
+			await registerSchedulling(data);
 			toast({
 				title: 'Agendamento realizado com sucesso',
 				duration: 5000,
@@ -101,14 +98,12 @@ const SelecionarDia: React.FC = () => {
 
 	useEffect(() => {
 		isMounted.current = true;
-		const fetchUserData = async () => {
-			if (payload) {
+		const fetchSchedullingData = async () => {
+			if (payload?.cras) {
 				try {
 					setLoading(true);
-					const response: ISchedulingResponse = await getAllSchedulling();
-					const userResponse = await getUser(payload.id);
+					const response: ISchedulingResponse = await getAllSchedullingCras(payload.cras);
 					if (isMounted.current) {
-						setUserData(userResponse);
 						setSchedullingData(response.agendamentos);
 					}
 				} catch (error) {
@@ -123,23 +118,20 @@ const SelecionarDia: React.FC = () => {
 			}
 		};
 
-		fetchUserData();
+		fetchSchedullingData();
 
 		return () => {
 			isMounted.current = false;
 		};
-	}, [payload, getAllSchedulling, getUser]);
+	}, [payload, getAllSchedullingCras]);
 
 	const horariosDisponiveis = useMemo(() => {
 		return horarios.map(horario => {
 			if (selectedDate) {
 				const dataSelecionadaFormatada = format(selectedDate, 'yyyy-MM-dd');
 				const horariosAgendados = schedullingData
-					.filter(
-						agendamentos =>
-							format(agendamentos.data_hora, 'yyyy-MM-dd') === dataSelecionadaFormatada
-					)
-					.map(agendamentos => format(agendamentos.data_hora, 'HH:mm'));
+					.filter(agendamentos => format(new Date(agendamentos.data_hora), 'yyyy-MM-dd') === dataSelecionadaFormatada)
+					.map(agendamentos => format(new Date(agendamentos.data_hora), 'HH:mm'));
 
 				return {
 					...horario,
@@ -279,7 +271,7 @@ const SelecionarDia: React.FC = () => {
 														<Input
 															id="name"
 															{...register('name')}
-															defaultValue={userData?.contas.name}
+															defaultValue={payload?.name}
 														/>
 														{errors.name && <Text color="red.500">{errors.name.message}</Text>}
 													</FormControl>
@@ -289,7 +281,7 @@ const SelecionarDia: React.FC = () => {
 														<Input
 															id="usuario_id"
 															{...register('usuario_id')}
-															defaultValue={userData?.contas.id}
+															defaultValue={payload?.id}
 														/>
 														{errors.usuario_id && (
 															<Text color="red.500">{errors.usuario_id.message}</Text>
@@ -316,24 +308,8 @@ const SelecionarDia: React.FC = () => {
 														<Input
 															id="cras"
 															{...register('cras')}
-															defaultValue={userData?.contas.cras}
+															defaultValue={payload?.cras}
 														/>
-														{errors.cras && <Text color="red.500">{errors.cras.message}</Text>}
-													</FormControl>
-
-													<FormControl isInvalid={!!errors.cras}>
-														<FormLabel htmlFor="cras">Cras</FormLabel>
-														<Input
-															id="cras"
-															{...register('cras')}
-															defaultValue={userData?.contas.cras}
-														/>
-														{errors.cras && <Text color="red.500">{errors.cras.message}</Text>}
-													</FormControl>
-
-													<FormControl mt={5}>
-														<FormLabel>Cras</FormLabel>
-														<Input defaultValue={BairroCras[userData?.contas.cras].cras} />
 														{errors.cras && <Text color="red.500">{errors.cras.message}</Text>}
 													</FormControl>
 
@@ -351,7 +327,7 @@ const SelecionarDia: React.FC = () => {
 														Deseja confirmar o seu agendamento para o dia{' '}
 														<strong>{selectedDate && format(selectedDate, 'dd/MM/yyyy')}</strong> às{' '}
 														<strong>{horarioSelecionado}</strong> no{' '}
-														<strong>CRAS - {BairroCras[userData?.contas.cras].cras}</strong>?
+														<strong>CRAS - {payload?.cras !== undefined ? BairroCras[payload.cras].cras : 'N/A'}?</strong>
 													</Text>
 												</ModalFooter>
 											)}

@@ -11,6 +11,8 @@ import {
   registerSchedullingRequest,
   getAllUsersRequest,
   registerEmployeeRequest,
+  getAllSchedullingCrasRequest,
+  updateSchedulingRequest 
 } from "../services/auth-request";
 import { IAllUsers, IUserModel } from "../interface/User";
 import { ISchedulingModel } from "../interface/Schedulling";
@@ -93,6 +95,11 @@ export const AuthProvider = ({ children }: IAuthProvider) => {
     return data;
   };
 
+  const getEmployee = async (): Promise<IAllUsers> => {
+    const { data } = await getAllUsersRequest();
+    return data;
+  };
+
   const registerSchedulling = async ({
     name,
     usuario_id,
@@ -142,9 +149,13 @@ export const AuthProvider = ({ children }: IAuthProvider) => {
     return data;
   };
 
-  const getEmployee = async (): Promise<IAllUsers> => {
-    const { data } = await getAllUsersRequest();
+  const getAllSchedullingCras = async (cras: number): Promise<ISchedulingModel> => {
+    const { data } = await getAllSchedullingCrasRequest(cras);
     return data;
+  };
+
+  const updateScheduling = async (id: number, usuario_id: string, updates: Partial<ISchedulingModel>) => {
+    await updateSchedulingRequest(id, usuario_id, updates);
   };
   
   const signOut = async () => {
@@ -168,7 +179,9 @@ export const AuthProvider = ({ children }: IAuthProvider) => {
         getAllUsers: getEmployee,
         token,
         getAllSchedulling,
-        registerSchedulling
+        registerSchedulling,
+        getAllSchedullingCras,
+        updateScheduling 
       }}
     >
       {children}

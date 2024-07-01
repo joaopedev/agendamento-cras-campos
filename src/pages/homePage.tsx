@@ -41,7 +41,7 @@ export const Home: React.FC = () => {
 	} = useForm<IUserModel>({
 		defaultValues: userData || {},
 	});
-	const showAgendamento = payload?.tipo_usuario === 1 || payload?.tipo_usuario === 3;
+	const showAgendamento = payload?.tipo_usuario !== 2;
 
 	const handleEdit = () => {
 		onOpen();
@@ -78,13 +78,13 @@ export const Home: React.FC = () => {
 			</Modal>
 			<Stack
 				gap={['15px', '15px', '18px', '18px']}
-				w={['60%', '60%', '60%', '80%']}
+				w="100%"
+				py={'60px'}
 				m={'auto'}
 				alignItems="center"
 				pl={[0, '30%', '25%', '20%']}
 			>
 				<Box
-					// mt={['60px', 0, 0, 0]}
 					sx={boxStyle}
 					maxW={['500px', '500px', '500px', '950px']}
 					position={['relative', 'static', 'static', 'static']}
@@ -96,16 +96,11 @@ export const Home: React.FC = () => {
 						<form onSubmit={handleSubmit(handleSave)}>
 							<Box>
 								<Box sx={textStyle2}>Nome:</Box>
-								<Box sx={textStyle1}>{payload?.name}</Box> {/* Nome remains read-only */}
+								<Box sx={textStyle1}>{payload?.name}</Box>
 								<Box sx={textStyle2}>CPF:</Box>
-								<Box sx={textStyle1}>{payload?.cpf}</Box> {/* CPF remains read-only */}
-								<FormControl
-									isInvalid={!!errors.telefone}
-									mt="10px"
-									isDisabled={!isEditing} // Use isDisabled instead of isReadOnly
-								>
+								<Box sx={textStyle1}>{payload?.cpf}</Box>
+								<FormControl isInvalid={!!errors.telefone} mt="10px" isDisabled={!isEditing}>
 									{' '}
-									{/* Conditionally read-only */}
 									<FormLabel htmlFor="telefone">Celular:</FormLabel>
 									<InputGroup>
 										<InputLeftElement pointerEvents="none" children={'+55'} />
@@ -118,19 +113,14 @@ export const Home: React.FC = () => {
 									</InputGroup>
 									<FormErrorMessage>{errors.telefone && errors.telefone.message}</FormErrorMessage>
 								</FormControl>
-								<Controller // Controlled Bairro Select
+								<Controller
 									control={control}
 									name="endereco.bairro"
 									render={({ field }) => (
-										<FormControl
-											isInvalid={!!errors.endereco?.bairro}
-											isDisabled={!isEditing} // Use isDisabled instead of isReadOnly
-										>
+										<FormControl isInvalid={!!errors.endereco?.bairro} isDisabled={!isEditing}>
 											{' '}
-											{/* Conditionally read-only */}
 											<FormLabel htmlFor="bairro">Bairro</FormLabel>
 											<Select id="bairro" variant="outline" {...field}>
-												{/* Map directly over the Bairros enum values */}
 												{Object.values(Bairros).map(bairro => (
 													<option key={bairro} value={bairro}>
 														{bairro}
@@ -143,25 +133,25 @@ export const Home: React.FC = () => {
 										</FormControl>
 									)}
 								/>
-								<Controller // Controlled (and read-only) CRAS Input
+								<Controller
 									control={control}
 									name="cras"
 									render={({ field }) => (
 										<FormControl isInvalid={!!errors.cras}>
 											<FormLabel htmlFor="cras">Cras</FormLabel>
-											{/* Display the name (string) associated with the Cras enum value */}
-											<Box sx={textStyle1}>{Cras[payload.cras]}</Box> {/* CPF remains read-only */}
+
+											<Box sx={textStyle1}>{Cras[payload.cras]}</Box>
 										</FormControl>
 									)}
 								/>
 							</Box>
-							{!isEditing && ( // Show button only when not editing
+							{!isEditing && (
 								<Button onClick={handleEdit} sx={btnStyle} mt={4} transform="auto">
 									EDITAR INFORMAÇÕES
 								</Button>
 							)}
 
-							{isEditing && ( // Show button only when editing
+							{isEditing && (
 								<Button type="submit" sx={btnStyle} transform="auto">
 									SALVAR
 								</Button>
@@ -221,14 +211,12 @@ export const btnStyle = {
 };
 
 export const btnStyle2 = {
-	p: '0',
-	w: '30%',
+	py: '0',
 	display: '-ms-grid',
 	boxShadow: '1px 1px 2px hsla(0, 28%, 0%, 0.7)',
 	color: '#fff',
 	bg: 'rgb(0, 128, 0)',
 	maxW: '950px',
-	minW: ['200px', '250px', '300px', '350px'],
 	fontSize: ['0.7rem', '0.8rem', '0.9rem', '1rem'],
 	_hover: {
 		bg: 'rgb(53, 94, 59)',

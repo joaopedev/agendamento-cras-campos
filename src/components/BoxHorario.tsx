@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from '@chakra-ui/react';
-import { format, addHours } from 'date-fns';
+import { format } from 'date-fns';
 import { UseFormSetValue } from 'react-hook-form';
 import { RegisterSchedullingModel } from '../types/auth-data';
 

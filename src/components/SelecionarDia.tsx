@@ -29,9 +29,9 @@ import { ISchedulingModel, ISchedulingResponse } from '../interface/Schedulling'
 import 'react-datepicker/dist/react-datepicker.css';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { RegisterSchedullingModel } from '../types/auth-data';
-import { BairroCras } from './BairroCras';
 import { btnStyle } from '../pages/loginPage';
 import BoxHorario from './BoxHorario';
+import { Cras } from '../interface/User';
 
 registerLocale('pt-BR', ptBR);
 
@@ -327,7 +327,9 @@ const SelecionarDia: React.FC = () => {
 														Deseja confirmar o seu agendamento para o dia{' '}
 														<strong>{selectedDate && format(selectedDate, 'dd/MM/yyyy')}</strong> às{' '}
 														<strong>{horarioSelecionado}</strong> no{' '}
-														<strong>CRAS - {payload?.cras !== undefined ? BairroCras[payload.cras].cras : 'N/A'}?</strong>
+														{ payload && (
+																<strong>CRAS - {Cras[payload.cras]}?</strong>
+														)}
 													</Text>
 												</ModalFooter>
 											)}

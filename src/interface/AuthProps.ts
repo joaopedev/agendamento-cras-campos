@@ -15,6 +15,8 @@ export interface IPayload {
   exp: number;
   iat: number;
   name: string;
+  cpf: string;
+  telefone: string;
   endereco: {
     rua: string,
     numero: number,
@@ -28,7 +30,6 @@ export interface IAuthContext {
   signOut: () => Promise<void>;
   registerUser: (data: RegisterUserModel) => Promise<void>;
   registerEmployee: (data: RegisterEmployee) => Promise<void>;
-  getUser: (id: string) => Promise<IUserModel>;
   getAllUsers: () => Promise<IAllUsers>;
   payload: IPayload | null;
   setPayload: React.Dispatch<React.SetStateAction<IPayload | null>>;

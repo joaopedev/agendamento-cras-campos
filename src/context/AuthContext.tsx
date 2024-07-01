@@ -4,7 +4,6 @@ import { createContext, useEffect, useState } from "react";
 import { IAuthContext, IAuthProvider, IPayload } from "../interface/AuthProps";
 import { SignIn, RegisterUserModel, RegisterSchedullingModel, RegisterEmployee } from "../types/auth-data";
 import {
-  getUserRequest,
   loginRequest,
   registerRequest,
   getSchedullingRequest,
@@ -14,7 +13,7 @@ import {
   getAllSchedullingCrasRequest,
   updateSchedulingRequest 
 } from "../services/auth-request";
-import { IAllUsers, IUserModel } from "../interface/User";
+import { IAllUsers } from "../interface/User";
 import { ISchedulingModel } from "../interface/Schedulling";
 
 export const AuthContext = createContext({} as IAuthContext);
@@ -90,10 +89,6 @@ export const AuthProvider = ({ children }: IAuthProvider) => {
     });
   };
 
-  const getUser = async (id: string): Promise<IUserModel> => {
-    const { data } = await getUserRequest(id);
-    return data;
-  };
 
   const getEmployee = async (): Promise<IAllUsers> => {
     const { data } = await getAllUsersRequest();
@@ -175,7 +170,6 @@ export const AuthProvider = ({ children }: IAuthProvider) => {
         signIn,
         registerUser,
         signOut,
-        getUser,
         getAllUsers: getEmployee,
         token,
         getAllSchedulling,

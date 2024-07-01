@@ -22,26 +22,17 @@ import {
 import React, { useContext, useState } from 'react';
 import { SidebarHome } from '../components/SidebarHome';
 import { HamburgerMenu } from '../components/HamburgerMenu';
-import { useAuth } from '../hook/useAuth';
 import { AuthContext } from '../context/AuthContext';
 import { IUserModel, Bairros, Cras } from '../interface/User';
 import { useForm, Controller } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query'
 
 export const Home: React.FC = () => {
-	const { signOut } = useAuth();
-	const { getUser, payload } = useContext(AuthContext);
+	const { payload } = useContext(AuthContext);
 	const [userData, setUserData] = useState<IUserModel | null>(null);
 	const { isOpen, onOpen, onClose } = useDisclosure();
 	const [isEditing, setIsEditing] = useState(false);
 	const navigate = useNavigate();
-	const id: string | undefined =payload?.id;
-	const { data } = useQuery({
-		queryKey: ['todos', payload?.id],
-		queryFn: () => getUser(id as string)
-	  })
-	console.log(setUserData)
 	const {
 		register,
 		handleSubmit,
@@ -51,11 +42,6 @@ export const Home: React.FC = () => {
 		defaultValues: userData || {},
 	});
 	const showAgendamento = payload?.tipo_usuario === 1 || payload?.tipo_usuario === 3;
-
-	const buttonSingleOut = () => {
-		signOut();
-		window.location.href = '/';
-	};
 
 	const handleEdit = () => {
 		onOpen();
@@ -97,9 +83,6 @@ export const Home: React.FC = () => {
 				alignItems="center"
 				pl={[0, '30%', '25%', '20%']}
 			>
-				<Box mt={['60px', 0, 0, 0]}>
-					<Button onClick={buttonSingleOut}>Sair</Button>
-				</Box>
 				<Box
 					// mt={['60px', 0, 0, 0]}
 					sx={boxStyle}
@@ -109,13 +92,13 @@ export const Home: React.FC = () => {
 					<Box fontSize={['15px', '20px', '25px', '30px']} fontWeight="bold" mb="20px">
 						SEUS DADOS
 					</Box>
-					{data && (
+					{payload && (
 						<form onSubmit={handleSubmit(handleSave)}>
 							<Box>
 								<Box sx={textStyle2}>Nome:</Box>
-								<Box sx={textStyle1}>{data?.contas.name}</Box> {/* Nome remains read-only */}
+								<Box sx={textStyle1}>{payload?.name}</Box> {/* Nome remains read-only */}
 								<Box sx={textStyle2}>CPF:</Box>
-								<Box sx={textStyle1}>{data?.contas.cpf}</Box> {/* CPF remains read-only */}
+								<Box sx={textStyle1}>{payload?.cpf}</Box> {/* CPF remains read-only */}
 								<FormControl
 									isInvalid={!!errors.telefone}
 									mt="10px"
@@ -128,7 +111,7 @@ export const Home: React.FC = () => {
 										<InputLeftElement pointerEvents="none" children={'+55'} />
 										<Input
 											id="telefone"
-											placeholder="(22) 98765-4321"
+											placeholder={payload.telefone}
 											size="md"
 											{...register('telefone')}
 										/>
@@ -167,7 +150,7 @@ export const Home: React.FC = () => {
 										<FormControl isInvalid={!!errors.cras}>
 											<FormLabel htmlFor="cras">Cras</FormLabel>
 											{/* Display the name (string) associated with the Cras enum value */}
-											<Box sx={textStyle1}>{Cras[data?.contas.cras]}</Box> {/* CPF remains read-only */}
+											<Box sx={textStyle1}>{Cras[payload.cras]}</Box> {/* CPF remains read-only */}
 										</FormControl>
 									)}
 								/>

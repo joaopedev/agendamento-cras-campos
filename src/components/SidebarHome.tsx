@@ -1,10 +1,7 @@
 import {
 	Button,
-	Text,
 	Stack,
 	Box,
-	Image,
-	// Image
 } from '@chakra-ui/react';
 import { NavLink } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';

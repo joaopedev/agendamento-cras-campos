@@ -52,17 +52,7 @@ const SelecionarDia: React.FC = () => {
 	const [loading, setLoading] = useState(true);
 	const isMounted = useRef(true);
 	const toast = useToast();
-	const horarios: Horario[] = [
-		{ hora: '08:00', disponivel: true },
-		{ hora: '09:00', disponivel: true },
-		{ hora: '10:00', disponivel: true },
-		{ hora: '11:00', disponivel: true },
-		{ hora: '12:00', disponivel: true },
-		{ hora: '13:00', disponivel: true },
-		{ hora: '14:00', disponivel: true },
-		{ hora: '15:00', disponivel: true },
-		{ hora: '16:00', disponivel: true },
-	];
+
 	const {
 		register,
 		handleSubmit,
@@ -126,6 +116,20 @@ const SelecionarDia: React.FC = () => {
 			isMounted.current = false;
 		};
 	}, [payload, getAllSchedullingCras]);
+
+	const horarios = useMemo(() => {
+		return [
+			{ hora: '08:00', disponivel: true },
+			{ hora: '09:00', disponivel: true },
+			{ hora: '10:00', disponivel: true },
+			{ hora: '11:00', disponivel: true },
+			{ hora: '12:00', disponivel: true },
+			{ hora: '13:00', disponivel: true },
+			{ hora: '14:00', disponivel: true },
+			{ hora: '15:00', disponivel: true },
+			{ hora: '16:00', disponivel: true },
+		];
+	}, []);
 
 	const horariosDisponiveis = useMemo(() => {
 		return horarios.map(horario => {

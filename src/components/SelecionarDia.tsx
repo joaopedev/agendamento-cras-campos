@@ -45,24 +45,14 @@ const SelecionarDia: React.FC = () => {
 	const [horarioSelecionado, setHorarioSelecionado] = useState<string | null>(null);
 	const [, setSelectedOption] = useState<string>('');
 	const maxDate = addDays(new Date(), 31);
-	const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+	const [selectedDate, setSelectedDate] = useState<Date>(addDays(new Date(), 1));
 	const { isOpen, onOpen, onClose } = useDisclosure();
 	const { payload, registerSchedulling, getAllSchedullingCras } = useContext(AuthContext);
 	const [schedullingData, setSchedullingData] = useState<ISchedulingModel[]>([]);
 	const [loading, setLoading] = useState(true);
 	const isMounted = useRef(true);
 	const toast = useToast();
-	const horarios: Horario[] = [
-		{ hora: '08:00', disponivel: true },
-		{ hora: '09:00', disponivel: true },
-		{ hora: '10:00', disponivel: true },
-		{ hora: '11:00', disponivel: true },
-		{ hora: '12:00', disponivel: true },
-		{ hora: '13:00', disponivel: true },
-		{ hora: '14:00', disponivel: true },
-		{ hora: '15:00', disponivel: true },
-		{ hora: '16:00', disponivel: true },
-	];
+
 	const {
 		register,
 		handleSubmit,
@@ -70,7 +60,9 @@ const SelecionarDia: React.FC = () => {
 		formState: { errors },
 	} = useForm<RegisterSchedullingModel>();
 
-	const onSubmit: SubmitHandler<RegisterSchedullingModel> = async (data: RegisterSchedullingModel) => {
+	const onSubmit: SubmitHandler<RegisterSchedullingModel> = async (
+		data: RegisterSchedullingModel
+	) => {
 		try {
 			await registerSchedulling(data);
 			toast({
@@ -125,12 +117,29 @@ const SelecionarDia: React.FC = () => {
 		};
 	}, [payload, getAllSchedullingCras]);
 
+	const horarios = useMemo(() => {
+		return [
+			{ hora: '08:00', disponivel: true },
+			{ hora: '09:00', disponivel: true },
+			{ hora: '10:00', disponivel: true },
+			{ hora: '11:00', disponivel: true },
+			{ hora: '12:00', disponivel: true },
+			{ hora: '13:00', disponivel: true },
+			{ hora: '14:00', disponivel: true },
+			{ hora: '15:00', disponivel: true },
+			{ hora: '16:00', disponivel: true },
+		];
+	}, []);
+
 	const horariosDisponiveis = useMemo(() => {
 		return horarios.map(horario => {
 			if (selectedDate) {
 				const dataSelecionadaFormatada = format(selectedDate, 'yyyy-MM-dd');
 				const horariosAgendados = schedullingData
-					.filter(agendamentos => format(new Date(agendamentos.data_hora), 'yyyy-MM-dd') === dataSelecionadaFormatada)
+					.filter(
+						agendamentos =>
+							format(new Date(agendamentos.data_hora), 'yyyy-MM-dd') === dataSelecionadaFormatada
+					)
 					.map(agendamentos => format(new Date(agendamentos.data_hora), 'HH:mm'));
 
 				return {
@@ -142,7 +151,7 @@ const SelecionarDia: React.FC = () => {
 		});
 	}, [horarios, selectedDate, schedullingData]);
 
-	const handleDateChange = (date: Date | null) => {
+	const handleDateChange = (date: Date) => {
 		if (date && horarioSelecionado) {
 			const minutos = horaParaMinutos(horarioSelecionado);
 			date.setHours(Math.floor(minutos / 60));
@@ -170,6 +179,18 @@ const SelecionarDia: React.FC = () => {
 			w="100%"
 			flexDir={'column'}
 		>
+			<Box borderRadius={5} border={'1px solid #000'} p={'1px'}>
+				<DatePicker
+					locale={'pt-BR'}
+					selected={selectedDate}
+					isClearable={true}
+					filterDate={date => date.getDay() !== 0 && date.getDay() !== 6 && date <= maxDate}
+					onSelect={handleDateChange}
+					onChange={(date: Date) => setSelectedDate(date)}
+					minDate={addDays(new Date(), 1)}
+					className="customInput"
+				/>
+			</Box>
 			{!selectedDate && (
 				<Box className="selecionar__dia" textAlign="center">
 					<Text alignSelf={'center'} fontWeight={'bold'} fontSize={'20px'} textAlign={'center'}>
@@ -268,11 +289,7 @@ const SelecionarDia: React.FC = () => {
 												<Box display={'none'}>
 													<FormControl isInvalid={!!errors.name}>
 														<FormLabel htmlFor="name">Nome</FormLabel>
-														<Input
-															id="name"
-															{...register('name')}
-															defaultValue={payload?.name}
-														/>
+														<Input id="name" {...register('name')} defaultValue={payload?.name} />
 														{errors.name && <Text color="red.500">{errors.name.message}</Text>}
 													</FormControl>
 
@@ -305,11 +322,7 @@ const SelecionarDia: React.FC = () => {
 
 													<FormControl isInvalid={!!errors.cras}>
 														<FormLabel htmlFor="cras">Cras</FormLabel>
-														<Input
-															id="cras"
-															{...register('cras')}
-															defaultValue={payload?.cras}
-														/>
+														<Input id="cras" {...register('cras')} defaultValue={payload?.cras} />
 														{errors.cras && <Text color="red.500">{errors.cras.message}</Text>}
 													</FormControl>
 
@@ -327,9 +340,7 @@ const SelecionarDia: React.FC = () => {
 														Deseja confirmar o seu agendamento para o dia{' '}
 														<strong>{selectedDate && format(selectedDate, 'dd/MM/yyyy')}</strong> às{' '}
 														<strong>{horarioSelecionado}</strong> no{' '}
-														{ payload && (
-																<strong>CRAS - {Cras[payload.cras]}?</strong>
-														)}
+														{payload && <strong>CRAS - {Cras[payload.cras]}?</strong>}
 													</Text>
 												</ModalFooter>
 											)}
@@ -366,17 +377,6 @@ const SelecionarDia: React.FC = () => {
 					</Flex>
 				</Box>
 			)}
-
-			<DatePicker
-				locale={'pt-BR'}
-				selected={selectedDate}
-				inline
-				filterDate={date => date.getDay() !== 0 && date.getDay() !== 6 && date <= maxDate}
-				onSelect={handleDateChange}
-				onChange={(date: Date | null) => setSelectedDate(date)}
-				minDate={addDays(new Date(), 1)}
-				className="customInput"
-			/>
 		</Flex>
 	);
 };

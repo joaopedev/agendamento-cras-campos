@@ -3,12 +3,13 @@ import {
   SignIn,
   RegisterUserModel,
   RegisterSchedullingModel,
+
 } from '../types/auth-data';
 import { IAllUsers } from './User';
 import { ISchedulingModel, ISchedulingResponse } from './Schedulling';
 
 export interface IAuthProvider {
-  children: ReactNode;
+	children: ReactNode;
 }
 
 export interface IPayload {
@@ -45,4 +46,5 @@ export interface IAuthContext {
     usuario_id: string,
     updates: Partial<ISchedulingModel>
   ) => Promise<void>;
+
 }

@@ -1,4 +1,3 @@
-import { Status, TipoServico } from '../interface/Schedulling';
 import { TipoUsuario, Cras, IEndereco } from '../interface/User';
 
 export type SignIn = {
@@ -7,26 +6,16 @@ export type SignIn = {
 };
 
 export type RegisterUserModel = {
-  tipoUsuario: TipoUsuario;
+  tipo_usuario: TipoUsuario;
   cras: Cras;
   name: string;
   cpf: string;
-  dataNascimento: string;
+  data_nascimento: string;
   telefone: string;
   email?: string;
   password: string;
   endereco: IEndereco;
-};
-
-export type RegisterEmployee = {
-  tipoUsuario: TipoUsuario;
-  cras: Cras;
-  name: string;
-  cpf: string;
-  dataNascimento: string;
-  telefone: string;
-  email?: string;
-  password: string;
+  ativo: boolean;
 };
 
 export interface RegisterSchedullingModel {

@@ -44,7 +44,8 @@ export const Cadastro: React.FC = () => {
   } = useForm<RegisterUserModel>({
     resolver: yupResolver(RegisterUserSchema),
     defaultValues: {
-      tipoUsuario: TipoUsuario.comum, // Default to "Comum"
+      tipo_usuario: TipoUsuario.comum, // Default to "Comum"
+      ativo: true,
     },
   });
 
@@ -103,7 +104,7 @@ export const Cadastro: React.FC = () => {
   ) => {
     let value = e.target.value.replace(/\D/g, ''); // Remove non-digits
     setInputDataNascimento(value.slice(0, 8)); // Store unformatted value in state
-    setValue('dataNascimento', value.slice(0, 8)); // Update form value with unformatted date
+    setValue('data_nascimento', value.slice(0, 8)); // Update form value with unformatted date
 
     setValue('password', value.slice(0, 8)); // Update form value for password
   };
@@ -221,7 +222,7 @@ export const Cadastro: React.FC = () => {
               </FormErrorMessage>
             </FormControl>
             <Box sx={textStyle2}></Box>
-            <FormControl isInvalid={!!errors.dataNascimento}>
+            <FormControl isInvalid={!!errors.data_nascimento}>
               <FormLabel htmlFor='data-de-nascimento'>
                 Data de nascimento
               </FormLabel>
@@ -230,7 +231,7 @@ export const Cadastro: React.FC = () => {
                   id='data-de-nascimento'
                   placeholder='DD/MM/AAAA'
                   value={formatDataNascimento(inputDataNascimento)} // Format for display only
-                  {...register('dataNascimento', {
+                  {...register('data_nascimento', {
                     onChange: handleDataNascimentoAndPasswordChange,
                   })}
                   size='md'
@@ -243,12 +244,12 @@ export const Cadastro: React.FC = () => {
                     mb: '0px',
                     paddingLeft: '16px',
                   }}
-                  {...register('dataNascimento')}
+                  {...register('data_nascimento')}
                 />
                 <InputLeftElement pointerEvents='none' children={' '} />
               </InputGroup>
               <FormErrorMessage>
-                {errors.dataNascimento && errors.dataNascimento.message}
+                {errors.data_nascimento && errors.data_nascimento.message}
               </FormErrorMessage>
             </FormControl>
             <Box sx={textStyle2}></Box>
@@ -430,7 +431,8 @@ export const Cadastro: React.FC = () => {
             <Box sx={textStyle2}></Box>
 
             <Box sx={textStyle2}></Box>
-            <input type='hidden' {...register('tipoUsuario')} />
+            <input type='hidden' {...register('tipo_usuario')} />
+            <input type='hidden' {...register('ativo')} />
 
             <Button
               type='submit'

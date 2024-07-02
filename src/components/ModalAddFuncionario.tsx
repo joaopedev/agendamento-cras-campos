@@ -19,9 +19,9 @@ import {
 } from '@chakra-ui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
-import { RegisterEmployee } from '../types/auth-data';
+import { RegisterUserModel } from '../types/auth-data';
 import { useAuth } from '../hook/useAuth';
-import { RegisterEmployeeSchema } from '../validation/auth';
+import { RegisterUserSchema } from '../validation/auth';
 import { Cras, TipoUsuario } from '../interface/User';
 
 interface AddEmployeeModalProps {
@@ -33,7 +33,7 @@ const ModalAddFuncionario: React.FC<AddEmployeeModalProps> = ({
   isOpen,
   onClose,
 }) => {
-  const { registerEmployee } = useAuth();
+  const { registerUser } = useAuth();
   const toast = useToast();
   const {
     register,
@@ -41,10 +41,16 @@ const ModalAddFuncionario: React.FC<AddEmployeeModalProps> = ({
     handleSubmit,
     setValue,
     formState: { errors, isSubmitting },
-  } = useForm<RegisterEmployee>({
-    resolver: yupResolver(RegisterEmployeeSchema),
+  } = useForm<RegisterUserModel>({
+    resolver: yupResolver(RegisterUserSchema),
     defaultValues: {
-      tipoUsuario: TipoUsuario.admin, // Default to "Admin"
+      tipo_usuario: TipoUsuario.admin,
+      endereco: {
+        bairro: '',
+        rua: '',
+        numero: 0,
+      },
+      ativo: false,
     },
   });
 
@@ -57,9 +63,9 @@ const ModalAddFuncionario: React.FC<AddEmployeeModalProps> = ({
     .filter(([_, value]) => typeof value === 'number')
     .map(([key, value]) => [value, key] as [Cras, string]);
 
-  const handleRegister = async (data: RegisterEmployee) => {
+  const handleRegister = async (data: RegisterUserModel) => {
     try {
-      await registerEmployee(data);
+      await registerUser(data);
       toast({
         title: 'Usuário cadastrado com sucesso',
         duration: 5000,
@@ -101,7 +107,7 @@ const ModalAddFuncionario: React.FC<AddEmployeeModalProps> = ({
   const handleDataNascimentoChange = (e: ChangeEvent<HTMLInputElement>) => {
     let value = e.target.value.replace(/\D/g, ''); // Remove non-digits
     setInputDataNascimento(value.slice(0, 8)); // Store unformatted value in state
-    setValue('dataNascimento', value.slice(0, 8)); // Update form value with unformatted date
+    setValue('data_nascimento', value.slice(0, 8)); // Update form value with unformatted date
   };
 
   // Helper to format Date of Birth for display only
@@ -210,7 +216,7 @@ const ModalAddFuncionario: React.FC<AddEmployeeModalProps> = ({
                 maxLength={8}
               />
             </FormControl>
-            <FormControl isInvalid={!!errors.dataNascimento}>
+            <FormControl isInvalid={!!errors.data_nascimento}>
               <FormLabel htmlFor='data-de-nascimento'>
                 Data de nascimento
               </FormLabel>
@@ -219,7 +225,7 @@ const ModalAddFuncionario: React.FC<AddEmployeeModalProps> = ({
                   id='data-de-nascimento'
                   placeholder='DD/MM/AAAA'
                   value={formatDataNascimento(inputDataNascimento)} // Format for display only
-                  {...register('dataNascimento', {
+                  {...register('data_nascimento', {
                     onChange: handleDataNascimentoChange,
                   })}
                   size='md'
@@ -232,12 +238,12 @@ const ModalAddFuncionario: React.FC<AddEmployeeModalProps> = ({
                     mb: '0px',
                     paddingLeft: '16px',
                   }}
-                  {...register('dataNascimento')}
+                  {...register('data_nascimento')}
                 />
                 <InputLeftElement pointerEvents='none' children={' '} />
               </InputGroup>
               <FormErrorMessage>
-                {errors.dataNascimento && errors.dataNascimento.message}
+                {errors.data_nascimento && errors.data_nascimento.message}
               </FormErrorMessage>
             </FormControl>
             <FormControl isInvalid={!!errors.telefone}>
@@ -315,7 +321,11 @@ const ModalAddFuncionario: React.FC<AddEmployeeModalProps> = ({
               </FormErrorMessage>
             </FormControl>
 
-            <input type='hidden' {...register('tipoUsuario')} />
+            <input type='hidden' {...register('tipo_usuario')} />
+            <input type='hidden' {...register('ativo')} />
+            <input type='hidden' {...register('endereco.bairro')} />
+            <input type='hidden' {...register('endereco.rua')} />
+            <input type='hidden' {...register('endereco.numero')} />
             <Button
               type='submit'
               style={{ backgroundColor: '#2CA1FF' }}

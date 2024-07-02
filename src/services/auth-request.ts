@@ -1,21 +1,20 @@
-import { api } from "../api";
+import { api } from '../api';
 import {
   SignIn,
   RegisterUserModel,
   RegisterSchedullingModel,
-  RegisterEmployee,
-} from "../types/auth-data";
-import { AxiosError } from "axios";
-import { IErrorResponse } from "../interface/Feedeback";
-import { ISchedulingModel } from "../interface/Schedulling";
+} from '../types/auth-data';
+import { AxiosError } from 'axios';
+import { IErrorResponse } from '../interface/Feedeback';
+import { ISchedulingModel } from '../interface/Schedulling';
 
 export const loginRequest = async (data: SignIn) => {
   try {
-    const response = await api.post("/login", data);
+    const response = await api.post('/login', data);
     return response;
   } catch (error) {
     const errors = error as AxiosError;
-    let errorMessage = "";
+    let errorMessage = '';
     if (errors.response && errors.response.data instanceof Error) {
       errorMessage = (errors.response.data as IErrorResponse).message;
       alert(errorMessage);
@@ -29,11 +28,11 @@ export const loginRequest = async (data: SignIn) => {
 
 export const registerRequest = async (data: RegisterUserModel) => {
   try {
-    const response = await api.post("/registerUsers", data);
+    const response = await api.post('/registerUsers', data);
     return response;
   } catch (error) {
     const errors = error as AxiosError;
-    let errorMessage = "";
+    let errorMessage = '';
     if (errors.response && errors.response.data) {
       errorMessage = (errors.response.data as IErrorResponse).message;
       throw new Error(errorMessage);
@@ -50,7 +49,7 @@ export const getUserRequest = async (id: string) => {
     return response;
   } catch (error) {
     const errors = error as AxiosError;
-    let errorMessage = "";
+    let errorMessage = '';
     if (errors.response && errors.response.data) {
       errorMessage = (errors.response.data as IErrorResponse).message;
       alert(errorMessage);
@@ -68,7 +67,7 @@ export const getAllUsersRequest = async () => {
     return response;
   } catch (error) {
     const errors = error as AxiosError;
-    let errorMessage = "";
+    let errorMessage = '';
     if (errors.response && errors.response.data) {
       errorMessage = (errors.response.data as IErrorResponse).message;
       alert(errorMessage);
@@ -86,7 +85,7 @@ export const getSchedullingRequest = async () => {
     return response;
   } catch (error) {
     const errors = error as AxiosError;
-    let errorMessage = "";
+    let errorMessage = '';
     if (errors.response && errors.response.data) {
       errorMessage = (errors.response.data as IErrorResponse).message;
       alert(errorMessage);
@@ -102,28 +101,11 @@ export const registerSchedullingRequest = async (
   data: RegisterSchedullingModel
 ) => {
   try {
-    const response = await api.post("private/registerScheduling", data);
+    const response = await api.post('private/registerScheduling', data);
     return response;
   } catch (error) {
     const errors = error as AxiosError;
-    let errorMessage = "";
-    if (errors.response && errors.response.data) {
-      errorMessage = (errors.response.data as IErrorResponse).message;
-      throw new Error(errorMessage);
-    } else {
-      alert(errors?.message);
-      throw new Error(errors?.message);
-    }
-  }
-};
-
-export const registerEmployeeRequest = async (data: RegisterEmployee) => {
-  try {
-    const response = await api.post("/registerEmployee", data);
-    return response;
-  } catch (error) {
-    const errors = error as AxiosError;
-    let errorMessage = "";
+    let errorMessage = '';
     if (errors.response && errors.response.data) {
       errorMessage = (errors.response.data as IErrorResponse).message;
       throw new Error(errorMessage);
@@ -140,7 +122,7 @@ export const getAllSchedullingCrasRequest = async (cras: number) => {
     return response;
   } catch (error) {
     const errors = error as AxiosError;
-    let errorMessage = "";
+    let errorMessage = '';
     if (errors.response && errors.response.data) {
       errorMessage = (errors.response.data as IErrorResponse).message;
       alert(errorMessage);
@@ -165,13 +147,13 @@ export const updateSchedulingRequest = async (
     return response;
   } catch (error) {
     const errors = error as AxiosError;
-    let errorMessage = "";
+    let errorMessage = '';
     if (errors.response && errors.response.data) {
       errorMessage = (errors.response.data as IErrorResponse).message;
       alert(errorMessage);
     } else {
-      errorMessage = errors?.message || "Erro desconhecido";
-      alert(errorMessage); 
+      errorMessage = errors?.message || 'Erro desconhecido';
+      alert(errorMessage);
     }
     throw new Error(errorMessage);
   }

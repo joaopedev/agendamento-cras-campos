@@ -1,20 +1,23 @@
-import axios from "axios";
-import { jwtDecode } from "jwt-decode";
-import { createContext, useEffect, useState } from "react";
-import { IAuthContext, IAuthProvider, IPayload } from "../interface/AuthProps";
-import { SignIn, RegisterUserModel, RegisterSchedullingModel, RegisterEmployee } from "../types/auth-data";
+import axios from 'axios';
+import { jwtDecode } from 'jwt-decode';
+import { createContext, useEffect, useState } from 'react';
+import { IAuthContext, IAuthProvider, IPayload } from '../interface/AuthProps';
+import {
+  SignIn,
+  RegisterUserModel,
+  RegisterSchedullingModel,
+} from '../types/auth-data';
 import {
   loginRequest,
   registerRequest,
   getSchedullingRequest,
   registerSchedullingRequest,
   getAllUsersRequest,
-  registerEmployeeRequest,
   getAllSchedullingCrasRequest,
-  updateSchedulingRequest 
-} from "../services/auth-request";
-import { IAllUsers } from "../interface/User";
-import { ISchedulingModel } from "../interface/Schedulling";
+  updateSchedulingRequest,
+} from '../services/auth-request';
+import { IAllUsers } from '../interface/User';
+import { ISchedulingModel } from '../interface/Schedulling';
 
 export const AuthContext = createContext({} as IAuthContext);
 export const AuthProvider = ({ children }: IAuthProvider) => {
@@ -32,20 +35,20 @@ export const AuthProvider = ({ children }: IAuthProvider) => {
   };
 
   const getToken = async () => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem('token');
     if (token) {
       const payload = getUserFromToken(token);
       if (payload) {
         setToken(token);
         setPayload(payload);
         setIsAuthenticated(true);
-        axios.defaults.headers.common["Authorization"] = "Bearer " + token;
+        axios.defaults.headers.common['Authorization'] = 'Bearer ' + token;
       } else {
-        localStorage.removeItem("token");
+        localStorage.removeItem('token');
         setToken(null);
         setPayload(null);
         setIsAuthenticated(false);
-        delete axios.defaults.headers.common["Authorization"];
+        delete axios.defaults.headers.common['Authorization'];
       }
     }
   };
@@ -60,7 +63,7 @@ export const AuthProvider = ({ children }: IAuthProvider) => {
       password,
     });
     const { token } = data;
-    localStorage.setItem("token", token);
+    localStorage.setItem('token', token);
     setToken(token);
     setPayload(getUserFromToken(token));
   };
@@ -68,27 +71,28 @@ export const AuthProvider = ({ children }: IAuthProvider) => {
   const registerUser = async ({
     cpf,
     cras,
-    dataNascimento,
+    data_nascimento,
     email,
     endereco,
     name,
     password,
     telefone,
-    tipoUsuario,
+    tipo_usuario,
+    ativo: status,
   }: RegisterUserModel) => {
     await registerRequest({
       cpf,
       cras,
-      dataNascimento,
+      data_nascimento,
       email,
       endereco,
       name,
       password,
       telefone,
-      tipoUsuario,
+      tipo_usuario,
+      ativo: status,
     });
   };
-
 
   const getEmployee = async (): Promise<IAllUsers> => {
     const { data } = await getAllUsersRequest();
@@ -117,53 +121,36 @@ export const AuthProvider = ({ children }: IAuthProvider) => {
     });
   };
 
-  const registerEmployee = async ({
-    cpf,
-    cras,
-    dataNascimento,
-    email,
-    name,
-    password,
-    telefone,
-    tipoUsuario,
-  }: RegisterEmployee) => {
-    await registerEmployeeRequest({
-      cpf,
-      cras,
-      dataNascimento,
-      email,
-      name,
-      password,
-      telefone,
-      tipoUsuario,
-    });
-  };
-
   const getAllSchedulling = async (): Promise<ISchedulingModel> => {
     const { data } = await getSchedullingRequest();
     return data;
   };
 
-  const getAllSchedullingCras = async (cras: number): Promise<ISchedulingModel> => {
+  const getAllSchedullingCras = async (
+    cras: number
+  ): Promise<ISchedulingModel> => {
     const { data } = await getAllSchedullingCrasRequest(cras);
     return data;
   };
 
-  const updateScheduling = async (id: number, usuario_id: string, updates: Partial<ISchedulingModel>) => {
+  const updateScheduling = async (
+    id: number,
+    usuario_id: string,
+    updates: Partial<ISchedulingModel>
+  ) => {
     await updateSchedulingRequest(id, usuario_id, updates);
   };
-  
+
   const signOut = async () => {
-    localStorage.removeItem("token");
+    localStorage.removeItem('token');
     setToken(null);
     setPayload(null);
-    delete axios.defaults.headers.common["Authorization"];
+    delete axios.defaults.headers.common['Authorization'];
   };
 
   return (
     <AuthContext.Provider
       value={{
-        registerEmployee,
         payload,
         setPayload,
         isAuthenticated,
@@ -175,7 +162,7 @@ export const AuthProvider = ({ children }: IAuthProvider) => {
         getAllSchedulling,
         registerSchedulling,
         getAllSchedullingCras,
-        updateScheduling 
+        updateScheduling,
       }}
     >
       {children}

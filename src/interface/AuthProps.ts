@@ -5,7 +5,7 @@ import {
   RegisterSchedullingModel,
 
 } from '../types/auth-data';
-import { IAllUsers } from './User';
+import { IAllUsers, IUserModel } from './User';
 import { ISchedulingModel, ISchedulingResponse } from './Schedulling';
 
 export interface IAuthProvider {
@@ -31,13 +31,17 @@ export interface IPayload {
 
 export interface IAuthContext {
   isAuthenticated: boolean;
-  signIn: (data: SignIn) => Promise<void>;
-  signOut: () => Promise<void>;
-  registerUser: (data: RegisterUserModel) => Promise<void>;
-  getAllUsers: () => Promise<IAllUsers>;
+  token: string | null;
   payload: IPayload | null;
   setPayload: React.Dispatch<React.SetStateAction<IPayload | null>>;
-  token: string | null;
+  signIn: (data: SignIn) => Promise<void>;
+  signOut: () => Promise<void>;
+  getAllUsers: () => Promise<IAllUsers>;
+  registerUser: (data: RegisterUserModel) => Promise<void>;
+  updateUser: (
+    id: string,
+    updates: Partial<IUserModel>
+  ) => Promise<void>;
   getAllSchedulling: () => Promise<ISchedulingModel>;
   registerSchedulling: (data: RegisterSchedullingModel) => Promise<void>;
   getAllSchedullingCras: (cras: number) => Promise<ISchedulingResponse>;
@@ -46,5 +50,4 @@ export interface IAuthContext {
     usuario_id: string,
     updates: Partial<ISchedulingModel>
   ) => Promise<void>;
-
 }

@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
-import { createContext, useEffect, useState } from 'react';
+import { createContext, useEffect, useState, useCallback } from 'react';
 import { IAuthContext, IAuthProvider, IPayload } from '../interface/AuthProps';
 import {
   SignIn,
@@ -10,13 +10,14 @@ import {
 import {
   loginRequest,
   registerRequest,
+  getAllUsersRequest,
+  updateUserRequest,
   getSchedullingRequest,
   registerSchedullingRequest,
-  getAllUsersRequest,
   getAllSchedullingCrasRequest,
   updateSchedulingRequest,
 } from '../services/auth-request';
-import { IAllUsers } from '../interface/User';
+import { IAllUsers, IUserModel } from '../interface/User';
 import { ISchedulingModel } from '../interface/Schedulling';
 
 export const AuthContext = createContext({} as IAuthContext);
@@ -34,7 +35,7 @@ export const AuthProvider = ({ children }: IAuthProvider) => {
     }
   };
 
-  const getToken = async () => {
+  const getToken = useCallback(async () => {
     const token = localStorage.getItem('token');
     if (token) {
       const payload = getUserFromToken(token);
@@ -51,17 +52,14 @@ export const AuthProvider = ({ children }: IAuthProvider) => {
         delete axios.defaults.headers.common['Authorization'];
       }
     }
-  };
+  }, []);
 
   useEffect(() => {
     getToken();
-  }, [token]);
+  }, [token, getToken]);
 
   const signIn = async ({ cpf, password }: SignIn) => {
-    const { data } = await loginRequest({
-      cpf,
-      password,
-    });
+    const { data } = await loginRequest({ cpf, password });
     const { token } = data;
     localStorage.setItem('token', token);
     setToken(token);
@@ -94,9 +92,13 @@ export const AuthProvider = ({ children }: IAuthProvider) => {
     });
   };
 
-  const getEmployee = async (): Promise<IAllUsers> => {
+  const getAllUsers = async (): Promise<IAllUsers> => {
     const { data } = await getAllUsersRequest();
     return data;
+  };
+
+  const updateUser = async (id: string, updates: Partial<IUserModel>) => {
+    await updateUserRequest(id, updates);
   };
 
   const registerSchedulling = async ({
@@ -157,12 +159,13 @@ export const AuthProvider = ({ children }: IAuthProvider) => {
         signIn,
         registerUser,
         signOut,
-        getAllUsers: getEmployee,
+        getAllUsers,
         token,
         getAllSchedulling,
         registerSchedulling,
         getAllSchedullingCras,
         updateScheduling,
+        updateUser,
       }}
     >
       {children}

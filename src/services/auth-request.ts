@@ -7,6 +7,7 @@ import {
 import { AxiosError } from 'axios';
 import { IErrorResponse } from '../interface/Feedeback';
 import { ISchedulingModel } from '../interface/Schedulling';
+import { IUserModel } from '../interface/User';
 
 export const loginRequest = async (data: SignIn) => {
   try {
@@ -76,6 +77,30 @@ export const getAllUsersRequest = async () => {
       alert(errors?.message);
       throw new Error(errors?.message);
     }
+  }
+};
+
+export const updateUserRequest = async (
+  id: string,
+  updates: Partial<IUserModel>
+) => {
+  try {
+    const response = await api.put(
+      `/private/updateAccount/${id}`,
+      updates
+    );
+    return response;
+  } catch (error) {
+    const errors = error as AxiosError;
+    let errorMessage = '';
+    if (errors.response && errors.response.data) {
+      errorMessage = (errors.response.data as IErrorResponse).message;
+      alert(errorMessage);
+    } else {
+      errorMessage = errors?.message || 'Erro desconhecido';
+      alert(errorMessage);
+    }
+    throw new Error(errorMessage);
   }
 };
 

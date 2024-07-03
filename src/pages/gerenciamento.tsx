@@ -21,7 +21,7 @@ import { AuthContext } from '../context/AuthContext';
 
 const Gerenciamento: React.FC = () => {
 	const { isOpen, onOpen, onClose } = useDisclosure();
-	const { getAllUsers: getEmployee, payload } = useContext(AuthContext);
+	const { getAllUsers, payload } = useContext(AuthContext);
 	const [employeeData, setEmployeeData] = useState<IEmployee[]>([]);
 	const [employeeToDeleteIndex, setEmployeeToDeleteIndex] = useState<number | null>(null);
 	const {
@@ -34,7 +34,7 @@ const Gerenciamento: React.FC = () => {
 		const fetchEmployeeData = async () => {
 			if (payload) {
 				try {
-					const response = await getEmployee();
+					const response = await getAllUsers();
 					const employees: IEmployee[] = (response.contas || [])
 						.filter(user => user.tipo_usuario === TipoUsuario.admin)
 						.map(user => ({
@@ -42,10 +42,10 @@ const Gerenciamento: React.FC = () => {
 							name: user.name,
 							email: user.email,
 							cpf: user.cpf,
-							dataNascimento: user.dataNascimento,
-							password: user.password, // This might be sensitive, handle with care
+							data_ascimento: user.data_ascimento,
+							password: user.password, 
 							telefone: user.telefone,
-							tipoUsuario: user.tipo_usuario,
+							tipo_usuario: user.tipo_usuario,
 							cras: user.cras,
 							ativo: user.ativo,
 						}));
@@ -59,7 +59,7 @@ const Gerenciamento: React.FC = () => {
 		};
 
 		fetchEmployeeData();
-	}, [payload, getEmployee]);
+	}, [payload, getAllUsers]);
 
 	const handleDeleteEmployee = (index: number) => {
 		setEmployeeToDeleteIndex(index);

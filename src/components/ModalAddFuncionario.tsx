@@ -46,8 +46,8 @@ const ModalAddFuncionario: React.FC<AddEmployeeModalProps> = ({
     defaultValues: {
       tipo_usuario: TipoUsuario.admin,
       endereco: {
-        bairro: '',
-        rua: '',
+        bairro: "Não se aplica",
+        rua: "Não se aplica",
         numero: 0,
       },
       ativo: false,
@@ -57,7 +57,7 @@ const ModalAddFuncionario: React.FC<AddEmployeeModalProps> = ({
   const [inputDataNascimento, setInputDataNascimento] = useState('');
   const [inputCpf, setInputCpf] = useState('');
   const [inputTelefone, setInputTelefone] = useState('');
-  const [senha, setSenha] = useState(''); // Add useState for senha
+  const [senha, setSenha] = useState('');
 
   const CrasEntries = Object.entries(Cras)
     .filter(([_, value]) => typeof value === 'number')
@@ -83,14 +83,12 @@ const ModalAddFuncionario: React.FC<AddEmployeeModalProps> = ({
     }
   };
 
-  // Change Handler for CPF (without formatting in the state)
   const handleCpfChange = (e: ChangeEvent<HTMLInputElement>) => {
     let value = e.target.value.replace(/\D/g, '');
-    setInputCpf(value.slice(0, 11)); // Store unformatted value in state
-    setValue('cpf', value.slice(0, 11)); // Update form value with unformatted CPF
+    setInputCpf(value.slice(0, 11)); 
+    setValue('cpf', value.slice(0, 11)); 
   };
 
-  // Helper to format CPF for display only
   const formatCpf = (cpf: string) => {
     if (cpf.length > 3) {
       cpf = cpf.slice(0, 3) + '.' + cpf.slice(3);
@@ -105,12 +103,11 @@ const ModalAddFuncionario: React.FC<AddEmployeeModalProps> = ({
   };
 
   const handleDataNascimentoChange = (e: ChangeEvent<HTMLInputElement>) => {
-    let value = e.target.value.replace(/\D/g, ''); // Remove non-digits
-    setInputDataNascimento(value.slice(0, 8)); // Store unformatted value in state
-    setValue('data_nascimento', value.slice(0, 8)); // Update form value with unformatted date
+    let value = e.target.value.replace(/\D/g, ''); 
+    setInputDataNascimento(value.slice(0, 8)); 
+    setValue('data_nascimento', value.slice(0, 8));
   };
 
-  // Helper to format Date of Birth for display only
   const formatDataNascimento = (data: string) => {
     if (data.length > 2) {
       data = data.slice(0, 2) + '/' + data.slice(2);
@@ -121,7 +118,6 @@ const ModalAddFuncionario: React.FC<AddEmployeeModalProps> = ({
     return data;
   };
 
-  // Mudando handler do telefone (com formatação)
   const handleTelefoneChange = (e: ChangeEvent<HTMLInputElement>) => {
     let value = e.target.value.replace(/\D/g, '');
     value = value.slice(0, 11);
@@ -138,7 +134,7 @@ const ModalAddFuncionario: React.FC<AddEmployeeModalProps> = ({
   };
 
   const handleCrasChange = (e: ChangeEvent<HTMLSelectElement>) => {
-    const value = parseInt(e.target.value, 10); // Parse as number
+    const value = parseInt(e.target.value, 10);
     setValue('cras', value);
   };
 

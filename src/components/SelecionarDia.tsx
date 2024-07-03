@@ -35,15 +35,11 @@ import { Cras } from '../interface/User';
 
 registerLocale('pt-BR', ptBR);
 
-interface Horario {
-	hora: string;
-	disponivel: boolean;
-}
-
 const SelecionarDia: React.FC = () => {
 	const [showForm, setShowForm] = useState(false);
 	const [horarioSelecionado, setHorarioSelecionado] = useState<string | null>(null);
-	const [, setSelectedOption] = useState<string>('');
+	const [selectedOption, setSelectedOption] = useState<string>('');
+	const [agendamentoRealizado, setAgendamentoRealizado] = useState(false);
 	const maxDate = addDays(new Date(), 31);
 	const [selectedDate, setSelectedDate] = useState<Date>(addDays(new Date(), 1));
 	const { isOpen, onOpen, onClose } = useDisclosure();
@@ -65,6 +61,7 @@ const SelecionarDia: React.FC = () => {
 	) => {
 		try {
 			await registerSchedulling(data);
+			setAgendamentoRealizado(true);
 			toast({
 				title: 'Agendamento realizado com sucesso',
 				duration: 5000,
@@ -115,7 +112,7 @@ const SelecionarDia: React.FC = () => {
 		return () => {
 			isMounted.current = false;
 		};
-	}, [payload, getAllSchedullingCras]);
+	}, [payload?.cras, getAllSchedullingCras]);
 
 	const horarios = useMemo(() => {
 		return [
@@ -158,6 +155,7 @@ const SelecionarDia: React.FC = () => {
 			date.setMinutes(minutos % 60);
 		}
 		setSelectedDate(date);
+		setAgendamentoRealizado(false); // Resetar o estado do agendamento realizado ao mudar a data
 	};
 
 	if (loading) {
@@ -268,25 +266,25 @@ const SelecionarDia: React.FC = () => {
 													>
 														<Stack direction="row" justifyContent="space-around">
 															<Radio
-																{...register('description')}
-																id="description"
-																value="1"
 																{...register('servico')}
+																id="cadastramento"
+																value="1"
+																isChecked={selectedOption === '1'}
 															>
 																Cadastramento
 															</Radio>
 															<Radio
-																{...register('description')}
-																id="description"
-																value="2"
 																{...register('servico')}
+																id="atualizacao"
+																value="2"
+																isChecked={selectedOption === '2'}
 															>
 																Atualização Cadastral
 															</Radio>
 														</Stack>
 													</RadioGroup>
 												</FormControl>
-												<Box display={'none'}>
+												<Box>
 													<FormControl isInvalid={!!errors.name}>
 														<FormLabel htmlFor="name">Nome</FormLabel>
 														<Input id="name" {...register('name')} defaultValue={payload?.name} />

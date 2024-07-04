@@ -10,12 +10,6 @@ export enum TipoUsuario {
   superAmin,
 }
 
-export interface IEmployee {
-  id?: string;
-  name: string;
-  email?: string;
-  [key: string]: any;
-}
 
 export interface IAllUsers {
   message: string;

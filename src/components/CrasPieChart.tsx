@@ -11,6 +11,7 @@ export interface PieChartData {
 export interface CrasData {
 	nome: string;
 	data: PieChartData[];
+	averageDuration?: string;
 }
 
 interface CrasPieChartProps {

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Flex, Text, Box, Grid, GridItem, Divider } from '@chakra-ui/react';
+import { Flex, Text, Box, Grid, GridItem } from '@chakra-ui/react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 
 export interface PieChartData {
@@ -41,7 +41,7 @@ const CrasPieChart: React.FC<CrasPieChartProps> = ({ crasData, crasNome }) => {
 				{crasNome || 'Visão Geral'}
 			</Text>
 			<Flex>
-				<Grid templateColumns={{ base: '1fr', md: 'repeat(1, 1fr)' }} gap={6}>
+				<Grid templateColumns={{ base: '1fr', md: 'repeat(1, 1fr)' }} gap={3}>
 					{crasData.map(cras => (
 						<React.Fragment key={cras.nome}>
 							<GridItem key={cras.nome}>
@@ -90,7 +90,6 @@ const CrasPieChart: React.FC<CrasPieChartProps> = ({ crasData, crasNome }) => {
 									</Grid>
 								</Box>
 							</GridItem>
-							<Divider />
 						</React.Fragment>
 					))}
 				</Grid>

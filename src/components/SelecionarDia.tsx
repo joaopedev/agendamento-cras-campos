@@ -20,12 +20,18 @@ import {
 	FormControl,
 	FormLabel,
 	Input,
+	Divider,
 } from '@chakra-ui/react';
 import DatePicker, { registerLocale } from 'react-datepicker';
 import { ptBR } from 'date-fns/locale/pt-BR';
 import { format, addDays } from 'date-fns';
 import { AuthContext } from '../context/AuthContext';
-import { ISchedulingModel, ISchedulingResponse } from '../interface/Schedulling';
+import {
+	ISchedulingModel,
+	ISchedulingResponse,
+	Status,
+	TipoServico,
+} from '../interface/Schedulling';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { RegisterSchedullingModel } from '../types/auth-data';
@@ -62,6 +68,20 @@ const SelecionarDia: React.FC = () => {
 		try {
 			await registerSchedulling(data);
 			setAgendamentoRealizado(true);
+			const novoAgendamento: ISchedulingModel = {
+				id: Math.random(), // Gere um ID único aqui conforme necessário
+				name: data.name,
+				usuario_id: data.usuario_id,
+				servico: data.servico as unknown as TipoServico,
+				description: '', // Ajuste conforme necessário
+				duracao_atendimento: 60, // Ajuste conforme necessário
+				data_hora: new Date(data.data_hora),
+				cras: data.cras,
+				status: data.status as unknown as Status,
+				message: '', // Ajuste conforme necessário
+				agendamentos: [], // Ajuste conforme necessário
+			};
+			setSchedullingData(prevState => [...prevState, novoAgendamento]);
 			toast({
 				title: 'Agendamento realizado com sucesso',
 				duration: 5000,
@@ -177,26 +197,6 @@ const SelecionarDia: React.FC = () => {
 			w="100%"
 			flexDir={'column'}
 		>
-			<Box borderRadius={5} border={'1px solid #000'} p={'1px'}>
-				<DatePicker
-					locale={'pt-BR'}
-					selected={selectedDate}
-					isClearable={true}
-					filterDate={date => date.getDay() !== 0 && date.getDay() !== 6 && date <= maxDate}
-					onSelect={handleDateChange}
-					onChange={(date: Date) => setSelectedDate(date)}
-					minDate={addDays(new Date(), 1)}
-					className="customInput"
-				/>
-			</Box>
-			{!selectedDate && (
-				<Box className="selecionar__dia" textAlign="center">
-					<Text alignSelf={'center'} fontWeight={'bold'} fontSize={'20px'} textAlign={'center'}>
-						SELECIONE UM DIA
-					</Text>
-				</Box>
-			)}
-
 			{selectedDate && (
 				<Box
 					className="box__cinza"
@@ -211,15 +211,50 @@ const SelecionarDia: React.FC = () => {
 					alignSelf={'center'}
 					w={'80%'}
 				>
+					<Text fontWeight={'bold'} fontSize={['1rem', '1.2rem', '1.3rem', '1.4rem']}>
+						AGENDAR ATENDIMENTO
+					</Text>
+					<Divider />
+					{!selectedDate && (
+						<Box textAlign="center">
+							<Text
+								alignSelf={'center'}
+								fontWeight={'bold'}
+								fontSize={['1.2rem', '1.3rem', '1.4rem', '1.5rem']}
+							>
+								SELECIONE UM DIA
+							</Text>
+						</Box>
+					)}
 					<Flex gap={'5px'} flexDirection={'column'}>
-						<Box className="box__dia" alignItems={'center'} display={'flex'} p={2}>
+						<Box mx={'auto'} className="box__dia" alignItems={'center'} display={'flex'}>
 							<Text mr={'5px'} fontWeight="bold" fontSize={['12px', '12px', '15px', '15px']}>
 								DIA SELECIONADO:
 							</Text>
-							<Box bg="#fff" p={'5px'} flex={1} textAlign="center" borderRadius="5px">
+							{/* <Box bg="#fff" p={'5px'} flex={1} textAlign="center" borderRadius="5px">
 								<Text fontSize={['12px', '12px', '15px', '15px']}>
 									{selectedDate && format(selectedDate, 'dd/MM/yyyy')}
 								</Text>
+							</Box> */}
+							<Box
+								alignItems={'center'}
+								w={'min-content'}
+								borderRadius={5}
+								border={'1px solid #999'}
+								p={'1px'}
+								// mx={'auto'}
+								my={2}
+							>
+								<DatePicker
+									dateFormat="dd/MM/yyyy"
+									locale={'pt-BR'}
+									selected={selectedDate}
+									filterDate={date => date.getDay() !== 0 && date.getDay() !== 6 && date <= maxDate}
+									onSelect={handleDateChange}
+									onChange={(date: Date) => setSelectedDate(date)}
+									minDate={addDays(new Date(), 1)}
+									className="customInput"
+								/>
 							</Box>
 						</Box>
 						<Box className="box__esquerda" flex={1}>
@@ -284,7 +319,7 @@ const SelecionarDia: React.FC = () => {
 														</Stack>
 													</RadioGroup>
 												</FormControl>
-												<Box>
+												<Box display={'none'}>
 													<FormControl isInvalid={!!errors.name}>
 														<FormLabel htmlFor="name">Nome</FormLabel>
 														<Input id="name" {...register('name')} defaultValue={payload?.name} />

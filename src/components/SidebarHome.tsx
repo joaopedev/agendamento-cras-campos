@@ -1,8 +1,4 @@
-import {
-	Button,
-	Stack,
-	Box,
-} from '@chakra-ui/react';
+import { Button, Stack, Box } from '@chakra-ui/react';
 import { NavLink } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { useContext } from 'react';
@@ -72,13 +68,13 @@ export const SidebarHome: React.FC = () => {
 						)}
 					</NavLink>
 
-					<NavLink to="/agendar">
+					{/* <NavLink to="/agendar">
 						{({ isActive }) => (
 							<Button isActive={isActive} sx={sideBtnStyle}>
 								Agendar
 							</Button>
 						)}
-					</NavLink>
+					</NavLink> */}
 
 					{payload?.tipo_usuario !== 1 && (
 						<NavLink to="/agendamentos">

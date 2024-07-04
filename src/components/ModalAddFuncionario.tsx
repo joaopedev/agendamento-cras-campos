@@ -27,11 +27,13 @@ import { Cras, TipoUsuario } from '../interface/User';
 interface AddEmployeeModalProps {
   isOpen: boolean;
   onClose: () => void;
+  fetchEmployeeData: () => void;
 }
 
 const ModalAddFuncionario: React.FC<AddEmployeeModalProps> = ({
   isOpen,
   onClose,
+  fetchEmployeeData, 
 }) => {
   const { registerUser } = useAuth();
   const toast = useToast();
@@ -72,14 +74,17 @@ const ModalAddFuncionario: React.FC<AddEmployeeModalProps> = ({
         isClosable: true,
         position: 'top-right',
       });
+      fetchEmployeeData();
+      onClose(); 
+    } catch (error) {
       toast({
-        title: 'Usuário cadastrado com sucesso',
+        title: 'Erro ao cadastrar usuário',
+        description: (error as Error).message,
+        status: 'error',
         duration: 5000,
         isClosable: true,
         position: 'top-right',
       });
-    } catch (error) {
-      return error;
     }
   };
 
@@ -178,7 +183,7 @@ const ModalAddFuncionario: React.FC<AddEmployeeModalProps> = ({
                   id='cpf'
                   placeholder='CPF'
                   size='md'
-                  value={formatCpf(inputCpf)} // Format for display only
+                  value={formatCpf(inputCpf)}
                   onChange={handleCpfChange}
                   sx={{
                     fontSize: ['0.7rem', '0.8rem', '0.9rem', '1rem'],
@@ -189,10 +194,7 @@ const ModalAddFuncionario: React.FC<AddEmployeeModalProps> = ({
                     mb: '0px',
                     paddingLeft: '16px',
                   }}
-                  // {...register('cpf')}
                   _placeholder={{ paddingLeft: 0 }}
-                  // value={inputValue}
-                  // onChange={handleCpfChange}
                 />
                 <InputLeftElement pointerEvents='none' children={' '} />
               </InputGroup>
@@ -220,7 +222,7 @@ const ModalAddFuncionario: React.FC<AddEmployeeModalProps> = ({
                 <Input
                   id='data-de-nascimento'
                   placeholder='DD/MM/AAAA'
-                  value={formatDataNascimento(inputDataNascimento)} // Format for display only
+                  value={formatDataNascimento(inputDataNascimento)}
                   {...register('data_nascimento', {
                     onChange: handleDataNascimentoChange,
                   })}
@@ -234,7 +236,6 @@ const ModalAddFuncionario: React.FC<AddEmployeeModalProps> = ({
                     mb: '0px',
                     paddingLeft: '16px',
                   }}
-                  {...register('data_nascimento')}
                 />
                 <InputLeftElement pointerEvents='none' children={' '} />
               </InputGroup>
@@ -249,8 +250,8 @@ const ModalAddFuncionario: React.FC<AddEmployeeModalProps> = ({
                   id='telefone'
                   placeholder='(22) 98765-4321'
                   size='md'
-                  value={inputTelefone} // Bind to formatted input
-                  onChange={handleTelefoneChange} // Use new handler
+                  value={inputTelefone}
+                  onChange={handleTelefoneChange} 
                   sx={{
                     fontSize: ['0.7rem', '0.8rem', '0.9rem', '1rem'],
                     bg: 'white',
@@ -271,8 +272,6 @@ const ModalAddFuncionario: React.FC<AddEmployeeModalProps> = ({
             <FormControl isInvalid={!!errors.email}>
               <FormLabel htmlFor='email'>Email</FormLabel>
               <InputGroup>
-                {' '}
-                {/* Envolva os elementos Input e InputLeftElement */}
                 <Input
                   id='email'
                   placeholder='Email'
@@ -304,7 +303,7 @@ const ModalAddFuncionario: React.FC<AddEmployeeModalProps> = ({
               >
                 {CrasEntries.map(
                   (
-                    [value, key] // Update the map function to use the array of tuples
+                    [value, key] 
                   ) => (
                     <option key={value} value={value}>
                       {key}

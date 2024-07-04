@@ -27,6 +27,7 @@ export interface IPayload {
     numero: number;
     bairro: string;
   };
+  data_nascimento: string;
 }
 
 export interface IAuthContext {

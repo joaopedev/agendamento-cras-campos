@@ -30,10 +30,11 @@ import { IUserModel, Bairros, Cras } from '../interface/User';
 import { useForm, Controller } from 'react-hook-form';
 import SelecionarDia from '../components/SelecionarDia';
 import { EditIcon, CheckIcon } from '@chakra-ui/icons';
+import CardShowAgendamento from '../components/CardShowAgendamento';
 
 export const Home: React.FC = () => {
 	const { payload } = useContext(AuthContext);
-	const [ userData ] = useState<IUserModel | null>(null);
+	const [userData] = useState<IUserModel | null>(null);
 	const { isOpen, onOpen, onClose } = useDisclosure();
 	const [isEditing, setIsEditing] = useState(false);
 	const {
@@ -227,13 +228,7 @@ export const Home: React.FC = () => {
 				</Box>
 			</Stack>
 			<Stack alignItems={'center'}>
-				{/* <Text
-					fontWeight={'bold'}
-					fontSize={['1.2rem', '1.3rem', '1.4rem', '1.5rem']}
-					ml={[0, '30%', '25%', '20%']}
-				>
-					AGENDAR ATENDIMENTO
-				</Text> */}
+				<CardShowAgendamento />
 				<SelecionarDia />
 			</Stack>
 		</Flex>

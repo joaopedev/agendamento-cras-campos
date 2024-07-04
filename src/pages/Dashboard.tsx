@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-import { Flex, Box } from "@chakra-ui/react";
+import { Flex, Box, Text } from "@chakra-ui/react";
 import CrasPieChart, {
   PieChartData,
   CrasData,
@@ -12,9 +12,7 @@ import { HamburgerMenu } from "../components/HamburgerMenu";
 
 export const Dashboard: React.FC = () => {
   const { getAllSchedulling, payload } = useContext(AuthContext);
-  const [schedullingData, setSchedullingData] = useState<ISchedulingModel[]>(
-    []
-  );
+  const [schedullingData, setSchedullingData] = useState<ISchedulingModel[]>([]);
   const [crasData, setCrasData] = useState<CrasData[]>([]);
   const [totalData, setTotalData] = useState<PieChartData[]>([
     { name: "Agendamentos Pendentes", value: 0, color: "#2CA1FF" },
@@ -42,6 +40,8 @@ export const Dashboard: React.FC = () => {
         { name: "Ausentes", value: 0, color: "#FF5757" },
       ];
 
+      const durationByCras: { [key: number]: number[] } = {};
+
       schedullingData.forEach((agendamento) => {
         if (!dataByCras[agendamento.cras]) {
           dataByCras[agendamento.cras] = [
@@ -49,6 +49,14 @@ export const Dashboard: React.FC = () => {
             { name: "Atendimentos Realizados", value: 0, color: "#38A169" },
             { name: "Ausentes", value: 0, color: "#FF5757" },
           ];
+        }
+
+        if (!durationByCras[agendamento.cras]) {
+          durationByCras[agendamento.cras] = [];
+        }
+
+        if (agendamento.duracao_atendimento != null) {
+          durationByCras[agendamento.cras].push(agendamento.duracao_atendimento);
         }
 
         if (agendamento.status === 2) {
@@ -65,10 +73,18 @@ export const Dashboard: React.FC = () => {
         }
       });
 
-      const processedData = Object.entries(dataByCras).map(([key, value]) => ({
-        nome: Cras[Number(key)],
-        data: value,
-      }));
+      const processedData = Object.entries(dataByCras).map(([key, value]) => {
+        const durations = durationByCras[Number(key)];
+        const averageDuration = durations.length > 0
+          ? durations.reduce((acc, curr) => acc + curr, 0) / durations.length
+          : 0;
+        
+        return {
+          nome: Cras[Number(key)],
+          data: value,
+          averageDuration: averageDuration.toFixed(2), // to 2 decimal places
+        };
+      });
 
       setCrasData(processedData);
       setTotalData(totalDataTemp);
@@ -87,11 +103,13 @@ export const Dashboard: React.FC = () => {
           crasNome="Total"
         />
         {crasData.map((cras) => (
-          <CrasPieChart
-            key={cras.nome}
-            crasData={[cras]}
-            crasNome={cras.nome}
-          />
+          <Box key={cras.nome}>
+            <CrasPieChart
+              crasData={[cras]}
+              crasNome={cras.nome}
+            />
+            <Text>Média de Duração de Atendimento: {cras.averageDuration} minutos</Text>
+          </Box>
         ))}
       </Box>
     </Flex>

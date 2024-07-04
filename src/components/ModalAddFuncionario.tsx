@@ -326,10 +326,12 @@ const ModalAddFuncionario: React.FC<AddEmployeeModalProps> = ({
               style={{ backgroundColor: '#2CA1FF' }}
               variant='solid'
               isLoading={isSubmitting}
+              mt={"7%"}
+              mr={"63%"}
             >
               Cadastrar
             </Button>
-            <Button variant='ghost' onClick={onClose}>
+            <Button mt={"7%"} variant='ghost' onClick={onClose}>
               Cancelar
             </Button>
           </form>

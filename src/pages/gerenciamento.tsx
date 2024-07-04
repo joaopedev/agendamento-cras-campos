@@ -21,15 +21,20 @@ const Gerenciamento: React.FC = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { getAllUsers, payload, updateUser } = useContext(AuthContext);
   const [employeeData, setEmployeeData] = useState<IUserModel[]>([]);
-  const [employeeToDeleteIndex, setEmployeeToDeleteIndex] = useState<number | null>(null);
-  const { isOpen: isConfirmationOpen, onClose: onConfirmationClose } = useDisclosure();
+  const [employeeToDeleteIndex, setEmployeeToDeleteIndex] = useState<
+    number | null
+  >(null);
+  const { isOpen: isConfirmationOpen, onClose: onConfirmationClose } =
+    useDisclosure();
   const toast = useToast();
 
   const fetchEmployeeData = useCallback(async () => {
     if (payload) {
       try {
         const response = await getAllUsers();
-        const employees: IUserModel[] = (response.contas || []).filter((user) => user.ativo === false);
+        const employees: IUserModel[] = (response.contas || []).filter(
+          (user) => user.ativo === false
+        );
         setEmployeeData(employees);
       } catch (error) {
         console.error("Error fetching employee data:", error);
@@ -42,7 +47,10 @@ const Gerenciamento: React.FC = () => {
     fetchEmployeeData();
   }, [payload, getAllUsers, fetchEmployeeData]);
 
-  const handleEmployeeAction = async (id: string, action: "authorize" | "delete") => {
+  const handleEmployeeAction = async (
+    id: string,
+    action: "authorize" | "delete"
+  ) => {
     try {
       if (action === "authorize") {
         await updateUser(id, { ativo: true });
@@ -54,7 +62,12 @@ const Gerenciamento: React.FC = () => {
           position: "top-right",
         });
       } else if (action === "delete") {
-        await updateUser(id, { tipo_usuario: TipoUsuario.comum, password: payload?.data_nascimento, ativo: true });
+        const password = payload?.data_nascimento.replace(/\//g, "");
+        await updateUser(id, {
+          tipo_usuario: TipoUsuario.comum,
+          password: password,
+          ativo: true,
+        });
         toast({
           title: "Funcionário excluído com sucesso",
           status: "success",
@@ -66,7 +79,9 @@ const Gerenciamento: React.FC = () => {
       fetchEmployeeData();
     } catch (error) {
       toast({
-        title: `Erro ao ${action === "authorize" ? "autorizar" : "excluir"} funcionário`,
+        title: `Erro ao ${
+          action === "authorize" ? "autorizar" : "excluir"
+        } funcionário`,
         description: (error as Error).message,
         status: "error",
         duration: 5000,
@@ -144,7 +159,9 @@ const Gerenciamento: React.FC = () => {
                         size="sm"
                         colorScheme="blue"
                         ml={2}
-                        onClick={() => handleEmployeeAction(employee.id!, "authorize")}
+                        onClick={() =>
+                          handleEmployeeAction(employee.id!, "authorize")
+                        }
                       >
                         Autorizar Funcionario
                       </Button>
@@ -152,7 +169,9 @@ const Gerenciamento: React.FC = () => {
                         size="sm"
                         colorScheme="red"
                         ml={2}
-                        onClick={() => handleEmployeeAction(employee.id!, "delete")}
+                        onClick={() =>
+                          handleEmployeeAction(employee.id!, "delete")
+                        }
                       >
                         Excluir Funcionario
                       </Button>
@@ -167,7 +186,11 @@ const Gerenciamento: React.FC = () => {
             )}
           </tbody>
         </Table>
-        <ModalAddFuncionario isOpen={isOpen} onClose={onClose} fetchEmployeeData={fetchEmployeeData} />
+        <ModalAddFuncionario
+          isOpen={isOpen}
+          onClose={onClose}
+          fetchEmployeeData={fetchEmployeeData}
+        />
       </Flex>
       <ConfirmationModal
         isOpen={isConfirmationOpen}

@@ -19,7 +19,6 @@ import {
 	useDisclosure,
 	Card,
 	Avatar,
-	Text,
 	InputLeftAddon,
 } from '@chakra-ui/react';
 import React, { useContext, useState } from 'react';
@@ -240,13 +239,6 @@ const textStyle1 = {
 	// bg: 'white',
 	borderRadius: '5px',
 	p: 2,
-};
-
-const textStyle2 = {
-	fontSize: ['0.7rem', '0.8rem', '0.9rem', '1rem'],
-	fontWeight: 'bold',
-	mt: '10px',
-	mb: '3px',
 };
 
 export const boxStyle = {

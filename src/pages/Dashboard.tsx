@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { Flex, Box, Text, Divider, Tag } from '@chakra-ui/react';
+import { Flex, Divider, Tag } from '@chakra-ui/react';
 import CrasPieChart, { PieChartData, CrasData } from '../components/CrasPieChart';
 import { AuthContext } from '../context/AuthContext';
 import { Cras } from '../interface/User';

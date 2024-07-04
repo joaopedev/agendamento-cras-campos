@@ -76,16 +76,6 @@ export const SidebarHome: React.FC = () => {
 						)}
 					</NavLink> */}
 
-					{payload?.tipo_usuario !== 1 && (
-						<NavLink to="/agendamentos">
-							{({ isActive }) => (
-								<Button isActive={isActive} sx={sideBtnStyle}>
-									Agendamentos
-								</Button>
-							)}
-						</NavLink>
-					)}
-
 					{payload?.tipo_usuario === 3 && (
 						<NavLink to="/dashboard">
 							{({ isActive }) => (
@@ -101,6 +91,16 @@ export const SidebarHome: React.FC = () => {
 							{({ isActive }) => (
 								<Button isActive={isActive} sx={sideBtnStyle}>
 									Gerenciamento
+								</Button>
+							)}
+						</NavLink>
+					)}
+
+					{payload?.tipo_usuario !== 1 && (
+						<NavLink to="/agendamentos">
+							{({ isActive }) => (
+								<Button isActive={isActive} sx={sideBtnStyle}>
+									Agendamentos
 								</Button>
 							)}
 						</NavLink>

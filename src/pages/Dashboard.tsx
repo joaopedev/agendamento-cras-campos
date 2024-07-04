@@ -1,119 +1,156 @@
-import React, { useEffect, useState, useContext } from "react";
-import { Flex, Box, Text } from "@chakra-ui/react";
-import CrasPieChart, {
-  PieChartData,
-  CrasData,
-} from "../components/CrasPieChart";
-import { AuthContext } from "../context/AuthContext";
-import { Cras } from "../interface/User";
-import { ISchedulingModel } from "../interface/Schedulling";
-import SidebarHome from "../components/SidebarHome";
-import { HamburgerMenu } from "../components/HamburgerMenu";
+import React, { useEffect, useState, useContext } from 'react';
+import { Flex, Divider, Tag } from '@chakra-ui/react';
+import CrasPieChart, { PieChartData, CrasData } from '../components/CrasPieChart';
+import { AuthContext } from '../context/AuthContext';
+import { Cras } from '../interface/User';
+import { ISchedulingModel } from '../interface/Schedulling';
+import SidebarHome from '../components/SidebarHome';
+import { HamburgerMenu } from '../components/HamburgerMenu';
 
 export const Dashboard: React.FC = () => {
-  const { getAllSchedulling, payload } = useContext(AuthContext);
-  const [schedullingData, setSchedullingData] = useState<ISchedulingModel[]>([]);
-  const [crasData, setCrasData] = useState<CrasData[]>([]);
-  const [totalData, setTotalData] = useState<PieChartData[]>([
-    { name: "Agendamentos Pendentes", value: 0, color: "#2CA1FF" },
-    { name: "Atendimentos Realizados", value: 0, color: "#38A169" },
-    { name: "Ausentes", value: 0, color: "#FF5757" },
-  ]);
+	const { getAllSchedulling, payload } = useContext(AuthContext);
+	const [schedullingData, setSchedullingData] = useState<ISchedulingModel[]>([]);
+	const [crasData, setCrasData] = useState<CrasData[]>([]);
+	const [totalData, setTotalData] = useState<PieChartData[]>([
+		{ name: 'Agendamentos Pendentes', value: 0, color: '#2CA1FF' },
+		{ name: 'Atendimentos Realizados', value: 0, color: '#38A169' },
+		{ name: 'Ausentes', value: 0, color: '#FF5757' },
+	]);
+	const formatDuration = (durationStr: string | undefined): string => {
+		if (!durationStr) {
+			return 'Duração não disponível';
+		}
+		const duration = parseFloat(durationStr);
+		if (isNaN(duration)) {
+			return 'Duração não disponível';
+		}
+		const minutes = Math.floor(duration);
+		const seconds = Math.floor((duration - minutes) * 60);
+		if (seconds === 0) {
+			return `${minutes} min `;
+		}
+		return `${minutes} min e ${seconds} seg`;
+	};
+	const getColorScheme = (averageDuration: string | undefined) => {
+		if (averageDuration === undefined) {
+			return;
+		}
+		switch (true) {
+			case parseInt(averageDuration) < 30:
+				return 'blue';
+			case parseInt(averageDuration) >= 30 && parseInt(averageDuration) < 45:
+				return 'yellow';
+			case parseInt(averageDuration) >= 45 && parseInt(averageDuration) < 60:
+				return 'red';
+		}
+	};
 
-  useEffect(() => {
-    const fetchSchedullingData = async () => {
-      if (payload) {
-        const response = await getAllSchedulling();
-        setSchedullingData(response.agendamentos);
-      }
-    };
+	useEffect(() => {
+		const fetchSchedullingData = async () => {
+			if (payload) {
+				const response = await getAllSchedulling();
+				setSchedullingData(response.agendamentos);
+			}
+		};
 
-    fetchSchedullingData();
-  }, [payload, getAllSchedulling]);
+		fetchSchedullingData();
+	}, [payload, getAllSchedulling]);
 
-  useEffect(() => {
-    const processCrasData = () => {
-      const dataByCras: { [key: number]: PieChartData[] } = {};
-      const totalDataTemp = [
-        { name: "Agendamentos Pendentes", value: 0, color: "#2CA1FF" },
-        { name: "Atendimentos Realizados", value: 0, color: "#38A169" },
-        { name: "Ausentes", value: 0, color: "#FF5757" },
-      ];
+	useEffect(() => {
+		const processCrasData = () => {
+			const dataByCras: { [key: number]: PieChartData[] } = {};
+			const totalDataTemp = [
+				{ name: 'Agendamentos Pendentes', value: 0, color: '#2CA1FF' },
+				{ name: 'Atendimentos Realizados', value: 0, color: '#38A169' },
+				{ name: 'Ausentes', value: 0, color: '#FF5757' },
+			];
 
-      const durationByCras: { [key: number]: number[] } = {};
+			const durationByCras: { [key: number]: number[] } = {};
 
-      schedullingData.forEach((agendamento) => {
-        if (!dataByCras[agendamento.cras]) {
-          dataByCras[agendamento.cras] = [
-            { name: "Agendamentos Pendentes", value: 0, color: "#2CA1FF" },
-            { name: "Atendimentos Realizados", value: 0, color: "#38A169" },
-            { name: "Ausentes", value: 0, color: "#FF5757" },
-          ];
-        }
+			schedullingData.forEach(agendamento => {
+				if (!dataByCras[agendamento.cras]) {
+					dataByCras[agendamento.cras] = [
+						{ name: 'Agendamentos Pendentes', value: 0, color: '#2CA1FF' },
+						{ name: 'Atendimentos Realizados', value: 0, color: '#38A169' },
+						{ name: 'Ausentes', value: 0, color: '#FF5757' },
+					];
+				}
 
-        if (!durationByCras[agendamento.cras]) {
-          durationByCras[agendamento.cras] = [];
-        }
+				if (!durationByCras[agendamento.cras]) {
+					durationByCras[agendamento.cras] = [];
+				}
 
-        if (agendamento.duracao_atendimento != null) {
-          durationByCras[agendamento.cras].push(agendamento.duracao_atendimento);
-        }
+				if (agendamento.duracao_atendimento != null) {
+					durationByCras[agendamento.cras].push(agendamento.duracao_atendimento);
+				}
 
-        if (agendamento.status === 2) {
-          dataByCras[agendamento.cras][0].value += 1; // Pendentes
-          totalDataTemp[0].value += 1;
-        }
-        if (agendamento.status === 1) {
-          dataByCras[agendamento.cras][1].value += 1; // Realizados
-          totalDataTemp[1].value += 1;
-        }
-        if (agendamento.status === 3) {
-          dataByCras[agendamento.cras][2].value += 1; // Ausentes
-          totalDataTemp[2].value += 1;
-        }
-      });
+				if (agendamento.status === 2) {
+					dataByCras[agendamento.cras][0].value += 1; // Pendentes
+					totalDataTemp[0].value += 1;
+				}
+				if (agendamento.status === 1) {
+					dataByCras[agendamento.cras][1].value += 1; // Realizados
+					totalDataTemp[1].value += 1;
+				}
+				if (agendamento.status === 3) {
+					dataByCras[agendamento.cras][2].value += 1; // Ausentes
+					totalDataTemp[2].value += 1;
+				}
+			});
 
-      const processedData = Object.entries(dataByCras).map(([key, value]) => {
-        const durations = durationByCras[Number(key)];
-        const averageDuration = durations.length > 0
-          ? durations.reduce((acc, curr) => acc + curr, 0) / durations.length
-          : 0;
-        
-        return {
-          nome: Cras[Number(key)],
-          data: value,
-          averageDuration: averageDuration.toFixed(2), // to 2 decimal places
-        };
-      });
+			const processedData = Object.entries(dataByCras).map(([key, value]) => {
+				const durations = durationByCras[Number(key)];
+				const averageDuration =
+					durations.length > 0
+						? durations.reduce((acc, curr) => acc + curr, 0) / durations.length
+						: 0;
 
-      setCrasData(processedData);
-      setTotalData(totalDataTemp);
-    };
+				return {
+					nome: Cras[Number(key)],
+					data: value,
+					averageDuration: averageDuration.toFixed(2), // to 2 decimal places
+				};
+			});
 
-    processCrasData();
-  }, [schedullingData]);
+			setCrasData(processedData);
+			setTotalData(totalDataTemp);
+		};
 
-  return (
-    <Flex h="100vh" flexDir={"column"}>
-      <SidebarHome />
-      <HamburgerMenu />
-      <Box pl={["0%", "30%", "25%", "20%"]} w="100%">
-        <CrasPieChart
-          crasData={[{ nome: "Total", data: totalData }]}
-          crasNome="Total"
-        />
-        {crasData.map((cras) => (
-          <Box key={cras.nome}>
-            <CrasPieChart
-              crasData={[cras]}
-              crasNome={cras.nome}
-            />
-            <Text>Média de Duração de Atendimento: {cras.averageDuration} minutos</Text>
-          </Box>
-        ))}
-      </Box>
-    </Flex>
-  );
+		processCrasData();
+	}, [schedullingData]);
+
+	return (
+		<Flex h="100vh" flexDir={'column'}>
+			<SidebarHome />
+			<HamburgerMenu />
+			<Flex
+				flexDir={'column'}
+				alignItems={'center'}
+				ml={['0%', '30%', '25%', '20%']}
+				w={['100%', '70%', '75%', '80%']}
+			>
+				<CrasPieChart crasData={[{ nome: 'Total', data: totalData }]} crasNome="Total" />
+				<Divider
+					boxShadow={'0px 1px 3px 0px #00000070'}
+					w={'90%'}
+					borderBottom={'1px solid  rgba(112, 112, 112, .5)'}
+				/>
+				{crasData.map(cras => (
+					<Flex w={'100%'} flexDir={'column'} alignItems={'center'} key={cras.nome}>
+						<CrasPieChart crasData={[cras]} crasNome={cras.nome} />
+						<Tag colorScheme={getColorScheme(cras.averageDuration)} mb={3} textAlign={'center'}>
+							Duração Média: {formatDuration(cras.averageDuration)}
+						</Tag>
+						<Divider
+							boxShadow={'0px 1px 3px 0px #00000070'}
+							w={'90%'}
+							borderBottom={'1px solid rgba(112, 112, 112, .5)'}
+						/>
+					</Flex>
+				))}
+			</Flex>
+		</Flex>
+	);
 };
 
 export default Dashboard;

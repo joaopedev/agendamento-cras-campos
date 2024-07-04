@@ -29,7 +29,7 @@ import { useNavigate } from 'react-router-dom';
 
 export const Home: React.FC = () => {
 	const { payload } = useContext(AuthContext);
-	const [userData, setUserData] = useState<IUserModel | null>(null);
+	const [ userData ] = useState<IUserModel | null>(null);
 	const { isOpen, onOpen, onClose } = useDisclosure();
 	const [isEditing, setIsEditing] = useState(false);
 	const navigate = useNavigate();

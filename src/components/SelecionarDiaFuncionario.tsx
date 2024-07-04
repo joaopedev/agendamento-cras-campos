@@ -210,7 +210,7 @@ const SelecionarDiaFuncionario: React.FC = () => {
 					bg={'#F4F4F4'}
 					h={'fit-content'}
 					alignSelf={'center'}
-					w={'80%'}
+					w={'90%'}
 				>
 					<Flex gap={'5px'} flexDirection={'column'}>
 						<Box className="box__dia" alignItems={'center'} display={'flex'} p={2}>
@@ -242,7 +242,7 @@ const SelecionarDiaFuncionario: React.FC = () => {
 										<Card key={schedulling.id} mt={1}>
 											<CardBody>
 												<Flex
-													minH={'102px'}
+													minH={28}
 													justifyContent={'space-between'}
 													flexDir={['column', 'column', 'row', 'row']}
 												>
@@ -298,6 +298,7 @@ const SelecionarDiaFuncionario: React.FC = () => {
 														{schedulling.status === 2 && (
 															<Flex gap={2} flexDir={['row', 'row', 'column', 'column']}>
 																<Button
+																	maxH={[6, 6, 7, 8]}
 																	sx={btnStyle}
 																	onClick={() => {
 																		handleAtendimentoClick(Number(schedulling.id));
@@ -318,6 +319,7 @@ const SelecionarDiaFuncionario: React.FC = () => {
 																</Button>
 																{activeCardId !== Number(schedulling.id) && (
 																	<Button
+																		maxH={[6, 6, 7, 8]}
 																		onClick={() =>
 																			handleUpdateScheduling(
 																				schedulling.id as number,
@@ -329,16 +331,33 @@ const SelecionarDiaFuncionario: React.FC = () => {
 																		boxShadow={'1px 1px 2px hsla(0, 28%, 0%, 0.7)'}
 																		minW={['80px', '80px', '90px', '100px']}
 																		fontSize={['0.8rem', '0.8rem', '0.9rem', '0.9rem']}
-																		bg={'#EE4B2B'}
+																		bg={'#c2bb00'}
 																		textColor={'white'}
 																		_hover={{
-																			bg: '#be3c22',
+																			bg: '#8a8600',
 																			fontWeight: 'bold',
 																		}}
 																	>
 																		Ausente
 																	</Button>
 																)}
+																{activeCardId !== Number(schedulling.id) &&
+																	payload?.tipo_usuario === 3 && (
+																		<Button
+																			maxH={[6, 6, 7, 8]}
+																			boxShadow={'1px 1px 2px hsla(0, 28%, 0%, 0.7)'}
+																			minW={['80px', '80px', '90px', '100px']}
+																			fontSize={['0.8rem', '0.8rem', '0.9rem', '0.9rem']}
+																			bg={'#e53e3e'}
+																			textColor={'white'}
+																			_hover={{
+																				bg: '#c53030',
+																				fontWeight: 'bold',
+																			}}
+																		>
+																			Cancelar
+																		</Button>
+																	)}
 															</Flex>
 														)}
 													</Flex>

@@ -22,7 +22,7 @@ import {
 	Input,
 	Divider,
 } from '@chakra-ui/react';
-import DatePicker, { registerLocale } from 'react-datepicker';
+import DatePicker, { CalendarContainer, registerLocale } from 'react-datepicker';
 import { ptBR } from 'date-fns/locale/pt-BR';
 import { format, addDays } from 'date-fns';
 import { AuthContext } from '../context/AuthContext';
@@ -215,27 +215,18 @@ const SelecionarDia: React.FC = () => {
 						AGENDAR ATENDIMENTO
 					</Text>
 					<Divider />
-					{!selectedDate && (
-						<Box textAlign="center">
-							<Text
-								alignSelf={'center'}
-								fontWeight={'bold'}
-								fontSize={['1.2rem', '1.3rem', '1.4rem', '1.5rem']}
-							>
-								SELECIONE UM DIA
-							</Text>
-						</Box>
-					)}
-					<Flex gap={'5px'} flexDirection={'column'}>
-						<Box mx={'auto'} className="box__dia" alignItems={'center'} display={'flex'}>
-							<Text mr={'5px'} fontWeight="bold" fontSize={['12px', '12px', '15px', '15px']}>
+					<Flex gap={2} flexDirection={'column'}>
+						<Box
+							flexDir={['column', 'column', 'row', 'row']}
+							mx={'auto'}
+							className="box__dia"
+							alignItems={'center'}
+							display={'flex'}
+							columnGap={2}
+						>
+							<Text fontWeight="bold" fontSize={['12px', '12px', '15px', '15px']}>
 								DIA SELECIONADO:
 							</Text>
-							{/* <Box bg="#fff" p={'5px'} flex={1} textAlign="center" borderRadius="5px">
-								<Text fontSize={['12px', '12px', '15px', '15px']}>
-									{selectedDate && format(selectedDate, 'dd/MM/yyyy')}
-								</Text>
-							</Box> */}
 							<Box
 								alignItems={'center'}
 								w={'min-content'}
@@ -243,7 +234,6 @@ const SelecionarDia: React.FC = () => {
 								border={'1px solid #999'}
 								p={'1px'}
 								// mx={'auto'}
-								my={2}
 							>
 								<DatePicker
 									dateFormat="dd/MM/yyyy"
@@ -254,6 +244,23 @@ const SelecionarDia: React.FC = () => {
 									onChange={(date: Date) => setSelectedDate(date)}
 									minDate={addDays(new Date(), 1)}
 									className="customInput"
+									calendarContainer={({ className, children }) => (
+										<Box
+											style={{
+												borderRadius: '10px',
+												padding: '16px',
+												background: '#2ca1ff',
+												color: '#fff',
+											}}
+										>
+											<CalendarContainer className={className}>
+												<Text style={{ background: '#2ca1ff', padding: '4px', color: 'white' }}>
+													Selecione um dia
+												</Text>
+												<Text style={{ position: 'relative' }}>{children}</Text>
+											</CalendarContainer>
+										</Box>
+									)}
 								/>
 							</Box>
 						</Box>

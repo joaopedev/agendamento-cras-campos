@@ -49,12 +49,18 @@ const SelecionarDia: React.FC = () => {
 	const maxDate = addDays(new Date(), 31);
 	const [selectedDate, setSelectedDate] = useState<Date>(addDays(new Date(), 1));
 	const { isOpen, onOpen, onClose } = useDisclosure();
-	const { payload, registerSchedulling, getAllSchedullingCras } = useContext(AuthContext);
+	const { payload, registerSchedulling, getAllSchedullingCras, getByCpf, cpfData } =
+		useContext(AuthContext);
 	const [schedullingData, setSchedullingData] = useState<ISchedulingModel[]>([]);
 	const [loading, setLoading] = useState(true);
+	const [cpf, setCpf] = useState<string>('');
 	const isMounted = useRef(true);
 	const toast = useToast();
 
+	const handleGetByCpf = async () => {
+		await getByCpf(cpf);
+	};
+	console.log(cpfData);
 	const {
 		register,
 		handleSubmit,
@@ -332,19 +338,6 @@ const SelecionarDia: React.FC = () => {
 														<Input id="name" {...register('name')} defaultValue={payload?.name} />
 														{errors.name && <Text color="red.500">{errors.name.message}</Text>}
 													</FormControl>
-
-													<FormControl isInvalid={!!errors.usuario_id}>
-														<FormLabel htmlFor="usuario_id">Usuário ID</FormLabel>
-														<Input
-															id="usuario_id"
-															{...register('usuario_id')}
-															defaultValue={payload?.id}
-														/>
-														{errors.usuario_id && (
-															<Text color="red.500">{errors.usuario_id.message}</Text>
-														)}
-													</FormControl>
-
 													<FormControl isInvalid={!!errors.data_hora}>
 														<FormLabel htmlFor="data_hora">Data e Hora</FormLabel>
 														<Input
@@ -375,14 +368,31 @@ const SelecionarDia: React.FC = () => {
 											</Flex>
 
 											{showForm && (
-												<ModalFooter justifyContent={'center'}>
-													<Text>
-														Deseja confirmar o seu agendamento para o dia{' '}
-														<strong>{selectedDate && format(selectedDate, 'dd/MM/yyyy')}</strong> às{' '}
-														<strong>{horarioSelecionado}</strong> no{' '}
-														{payload && <strong>CRAS - {Cras[payload.cras]}?</strong>}
-													</Text>
-												</ModalFooter>
+												<>
+													{payload?.tipo_usuario !== 1 && (
+														<div>
+															<input
+																value={cpf}
+																onChange={e => setCpf(e.target.value)}
+																placeholder="Digite o CPF"
+															/>
+															<button onClick={handleGetByCpf}>Buscar por CPF</button>
+															{cpfData && <div>{JSON.stringify(cpfData)}</div>}
+														</div>
+													)}
+													<ModalFooter justifyContent={'center'}>
+														{payload?.tipo_usuario === 1 && (
+															<Text>
+																Deseja confirmar o seu agendamento para o dia{' '}
+																<strong>
+																	{selectedDate && format(selectedDate, 'dd/MM/yyyy')}
+																</strong>{' '}
+																às <strong>{horarioSelecionado}</strong> no{' '}
+																{payload && <strong>CRAS - {Cras[payload.cras]}?</strong>}
+															</Text>
+														)}
+													</ModalFooter>
+												</>
 											)}
 											<ModalFooter justifyContent={'center'}>
 												<Button

@@ -29,6 +29,7 @@ export interface IPayload {
 export interface IAuthContext {
 	isAuthenticated: boolean;
 	token: string | null;
+	cpfData: string;
 	payload: IPayload | null;
 	setPayload: React.Dispatch<React.SetStateAction<IPayload | null>>;
 	signIn: (data: SignIn) => Promise<void>;

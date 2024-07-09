@@ -18,8 +18,10 @@ import { IAllUsers, IUserModel } from '../interface/User';
 import { ISchedulingModel } from '../interface/Schedulling';
 
 export const AuthContext = createContext({} as IAuthContext);
+
 export const AuthProvider = ({ children }: IAuthProvider) => {
 	const [payload, setPayload] = useState<IPayload | null>(null);
+	const [cpfData, setCpfData] = useState<any>(null);
 	const [token, setToken] = useState<string | null>(null);
 	const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
@@ -33,8 +35,8 @@ export const AuthProvider = ({ children }: IAuthProvider) => {
 	};
 
 	const getByCpf = async (cpf: string) => {
-		const { data } = await getUserCpfRequest(cpf);
-		return data;
+		const data = await getUserCpfRequest(cpf);
+		setCpfData(data.contas);
 	};
 
 	const getToken = useCallback(async () => {
@@ -161,6 +163,7 @@ export const AuthProvider = ({ children }: IAuthProvider) => {
 				signOut,
 				getAllUsers,
 				token,
+				cpfData,
 				getAllSchedulling,
 				registerSchedulling,
 				getAllSchedullingCras,

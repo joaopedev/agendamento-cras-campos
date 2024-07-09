@@ -23,7 +23,7 @@ import {
   useToast,
   CloseButton,
 } from '@chakra-ui/react';
-import React, { useContext, useState, useEffect, ChangeEvent } from 'react';
+import React, { useContext, useState, useEffect, ChangeEvent, useRef } from 'react';
 import { SidebarHome } from '../components/SidebarHome';
 import { HamburgerMenu } from '../components/HamburgerMenu';
 import { AuthContext } from '../context/AuthContext';
@@ -40,6 +40,16 @@ export const Home: React.FC = () => {
   const { payload, setPayload } = useContext(AuthContext); // Access updateUser from context
   const toast = useToast(); // Initialize useToast hook
   const [inputTelefone, setInputTelefone] = useState('');
+  const payloadRef = useRef(payload);
+
+  useEffect(() => {
+    payloadRef.current = payload;
+  }, [payload]);
+  
+  useEffect(() => {
+    if (payloadRef.current && payloadRef.current.id) {
+    }
+  }, [payloadRef]);
 
   const {
     register,
@@ -86,31 +96,24 @@ export const Home: React.FC = () => {
 
   const handleSave = async (data: IUserModel) => {
     try {
-      if (!payload || !payload.id) {
+      if (!payload || !payload.id) { // Verifica se payload é null ou se payload.id é null
         throw new Error('User information not available');
       }
-
-      const { data: updatedUserData } = await updateUserRequest(
-        payload.id,
-        data
-      );
-
-      setPayload(updatedUserData); // Update the payload in your context
-
+  
+      const { data: updatedUserData } = await updateUserRequest(payload.id, data); // Agora é seguro usar payload.id
+      setPayload(updatedUserData);
+      setIsEditing(false);
       toast({
         title: 'Sucesso',
-        description: 'Informações atualizada com sucesso.',
+        description: 'Informações atualizadas com sucesso.',
         status: 'success',
         duration: 5000,
         isClosable: true,
       });
-      setIsEditing(false);
     } catch (error) {
-      const errorMessage = (error as Error).message;
-
       toast({
-        title: 'Error',
-        description: errorMessage,
+        title: 'Erro',
+        description: (error as Error).message,
         status: 'error',
         duration: 5000,
         isClosable: true,

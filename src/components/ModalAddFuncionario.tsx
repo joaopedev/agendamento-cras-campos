@@ -37,26 +37,28 @@ const ModalAddFuncionario: React.FC<AddEmployeeModalProps> = ({
 	onClose,
 	fetchEmployeeData,
 }) => {
-	const { registerUser } = useAuth();
-	const toast = useToast();
-	const {
-		register,
-		watch,
-		handleSubmit,
-		setValue,
-		formState: { errors, isSubmitting },
-	} = useForm<RegisterUserModel>({
-		resolver: yupResolver(RegisterUserSchema),
-		defaultValues: {
-			tipo_usuario: TipoUsuario.admin,
-			endereco: {
-				bairro: 'Não se aplica',
-				rua: 'Não se aplica',
-				numero: 0,
-			},
-			ativo: false,
-		},
-	});
+
+  const { registerUser } = useAuth();
+  const toast = useToast();
+  const {
+    register,
+    watch,
+    handleSubmit,
+    setValue,
+    formState: { errors, isSubmitting },
+  } = useForm<RegisterUserModel>({
+    resolver: yupResolver(RegisterUserSchema),
+    defaultValues: {
+      tipo_usuario: TipoUsuario.admin,
+      ativo: true,
+      endereco: {
+        bairro: "Não se aplica",
+        rua: "Não se aplica",
+        numero: 0,
+      }
+    },
+  });
+
 
 	const [inputDataNascimento, setInputDataNascimento] = useState('');
 	const [inputCpf, setInputCpf] = useState('');

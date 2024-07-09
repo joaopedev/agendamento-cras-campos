@@ -23,7 +23,7 @@ import {
 	useToast,
 	CloseButton,
 } from '@chakra-ui/react';
-import React, { useContext, useState, useEffect, ChangeEvent } from 'react';
+import React, { useContext, useState, useEffect, ChangeEvent, useRef } from 'react';
 import { SidebarHome } from '../components/SidebarHome';
 import { HamburgerMenu } from '../components/HamburgerMenu';
 import { AuthContext } from '../context/AuthContext';
@@ -36,11 +36,22 @@ import { BairroCras } from '../components/BairroCras';
 import CardShowAgendamento from '../components/CardShowAgendamento';
 
 export const Home: React.FC = () => {
-	const { isOpen, onOpen, onClose } = useDisclosure();
-	const [isEditing, setIsEditing] = useState(false);
-	const { payload, setPayload } = useContext(AuthContext); // Access updateUser from context
-	const toast = useToast(); // Initialize useToast hook
-	const [inputTelefone, setInputTelefone] = useState('');
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [isEditing, setIsEditing] = useState(false);
+  const { payload, setPayload } = useContext(AuthContext); // Access updateUser from context
+  const toast = useToast(); // Initialize useToast hook
+  const [inputTelefone, setInputTelefone] = useState('');
+  const payloadRef = useRef(payload);
+
+  useEffect(() => {
+    payloadRef.current = payload;
+  }, [payload]);
+  
+  useEffect(() => {
+    if (payloadRef.current && payloadRef.current.id) {
+    }
+  }, [payloadRef]);
+
 
 	const {
 		register,
@@ -85,36 +96,32 @@ export const Home: React.FC = () => {
 		setValue('telefone', value); // Update form value with formatted number
 	};
 
-	const handleSave = async (data: IUserModel) => {
-		try {
-			if (!payload || !payload.id) {
-				throw new Error('User information not available');
-			}
-
-			const { data: updatedUserData } = await updateUserRequest(payload.id, data);
-
-			setPayload(updatedUserData); // Update the payload in your context
-
-			toast({
-				title: 'Sucesso',
-				description: 'Informações atualizada com sucesso.',
-				status: 'success',
-				duration: 5000,
-				isClosable: true,
-			});
-			setIsEditing(false);
-		} catch (error) {
-			const errorMessage = (error as Error).message;
-
-			toast({
-				title: 'Error',
-				description: errorMessage,
-				status: 'error',
-				duration: 5000,
-				isClosable: true,
-			});
-		}
-	};
+  const handleSave = async (data: IUserModel) => {
+    try {
+      if (!payload || !payload.id) { // Verifica se payload é null ou se payload.id é null
+        throw new Error('User information not available');
+      }
+  
+      const { data: updatedUserData } = await updateUserRequest(payload.id, data); // Agora é seguro usar payload.id
+      setPayload(updatedUserData);
+      setIsEditing(false);
+      toast({
+        title: 'Sucesso',
+        description: 'Informações atualizadas com sucesso.',
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
+      });
+    } catch (error) {
+      toast({
+        title: 'Erro',
+        description: (error as Error).message,
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  };
 
 	const selectedBairro = watch('endereco.bairro');
 

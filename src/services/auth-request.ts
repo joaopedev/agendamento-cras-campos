@@ -3,7 +3,7 @@ import { SignIn, RegisterUserModel, RegisterSchedullingModel } from '../types/au
 import { AxiosError } from 'axios';
 import { IErrorResponse } from '../interface/Feedeback';
 import { ISchedulingModel } from '../interface/Schedulling';
-import { IUserModel } from '../interface/User';
+import { IAllUsers, IUserModel } from '../interface/User';
 
 export const loginRequest = async (data: SignIn) => {
 	try {
@@ -37,10 +37,10 @@ export const registerRequest = async (data: RegisterUserModel) => {
 	}
 };
 
-export const getUserCpfRequest = async (cpf: string) => {
+export const getUserCpfRequest = async (cpf: string): Promise<IAllUsers> => {
 	try {
-		const response = await api.get(`/private/accountByCpf/${cpf}`);
-		return response;
+		const response = await api.get<IAllUsers>(`/private/accountByCpf/${cpf}`);
+		return response.data;
 	} catch (error) {
 		const errors = error as AxiosError;
 		let errorMessage = '';

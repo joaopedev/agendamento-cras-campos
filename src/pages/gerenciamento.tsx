@@ -1,204 +1,184 @@
-import React, { useState, useEffect, useContext, useCallback } from "react";
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import {
-  Button,
-  Flex,
-  Heading,
-  Table,
-  Td,
-  Th,
-  Tr,
-  useDisclosure,
-  useToast,
-} from "@chakra-ui/react";
-import ModalAddFuncionario from "../components/ModalAddFuncionario";
-import SidebarHome from "../components/SidebarHome";
-import { HamburgerMenu } from "../components/HamburgerMenu";
-import ConfirmationModal from "../components/ConfirmationModal";
-import { TipoUsuario, Cras, IUserModel } from "../interface/User";
-import { AuthContext } from "../context/AuthContext";
+	Button,
+	Flex,
+	Heading,
+	Table,
+	Td,
+	Th,
+	Tr,
+	useDisclosure,
+	useToast,
+} from '@chakra-ui/react';
+import ModalAddFuncionario from '../components/ModalAddFuncionario';
+import SidebarHome from '../components/SidebarHome';
+import { HamburgerMenu } from '../components/HamburgerMenu';
+import ConfirmationModal from '../components/ConfirmationModal';
+import { TipoUsuario, Cras, IUserModel } from '../interface/User';
+import { AuthContext } from '../context/AuthContext';
 
 const Gerenciamento: React.FC = () => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const { getAllUsers, payload, updateUser } = useContext(AuthContext);
-  const [employeeData, setEmployeeData] = useState<IUserModel[]>([]);
-  const [employeeToDeleteIndex, setEmployeeToDeleteIndex] = useState<
-    number | null
-  >(null);
-  const { isOpen: isConfirmationOpen, onClose: onConfirmationClose } =
-    useDisclosure();
-  const toast = useToast();
+	const { isOpen, onOpen, onClose } = useDisclosure();
+	const { getAllUsers, payload, updateUser } = useContext(AuthContext);
+	const [employeeData, setEmployeeData] = useState<IUserModel[]>([]);
+	const [employeeToDeleteIndex, setEmployeeToDeleteIndex] = useState<number | null>(null);
+	const { isOpen: isConfirmationOpen, onClose: onConfirmationClose } = useDisclosure();
+	const toast = useToast();
+	const fetchEmployeeData = useCallback(async () => {
+		if (payload) {
+			try {
+				const response = await getAllUsers();
+				const employees: IUserModel[] = (response.contas || []).filter(
+					// @ts-ignore
+					user => user.ativo === false
+				);
+				setEmployeeData(employees);
+			} catch (error) {
+				console.error('Error fetching employee data:', error);
+				setEmployeeData([]);
+			}
+		}
+	}, [payload, getAllUsers]);
 
-  const fetchEmployeeData = useCallback(async () => {
-    if (payload) {
-      try {
-        const response = await getAllUsers();
-        const employees: IUserModel[] = (response.contas || []).filter(
-          (user) => user.ativo === false
-        );
-        setEmployeeData(employees);
-      } catch (error) {
-        console.error("Error fetching employee data:", error);
-        setEmployeeData([]);
-      }
-    }
-  }, [payload, getAllUsers]);
+	useEffect(() => {
+		fetchEmployeeData();
+	}, [payload, getAllUsers, fetchEmployeeData]);
 
-  useEffect(() => {
-    fetchEmployeeData();
-  }, [payload, getAllUsers, fetchEmployeeData]);
+	const handleEmployeeAction = async (id: string, action: 'authorize' | 'delete') => {
+		try {
+			if (action === 'authorize') {
+				await updateUser(id, { ativo: true });
+				toast({
+					title: 'Funcionário autorizado com sucesso',
+					status: 'success',
+					duration: 5000,
+					isClosable: true,
+					position: 'top-right',
+				});
+			} else if (action === 'delete') {
+				const password = payload?.data_nascimento.replace(/\//g, '');
+				await updateUser(id, {
+					tipo_usuario: TipoUsuario.comum,
+					password: password,
+					ativo: true,
+				});
+				toast({
+					title: 'Funcionário excluído com sucesso',
+					status: 'success',
+					duration: 5000,
+					isClosable: true,
+					position: 'top-right',
+				});
+			}
+			fetchEmployeeData();
+		} catch (error) {
+			toast({
+				title: `Erro ao ${action === 'authorize' ? 'autorizar' : 'excluir'} funcionário`,
+				description: (error as Error).message,
+				status: 'error',
+				duration: 5000,
+				isClosable: true,
+				position: 'top-right',
+			});
+		}
+	};
 
-  const handleEmployeeAction = async (
-    id: string,
-    action: "authorize" | "delete"
-  ) => {
-    try {
-      if (action === "authorize") {
-        await updateUser(id, { ativo: true });
-        toast({
-          title: "Funcionário autorizado com sucesso",
-          status: "success",
-          duration: 5000,
-          isClosable: true,
-          position: "top-right",
-        });
-      } else if (action === "delete") {
-        const password = payload?.data_nascimento.replace(/\//g, "");
-        await updateUser(id, {
-          tipo_usuario: TipoUsuario.comum,
-          password: password,
-          ativo: true,
-        });
-        toast({
-          title: "Funcionário excluído com sucesso",
-          status: "success",
-          duration: 5000,
-          isClosable: true,
-          position: "top-right",
-        });
-      }
-      fetchEmployeeData();
-    } catch (error) {
-      toast({
-        title: `Erro ao ${
-          action === "authorize" ? "autorizar" : "excluir"
-        } funcionário`,
-        description: (error as Error).message,
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-        position: "top-right",
-      });
-    }
-  };
+	const confirmDelete = () => {
+		if (employeeToDeleteIndex !== null) {
+			setEmployeeData(prevEmployeeData =>
+				prevEmployeeData.filter((_, i) => i !== employeeToDeleteIndex)
+			);
+			setEmployeeToDeleteIndex(null);
+		}
+		onConfirmationClose();
+	};
 
-  const confirmDelete = () => {
-    if (employeeToDeleteIndex !== null) {
-      setEmployeeData((prevEmployeeData) =>
-        prevEmployeeData.filter((_, i) => i !== employeeToDeleteIndex)
-      );
-      setEmployeeToDeleteIndex(null);
-    }
-    onConfirmationClose();
-  };
-
-  return (
-    <Flex h="100vh" flexDir={"column"}>
-      <SidebarHome />
-      <HamburgerMenu />
-      <Flex
-        className="container__content"
-        ml={["0vw", "30vw", "25vw", "20vw"]}
-        flexDir={"column"}
-      >
-        <Flex
-          className="top__elements"
-          p={"50px 30px 20px 30px"}
-          justifyContent="space-around"
-          alignItems={"center"}
-          ml={["20px", "0", "0", "0"]}
-          w={["110%", "100%", "100%", "100%"]}
-        >
-          <Heading size={["lg"]} fontSize={["18", "20", "22", "24"]}>
-            Gerenciamento de Funcionários
-          </Heading>
-          <Button
-            minW="max-content"
-            colorScheme="blue"
-            bg={"#2CA1FF"}
-            _hover={{
-              bg: "#1C75BC",
-            }}
-            onClick={onOpen}
-          >
-            Adicionar Funcionário
-          </Button>
-        </Flex>
-        <Table
-          size={["sm", "sm", "md", "md"]}
-          variant="striped"
-          colorScheme="blue"
-        >
-          <thead>
-            <Tr>
-              <Th width="30%">Nome</Th>
-              <Th width="20%">CPF</Th>
-              <Th width="20%">CRAS</Th>
-              <Th width="20%">Ações</Th>
-            </Tr>
-          </thead>
-          <tbody>
-            {employeeData && employeeData.length > 0 ? (
-              employeeData.map((employee, index) => (
-                <Tr key={index}>
-                  <Td>{employee.name}</Td>
-                  <Td>{employee.cpf}</Td>
-                  <Td>{Cras[employee.cras]}</Td>
-                  <Td minWidth="180px">
-                    <Flex alignItems="center">
-                      <Button
-                        size="sm"
-                        colorScheme="blue"
-                        ml={2}
-                        onClick={() =>
-                          handleEmployeeAction(employee.id!, "authorize")
-                        }
-                      >
-                        Autorizar Funcionario
-                      </Button>
-                      <Button
-                        size="sm"
-                        colorScheme="red"
-                        ml={2}
-                        onClick={() =>
-                          handleEmployeeAction(employee.id!, "delete")
-                        }
-                      >
-                        Excluir Funcionario
-                      </Button>
-                    </Flex>
-                  </Td>
-                </Tr>
-              ))
-            ) : (
-              <Tr>
-                <Td colSpan={4}>Nenhum funcionário encontrado.</Td>
-              </Tr>
-            )}
-          </tbody>
-        </Table>
-        <ModalAddFuncionario
-          isOpen={isOpen}
-          onClose={onClose}
-          fetchEmployeeData={fetchEmployeeData}
-        />
-      </Flex>
-      <ConfirmationModal
-        isOpen={isConfirmationOpen}
-        onClose={onConfirmationClose}
-        onConfirm={confirmDelete}
-      />
-    </Flex>
-  );
+	return (
+		<Flex h="100vh" flexDir={'column'}>
+			<SidebarHome />
+			<HamburgerMenu />
+			<Flex className="container__content" ml={['0vw', '30vw', '25vw', '20vw']} flexDir={'column'}>
+				<Flex
+					className="top__elements"
+					p={'50px 30px 20px 30px'}
+					justifyContent="space-around"
+					alignItems={'center'}
+					ml={['20px', '0', '0', '0']}
+					w={['110%', '100%', '100%', '100%']}
+				>
+					<Heading size={['lg']} fontSize={['18', '20', '22', '24']}>
+						Gerenciamento de Funcionários
+					</Heading>
+					<Button
+						minW="max-content"
+						colorScheme="blue"
+						bg={'#2CA1FF'}
+						_hover={{
+							bg: '#1C75BC',
+						}}
+						onClick={onOpen}
+					>
+						Adicionar Funcionário
+					</Button>
+				</Flex>
+				<Table size={['sm', 'sm', 'md', 'md']} variant="striped" colorScheme="blue">
+					<thead>
+						<Tr>
+							<Th width="30%">Nome</Th>
+							<Th width="20%">CPF</Th>
+							<Th width="20%">CRAS</Th>
+							<Th width="20%">Ações</Th>
+						</Tr>
+					</thead>
+					<tbody>
+						{employeeData && employeeData.length > 0 ? (
+							employeeData.map((employee, index) => (
+								<Tr key={index}>
+									<Td>{employee.name}</Td>
+									<Td>{employee.cpf}</Td>
+									<Td>{Cras[employee.cras]}</Td>
+									<Td minWidth="180px">
+										<Flex alignItems="center">
+											<Button
+												size="sm"
+												colorScheme="blue"
+												ml={2}
+												onClick={() => handleEmployeeAction(employee.id!, 'authorize')}
+											>
+												Autorizar Funcionario
+											</Button>
+											<Button
+												size="sm"
+												colorScheme="red"
+												ml={2}
+												onClick={() => handleEmployeeAction(employee.id!, 'delete')}
+											>
+												Excluir Funcionario
+											</Button>
+										</Flex>
+									</Td>
+								</Tr>
+							))
+						) : (
+							<Tr>
+								<Td colSpan={4}>Nenhum funcionário encontrado.</Td>
+							</Tr>
+						)}
+					</tbody>
+				</Table>
+				<ModalAddFuncionario
+					isOpen={isOpen}
+					onClose={onClose}
+					fetchEmployeeData={fetchEmployeeData}
+				/>
+			</Flex>
+			<ConfirmationModal
+				isOpen={isConfirmationOpen}
+				onClose={onConfirmationClose}
+				onConfirm={confirmDelete}
+			/>
+		</Flex>
+	);
 };
 
 export default Gerenciamento;

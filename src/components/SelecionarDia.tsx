@@ -22,7 +22,7 @@ import {
 	Input,
 	Divider,
 } from '@chakra-ui/react';
-import DatePicker, { registerLocale } from 'react-datepicker';
+import DatePicker, { CalendarContainer, registerLocale } from 'react-datepicker';
 import { ptBR } from 'date-fns/locale/pt-BR';
 import { format, addDays } from 'date-fns';
 import { AuthContext } from '../context/AuthContext';
@@ -49,12 +49,18 @@ const SelecionarDia: React.FC = () => {
 	const maxDate = addDays(new Date(), 31);
 	const [selectedDate, setSelectedDate] = useState<Date>(addDays(new Date(), 1));
 	const { isOpen, onOpen, onClose } = useDisclosure();
-	const { payload, registerSchedulling, getAllSchedullingCras } = useContext(AuthContext);
+	const { payload, registerSchedulling, getAllSchedullingCras, getByCpf, cpfData } =
+		useContext(AuthContext);
 	const [schedullingData, setSchedullingData] = useState<ISchedulingModel[]>([]);
 	const [loading, setLoading] = useState(true);
+	const [cpf, setCpf] = useState<string>('');
 	const isMounted = useRef(true);
 	const toast = useToast();
 
+	const handleGetByCpf = async () => {
+		await getByCpf(cpf);
+	};
+	console.log(cpfData);
 	const {
 		register,
 		handleSubmit,
@@ -215,27 +221,18 @@ const SelecionarDia: React.FC = () => {
 						AGENDAR ATENDIMENTO
 					</Text>
 					<Divider />
-					{!selectedDate && (
-						<Box textAlign="center">
-							<Text
-								alignSelf={'center'}
-								fontWeight={'bold'}
-								fontSize={['1.2rem', '1.3rem', '1.4rem', '1.5rem']}
-							>
-								SELECIONE UM DIA
-							</Text>
-						</Box>
-					)}
-					<Flex gap={'5px'} flexDirection={'column'}>
-						<Box mx={'auto'} className="box__dia" alignItems={'center'} display={'flex'}>
-							<Text mr={'5px'} fontWeight="bold" fontSize={['12px', '12px', '15px', '15px']}>
+					<Flex gap={2} flexDirection={'column'}>
+						<Box
+							flexDir={['column', 'column', 'row', 'row']}
+							mx={'auto'}
+							className="box__dia"
+							alignItems={'center'}
+							display={'flex'}
+							columnGap={2}
+						>
+							<Text fontWeight="bold" fontSize={['12px', '12px', '15px', '15px']}>
 								DIA SELECIONADO:
 							</Text>
-							{/* <Box bg="#fff" p={'5px'} flex={1} textAlign="center" borderRadius="5px">
-								<Text fontSize={['12px', '12px', '15px', '15px']}>
-									{selectedDate && format(selectedDate, 'dd/MM/yyyy')}
-								</Text>
-							</Box> */}
 							<Box
 								alignItems={'center'}
 								w={'min-content'}
@@ -243,7 +240,6 @@ const SelecionarDia: React.FC = () => {
 								border={'1px solid #999'}
 								p={'1px'}
 								// mx={'auto'}
-								my={2}
 							>
 								<DatePicker
 									dateFormat="dd/MM/yyyy"
@@ -254,6 +250,23 @@ const SelecionarDia: React.FC = () => {
 									onChange={(date: Date) => setSelectedDate(date)}
 									minDate={addDays(new Date(), 1)}
 									className="customInput"
+									calendarContainer={({ className, children }) => (
+										<Box
+											style={{
+												borderRadius: '10px',
+												padding: '16px',
+												background: '#2ca1ff',
+												color: '#fff',
+											}}
+										>
+											<CalendarContainer className={className}>
+												<Text style={{ background: '#2ca1ff', padding: '4px', color: 'white' }}>
+													Selecione um dia
+												</Text>
+												<Text style={{ position: 'relative' }}>{children}</Text>
+											</CalendarContainer>
+										</Box>
+									)}
 								/>
 							</Box>
 						</Box>
@@ -325,19 +338,6 @@ const SelecionarDia: React.FC = () => {
 														<Input id="name" {...register('name')} defaultValue={payload?.name} />
 														{errors.name && <Text color="red.500">{errors.name.message}</Text>}
 													</FormControl>
-
-													<FormControl isInvalid={!!errors.usuario_id}>
-														<FormLabel htmlFor="usuario_id">Usuário ID</FormLabel>
-														<Input
-															id="usuario_id"
-															{...register('usuario_id')}
-															defaultValue={payload?.id}
-														/>
-														{errors.usuario_id && (
-															<Text color="red.500">{errors.usuario_id.message}</Text>
-														)}
-													</FormControl>
-
 													<FormControl isInvalid={!!errors.data_hora}>
 														<FormLabel htmlFor="data_hora">Data e Hora</FormLabel>
 														<Input
@@ -368,14 +368,31 @@ const SelecionarDia: React.FC = () => {
 											</Flex>
 
 											{showForm && (
-												<ModalFooter justifyContent={'center'}>
-													<Text>
-														Deseja confirmar o seu agendamento para o dia{' '}
-														<strong>{selectedDate && format(selectedDate, 'dd/MM/yyyy')}</strong> às{' '}
-														<strong>{horarioSelecionado}</strong> no{' '}
-														{payload && <strong>CRAS - {Cras[payload.cras]}?</strong>}
-													</Text>
-												</ModalFooter>
+												<>
+													{payload?.tipo_usuario !== 1 && (
+														<div>
+															<input
+																value={cpf}
+																onChange={e => setCpf(e.target.value)}
+																placeholder="Digite o CPF"
+															/>
+															<button onClick={handleGetByCpf}>Buscar por CPF</button>
+															{cpfData && <div>{JSON.stringify(cpfData)}</div>}
+														</div>
+													)}
+													<ModalFooter justifyContent={'center'}>
+														{payload?.tipo_usuario === 1 && (
+															<Text>
+																Deseja confirmar o seu agendamento para o dia{' '}
+																<strong>
+																	{selectedDate && format(selectedDate, 'dd/MM/yyyy')}
+																</strong>{' '}
+																às <strong>{horarioSelecionado}</strong> no{' '}
+																{payload && <strong>CRAS - {Cras[payload.cras]}?</strong>}
+															</Text>
+														)}
+													</ModalFooter>
+												</>
 											)}
 											<ModalFooter justifyContent={'center'}>
 												<Button

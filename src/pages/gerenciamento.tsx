@@ -33,7 +33,7 @@ const Gerenciamento: React.FC = () => {
       try {
         const response = await getAllUsers();
         const employees: IUserModel[] = (response.contas || []).filter(
-          (user) => user.tipo_usuario === TipoUsuario.admin
+          (user: IUserModel) => user.tipo_usuario === TipoUsuario.admin
         );
         setEmployeeData(employees);
       } catch (error) {

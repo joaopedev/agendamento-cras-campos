@@ -47,12 +47,12 @@ const ModalAddFuncionario: React.FC<AddEmployeeModalProps> = ({
     resolver: yupResolver(RegisterUserSchema),
     defaultValues: {
       tipo_usuario: TipoUsuario.admin,
+      ativo: true,
       endereco: {
         bairro: "Não se aplica",
         rua: "Não se aplica",
         numero: 0,
-      },
-      ativo: false,
+      }
     },
   });
 

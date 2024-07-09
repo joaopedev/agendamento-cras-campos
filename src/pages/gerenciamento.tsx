@@ -33,7 +33,7 @@ const Gerenciamento: React.FC = () => {
       try {
         const response = await getAllUsers();
         const employees: IUserModel[] = (response.contas || []).filter(
-          (user) => user.ativo === false
+          (user) => user.tipo_usuario === TipoUsuario.admin
         );
         setEmployeeData(employees);
       } catch (error) {
@@ -65,8 +65,7 @@ const Gerenciamento: React.FC = () => {
         const password = payload?.data_nascimento.replace(/\//g, "");
         await updateUser(id, {
           tipo_usuario: TipoUsuario.comum,
-          password: password,
-          ativo: true,
+          password: password
         });
         toast({
           title: "Funcionário excluído com sucesso",
@@ -155,16 +154,6 @@ const Gerenciamento: React.FC = () => {
                   <Td>{Cras[employee.cras]}</Td>
                   <Td minWidth="180px">
                     <Flex alignItems="center">
-                      <Button
-                        size="sm"
-                        colorScheme="blue"
-                        ml={2}
-                        onClick={() =>
-                          handleEmployeeAction(employee.id!, "authorize")
-                        }
-                      >
-                        Autorizar Funcionario
-                      </Button>
                       <Button
                         size="sm"
                         colorScheme="red"

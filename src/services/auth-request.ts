@@ -74,7 +74,7 @@ export const getUserRequest = async (id: string) => {
 export const getAllUsersRequest = async () => {
 	try {
 		const response = await api.get(`/private/account`);
-		return response;
+		return response.data;
 	} catch (error) {
 		const errors = error as AxiosError;
 		let errorMessage = '';

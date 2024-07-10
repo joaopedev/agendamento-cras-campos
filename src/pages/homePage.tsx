@@ -127,6 +127,7 @@ export const Home: React.FC = () => {
         status: 'success',
         duration: 5000,
         isClosable: true,
+		position: "top-right"
       });
     } catch (error) {
       toast({
@@ -135,6 +136,7 @@ export const Home: React.FC = () => {
         status: 'error',
         duration: 5000,
         isClosable: true,
+		position: "top-right"
       });
     }
   };

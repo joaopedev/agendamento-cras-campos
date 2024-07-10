@@ -38,8 +38,8 @@ import CardShowAgendamento from '../components/CardShowAgendamento';
 export const Home: React.FC = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [isEditing, setIsEditing] = useState(false);
-  const { payload, setPayload } = useContext(AuthContext); // Access updateUser from context
-  const toast = useToast(); // Initialize useToast hook
+  const { payload, setPayload } = useContext(AuthContext);
+  const toast = useToast();
   const [inputTelefone, setInputTelefone] = useState('');
   const payloadRef = useRef(payload);
 
@@ -51,7 +51,6 @@ export const Home: React.FC = () => {
     if (payloadRef.current && payloadRef.current.id) {
     }
   }, [payloadRef]);
-
 
 	const {
 		register,
@@ -98,12 +97,29 @@ export const Home: React.FC = () => {
 
   const handleSave = async (data: IUserModel) => {
     try {
-      if (!payload || !payload.id) { // Verifica se payload é null ou se payload.id é null
+      if (!payload || !payload.id) {
         throw new Error('User information not available');
       }
+      
+      const lastUpdated = new Date(payload.updated_at);
+      const now = new Date();
+      const timeDifference = now.getTime() - lastUpdated.getTime();
+      const hoursDifference = timeDifference / (1000 * 3600);
   
-      const { data: updatedUserData } = await updateUserRequest(payload.id, data); // Agora é seguro usar payload.id
-      setPayload(updatedUserData);
+      if (hoursDifference <= 24) {
+        throw new Error('Cannot update information within 24 hours of the last update');
+      }
+  
+      const { data: updatedUserData } = await updateUserRequest(payload.id, data);
+  
+      // Atualiza apenas os campos necessários no payload
+      setPayload((prevPayload) => ({
+        ...prevPayload,
+        ...updatedUserData,
+        // Preserve campos críticos, se necessário
+        tipoUsuario: payload?.tipo_usuario,
+      }));
+  
       setIsEditing(false);
       toast({
         title: 'Sucesso',
@@ -370,12 +386,12 @@ const textStyle1 = {
 	p: 2,
 };
 
-const textStyle2 = {
-	fontSize: ['0.7rem', '0.8rem', '0.9rem', '1rem'],
-	fontWeight: 'bold',
-	mt: '10px',
-	mb: '3px',
-};
+// const textStyle2 = {
+// 	fontSize: ['0.7rem', '0.8rem', '0.9rem', '1rem'],
+// 	fontWeight: 'bold',
+// 	mt: '10px',
+// 	mb: '3px',
+// };
 
 export const boxStyle = {
 	w: '60%',

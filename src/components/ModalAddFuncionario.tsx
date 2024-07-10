@@ -16,7 +16,6 @@ import {
 	InputLeftElement,
 	Select,
 	useToast,
-	Box,
 	Flex,
 } from '@chakra-ui/react';
 import { yupResolver } from '@hookform/resolvers/yup';

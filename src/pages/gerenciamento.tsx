@@ -14,7 +14,7 @@ import ModalAddFuncionario from "../components/ModalAddFuncionario";
 import SidebarHome from "../components/SidebarHome";
 import { HamburgerMenu } from "../components/HamburgerMenu";
 import ConfirmationModal from "../components/ConfirmationModal";
-import { TipoUsuario, Cras, IUserModel } from "../interface/User";
+import { TipoUsuario, Cras, IUserModel, IAllUsers } from "../interface/User";
 import { AuthContext } from "../context/AuthContext";
 
 const Gerenciamento: React.FC = () => {
@@ -31,7 +31,7 @@ const Gerenciamento: React.FC = () => {
   const fetchEmployeeData = useCallback(async () => {
     if (payload) {
       try {
-        const response = await getAllUsers();
+        const response: IAllUsers = await getAllUsers();
         const employees: IUserModel[] = (response.contas || []).filter(
           (user: IUserModel) => user.tipo_usuario === TipoUsuario.admin
         );
@@ -65,7 +65,7 @@ const Gerenciamento: React.FC = () => {
         const password = payload?.data_nascimento.replace(/\//g, "");
         await updateUser(id, {
           tipo_usuario: TipoUsuario.comum,
-          password: password
+          password: password,
         });
         toast({
           title: "Funcionário excluído com sucesso",

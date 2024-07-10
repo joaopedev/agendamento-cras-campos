@@ -97,7 +97,7 @@ export const AuthProvider = ({ children }: IAuthProvider) => {
 	};
 
 	const getAllUsers = async (): Promise<IAllUsers> => {
-		const { data } = await getAllUsersRequest();
+		const data = await getAllUsersRequest();
 		return data;
 	};
 

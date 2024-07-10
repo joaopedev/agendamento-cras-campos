@@ -46,6 +46,7 @@ export interface IUserModel {
 	ativo: boolean;
 	password_reset_token?: string;
 	password_reset_expires?: Date;
+	updated_at?: Date;
 	[key: string]: any;
 }
 

@@ -88,32 +88,33 @@ const SelecionarDia: React.FC = () => {
       await registerSchedulling(data);
       setAgendamentoRealizado(true);
       const novoAgendamento: ISchedulingModel = {
+        id: Math.random(), // Gere um ID único aqui conforme necessário
         name: data.name,
         usuario_id: data.usuario_id,
         servico: data.servico as unknown as TipoServico,
-        description: "", // Ajuste conforme necessário
+        description: '', // Ajuste conforme necessário
         duracao_atendimento: 60, // Ajuste conforme necessário
         data_hora: new Date(data.data_hora),
         cras: data.cras,
         status: data.status as unknown as Status,
-        message: "", // Ajuste conforme necessário
+        message: '', // Ajuste conforme necessário
         agendamentos: [], // Ajuste conforme necessário
       };
-      setSchedullingData((prevState) => [...prevState, novoAgendamento]);
+      setSchedullingData(prevState => [...prevState, novoAgendamento]);
       toast({
-        title: "Agendamento realizado com sucesso",
+        title: 'Agendamento realizado com sucesso',
         duration: 5000,
         isClosable: true,
-        position: "top-right",
+        position: 'top-right',
       });
     } catch (error) {
       toast({
-        title: "Erro ao realizar agendamento",
+        title: 'Erro ao realizar agendamento',
         description: (error as Error).message,
-        status: "error",
+        status: 'error',
         duration: 5000,
         isClosable: true,
-        position: "top-right",
+        position: 'top-right',
       });
     }
   };
@@ -435,6 +436,19 @@ const SelecionarDia: React.FC = () => {
                               </Text>
                             )}
                           </FormControl>
+                          
+                          <FormControl isInvalid={!!errors.usuario_id}>
+                            <FormLabel htmlFor="usuario_id">Usuário ID</FormLabel>
+                            <Input
+                              id="usuario_id"
+                              {...register("usuario_id")}
+                              defaultValue={payload?.id} // ou o valor correto do id do usuário
+                            />
+                            {errors.usuario_id && (
+                              <Text color="red.500">{errors.usuario_id.message}</Text>
+                            )}
+                          </FormControl>
+
                         </Box>
                       </Flex>
 

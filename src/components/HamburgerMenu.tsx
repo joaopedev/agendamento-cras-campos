@@ -1,4 +1,4 @@
-import { Menu, MenuButton, MenuList, MenuItem, Box, IconButton, Button } from '@chakra-ui/react';
+import { Menu, MenuButton, MenuList, MenuItem, Box, IconButton } from '@chakra-ui/react';
 import { NavLink } from 'react-router-dom';
 import { HamburgerIcon } from '@chakra-ui/icons';
 import { useContext } from 'react';

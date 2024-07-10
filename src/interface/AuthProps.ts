@@ -24,12 +24,13 @@ export interface IPayload {
 	};
 	data_nascimento: string;
 	message: string;
+	updated_at: Date;
 }
 
 export interface IAuthContext {
 	isAuthenticated: boolean;
 	token: string | null;
-	cpfData: string;
+	cpfData: IUserModel;
 	payload: IPayload | null;
 	setPayload: React.Dispatch<React.SetStateAction<IPayload | null>>;
 	signIn: (data: SignIn) => Promise<void>;

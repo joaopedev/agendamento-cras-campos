@@ -9,6 +9,7 @@ import {
   Tr,
   useDisclosure,
   useToast,
+  Select,
 } from "@chakra-ui/react";
 import ModalAddFuncionario from "../components/ModalAddFuncionario";
 import SidebarHome from "../components/SidebarHome";
@@ -24,6 +25,10 @@ const Gerenciamento: React.FC = () => {
   const [employeeToDeleteIndex, setEmployeeToDeleteIndex] = useState<
     number | null
   >(null);
+  const [editingEmployee, setEditingEmployee] = useState<{
+    index: number | null;
+    data: IUserModel | null;
+  }>({ index: null, data: null });
   const { isOpen: isConfirmationOpen, onClose: onConfirmationClose } =
     useDisclosure();
   const toast = useToast();
@@ -100,6 +105,43 @@ const Gerenciamento: React.FC = () => {
     onConfirmationClose();
   };
 
+  const handleEditChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setEditingEmployee((prev) => ({
+      ...prev,
+      data: {
+        ...prev.data!,
+        [name]: Number(value),
+      },
+    }));
+  };
+
+  const saveEdit = async () => {
+    if (editingEmployee.data) {
+      try {
+        await updateUser(editingEmployee.data.id!, editingEmployee.data);
+        toast({
+          title: "Funcionário editado com sucesso",
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+          position: "top-right",
+        });
+        setEditingEmployee({ index: null, data: null });
+        fetchEmployeeData();
+      } catch (error) {
+        toast({
+          title: "Erro ao editar funcionário",
+          description: (error as Error).message,
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+          position: "top-right",
+        });
+      }
+    }
+  };
+
   return (
     <Flex h="100vh" flexDir={"column"}>
       <SidebarHome />
@@ -151,9 +193,43 @@ const Gerenciamento: React.FC = () => {
                 <Tr key={index}>
                   <Td>{employee.name}</Td>
                   <Td>{employee.cpf}</Td>
-                  <Td>{Cras[employee.cras]}</Td>
+                  <Td>
+                    {editingEmployee.index === index ? (
+                      <Select
+                        name="cras"
+                        value={editingEmployee.data?.cras || ""}
+                        onChange={handleEditChange}
+                      >
+                        {Object.entries(Cras)
+                          .filter(([key]) => isNaN(Number(key)))
+                          .map(([key, value]) => (
+                            <option key={value} value={value}>
+                              {key}
+                            </option>
+                          ))}
+                      </Select>
+                    ) : (
+                      Cras[employee.cras]
+                    )}
+                  </Td>
                   <Td minWidth="180px">
                     <Flex alignItems="center">
+                      {editingEmployee.index === index ? (
+                        <Button size="sm" colorScheme="green" ml={2} onClick={saveEdit}>
+                          Salvar
+                        </Button>
+                      ) : (
+                        <Button
+                          size="sm"
+                          colorScheme="blue"
+                          ml={2}
+                          onClick={() =>
+                            setEditingEmployee({ index, data: employee })
+                          }
+                        >
+                          Editar
+                        </Button>
+                      )}
                       <Button
                         size="sm"
                         colorScheme="red"

@@ -22,6 +22,7 @@ import {
 	InputLeftAddon,
 	useToast,
 	CloseButton,
+	Container,
 } from '@chakra-ui/react';
 import React, { useContext, useState, useEffect, ChangeEvent, useRef } from 'react';
 import { SidebarHome } from '../components/SidebarHome';
@@ -36,21 +37,21 @@ import { BairroCras } from '../components/BairroCras';
 import CardShowAgendamento from '../components/CardShowAgendamento';
 
 export const Home: React.FC = () => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const [isEditing, setIsEditing] = useState(false);
-  const { payload, setPayload } = useContext(AuthContext);
-  const toast = useToast();
-  const [inputTelefone, setInputTelefone] = useState('');
-  const payloadRef = useRef(payload);
+	const { isOpen, onOpen, onClose } = useDisclosure();
+	const [isEditing, setIsEditing] = useState(false);
+	const { payload, setPayload } = useContext(AuthContext);
+	const toast = useToast();
+	const [inputTelefone, setInputTelefone] = useState('');
+	const payloadRef = useRef(payload);
 
-  useEffect(() => {
-    payloadRef.current = payload;
-  }, [payload]);
-  
-  useEffect(() => {
-    if (payloadRef.current && payloadRef.current.id) {
-    }
-  }, [payloadRef]);
+	useEffect(() => {
+		payloadRef.current = payload;
+	}, [payload]);
+
+	useEffect(() => {
+		if (payloadRef.current && payloadRef.current.id) {
+		}
+	}, [payloadRef]);
 
 	const {
 		register,
@@ -95,51 +96,51 @@ export const Home: React.FC = () => {
 		setValue('telefone', value); // Update form value with formatted number
 	};
 
-  const handleSave = async (data: IUserModel) => {
-    try {
-      if (!payload || !payload.id) {
-        throw new Error('User information not available');
-      }
-      
-      const lastUpdated = new Date(payload.updated_at);
-      const now = new Date();
-      const timeDifference = now.getTime() - lastUpdated.getTime();
-      const hoursDifference = timeDifference / (1000 * 3600);
-  
-      if (hoursDifference <= 24) {
-        throw new Error('Cannot update information within 24 hours of the last update');
-      }
-  
-      const { data: updatedUserData } = await updateUserRequest(payload.id, data);
-  
-      // Atualiza apenas os campos necessários no payload
-      setPayload((prevPayload) => ({
-        ...prevPayload,
-        ...updatedUserData,
-        // Preserve campos críticos, se necessário
-        tipoUsuario: payload?.tipo_usuario,
-      }));
-  
-      setIsEditing(false);
-      toast({
-        title: 'Sucesso',
-        description: 'Informações atualizadas com sucesso.',
-        status: 'success',
-        duration: 5000,
-        isClosable: true,
-		position: "top-right"
-      });
-    } catch (error) {
-      toast({
-        title: 'Erro',
-        description: (error as Error).message,
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-		position: "top-right"
-      });
-    }
-  };
+	const handleSave = async (data: IUserModel) => {
+		try {
+			if (!payload || !payload.id) {
+				throw new Error('User information not available');
+			}
+
+			const lastUpdated = new Date(payload.updated_at);
+			const now = new Date();
+			const timeDifference = now.getTime() - lastUpdated.getTime();
+			const hoursDifference = timeDifference / (1000 * 3600);
+
+			if (hoursDifference <= 24) {
+				throw new Error('Cannot update information within 24 hours of the last update');
+			}
+
+			const { data: updatedUserData } = await updateUserRequest(payload.id, data);
+
+			// Atualiza apenas os campos necessários no payload
+			setPayload(prevPayload => ({
+				...prevPayload,
+				...updatedUserData,
+				// Preserve campos críticos, se necessário
+				tipoUsuario: payload?.tipo_usuario,
+			}));
+
+			setIsEditing(false);
+			toast({
+				title: 'Sucesso',
+				description: 'Informações atualizadas com sucesso.',
+				status: 'success',
+				duration: 5000,
+				isClosable: true,
+				position: 'top-right',
+			});
+		} catch (error) {
+			toast({
+				title: 'Erro',
+				description: (error as Error).message,
+				status: 'error',
+				duration: 5000,
+				isClosable: true,
+				position: 'top-right',
+			});
+		}
+	};
 
 	const selectedBairro = watch('endereco.bairro');
 
@@ -199,6 +200,7 @@ export const Home: React.FC = () => {
 									flexDir={['column', 'column', 'row', 'row']}
 									justifyContent={'space-evenly'}
 									alignItems={'center'}
+									gap={2}
 								>
 									<Avatar
 										bg={'#2CA1FF'}
@@ -351,14 +353,29 @@ export const Home: React.FC = () => {
 									)}
 
 									{isEditing && (
-										<>
-											<Button type="submit" borderRadius={'100%'} transform="auto" mr={2}>
-												<CheckIcon color={'#2CA1FF'} />
+										<Flex gap={2} flexDir={['row', 'row', 'column', 'column']}>
+											<Button
+												type="submit"
+												maxW={10}
+												maxH={10}
+												borderRadius={'100%'}
+												transform="auto"
+												bgColor={'#2CA1FF'}
+												_hover={{ backgroundColor: '#2CA1FF' }}
+											>
+												<CheckIcon _hover={{ backgroundColor: '#2CA1FF' }} color={'white'} />
 											</Button>
-											<Button onClick={handleCancelEdit} borderRadius={'100%'} transform="auto">
-												<CloseButton color={'red.500'} />
+											<Button
+												maxW={10}
+												maxH={10}
+												bg={'red.500'}
+												onClick={handleCancelEdit}
+												borderRadius={'100%'}
+												transform="auto"
+											>
+												<CloseButton w={0} h={0} color={'white'} />
 											</Button>
-										</>
+										</Flex>
 									)}
 								</Flex>
 							</Card>
@@ -366,17 +383,10 @@ export const Home: React.FC = () => {
 					)}
 				</Box>
 			</Stack>
-			<Stack alignItems={'center'}>
-				{/* <Text
-					fontWeight={'bold'}
-					fontSize={['1.2rem', '1.3rem', '1.4rem', '1.5rem']}
-					ml={[0, '30%', '25%', '20%']}
-				>
-					AGENDAR ATENDIMENTO
-				</Text> */}
+			<Flex mb={10} flexDir={'column'}>
 				<CardShowAgendamento />
-				<SelecionarDia />
-			</Stack>
+				{payload?.tipo_usuario !== 5 && <SelecionarDia />}
+			</Flex>
 		</Flex>
 	);
 };

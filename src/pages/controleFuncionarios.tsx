@@ -7,13 +7,11 @@ import SidebarHome from '../components/SidebarHome';
 
 const Agendamentos: React.FC = () => {
 	return (
-		<>
+		<Flex className="flex" h="100vh" w="100%">
 			<SidebarHome />
-			<Flex className="flex" h="100vh">
-				<HamburgerMenu />
-				<SelecionarDiaFuncionario />
-			</Flex>
-		</>
+			<HamburgerMenu />
+			<SelecionarDiaFuncionario />
+		</Flex>
 	);
 };
 

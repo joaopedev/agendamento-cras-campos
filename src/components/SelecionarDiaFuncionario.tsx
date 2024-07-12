@@ -14,18 +14,9 @@ import {
 	Tag,
 	useToast,
 	Avatar,
-	Modal,
-	ModalBody,
-	ModalCloseButton,
-	ModalContent,
-	ModalFooter,
-	ModalHeader,
-	ModalOverlay,
-	useDisclosure,
 } from '@chakra-ui/react';
 import { AuthContext } from '../context/AuthContext';
 import { ISchedulingModel, ISchedulingResponse } from '../interface/Schedulling';
-import SelecionarDia from './SelecionarDia';
 
 registerLocale('pt-BR', ptBR);
 

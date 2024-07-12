@@ -22,7 +22,6 @@ import {
 	InputLeftAddon,
 	useToast,
 	CloseButton,
-	Container,
 } from '@chakra-ui/react';
 import React, { useContext, useState, useEffect, ChangeEvent, useRef } from 'react';
 import { SidebarHome } from '../components/SidebarHome';

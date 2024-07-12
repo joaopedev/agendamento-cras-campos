@@ -53,12 +53,12 @@ const Gerenciamento: React.FC = () => {
   }, [payload, getAllUsers, fetchEmployeeData]);
 
   const handleEmployeeAction = async (
-    id: string,
+    employee: IUserModel,
     action: "authorize" | "delete"
   ) => {
     try {
       if (action === "authorize") {
-        await updateUser(id, { ativo: true });
+        await updateUser(employee.id!, { ativo: true });
         toast({
           title: "Funcionário autorizado com sucesso",
           status: "success",
@@ -67,18 +67,24 @@ const Gerenciamento: React.FC = () => {
           position: "top-right",
         });
       } else if (action === "delete") {
-        const password = payload?.data_nascimento.replace(/\//g, "");
-        await updateUser(id, {
-          tipo_usuario: TipoUsuario.comum,
-          password: password,
-        });
-        toast({
-          title: "Funcionário excluído com sucesso",
-          status: "success",
-          duration: 5000,
-          isClosable: true,
-          position: "top-right",
-        });
+        if (employee.data_nascimento) {
+          const password = employee.data_nascimento.replace(/\//g, "");
+          await updateUser(employee.id!, {
+            tipo_usuario: TipoUsuario.comum,
+            password: password,
+          });
+          toast({
+            title: "Funcionário excluído com sucesso",
+            status: "success",
+            duration: 5000,
+            isClosable: true,
+            position: "top-right",
+          });
+        } else {
+          throw new Error(
+            "Data de nascimento não disponível para criar a senha."
+          );
+        }
       }
       fetchEmployeeData();
     } catch (error) {
@@ -215,7 +221,12 @@ const Gerenciamento: React.FC = () => {
                   <Td minWidth="180px">
                     <Flex alignItems="center">
                       {editingEmployee.index === index ? (
-                        <Button size="sm" colorScheme="green" ml={2} onClick={saveEdit}>
+                        <Button
+                          size="sm"
+                          colorScheme="green"
+                          ml={2}
+                          onClick={saveEdit}
+                        >
                           Salvar
                         </Button>
                       ) : (
@@ -234,9 +245,7 @@ const Gerenciamento: React.FC = () => {
                         size="sm"
                         colorScheme="red"
                         ml={2}
-                        onClick={() =>
-                          handleEmployeeAction(employee.id!, "delete")
-                        }
+                        onClick={() => handleEmployeeAction(employee, "delete")}
                       >
                         Excluir Funcionario
                       </Button>

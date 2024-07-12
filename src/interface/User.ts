@@ -33,7 +33,7 @@ export enum Cras {
 }
 
 export interface IUserModel {
-	id?: string;
+	id: string;
 	name: string;
 	email?: string;
 	cpf: string;

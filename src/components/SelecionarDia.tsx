@@ -46,15 +46,11 @@ registerLocale("pt-BR", ptBR);
 
 const SelecionarDia: React.FC = () => {
   const [showForm, setShowForm] = useState(false);
-  const [horarioSelecionado, setHorarioSelecionado] = useState<string | null>(
-    null
-  );
+  const [horarioSelecionado, setHorarioSelecionado] = useState<string | null>(null);
   const [selectedOption, setSelectedOption] = useState<string>("");
   const [ , setAgendamentoRealizado] = useState(false);
   const maxDate = addDays(new Date(), 31);
-  const [selectedDate, setSelectedDate] = useState<Date>(
-    addDays(new Date(), 1)
-  );
+  const [selectedDate, setSelectedDate] = useState<Date>(addDays(new Date(), 1));
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
     payload,
@@ -63,9 +59,7 @@ const SelecionarDia: React.FC = () => {
     getByCpf,
     cpfData,
   } = useContext(AuthContext);
-  const [schedullingData, setSchedullingData] = useState<ISchedulingModel[]>(
-    []
-  );
+  const [schedullingData, setSchedullingData] = useState<ISchedulingModel[]>([]);
   const [loading, setLoading] = useState(true);
   const [cpf, setCpf] = useState<string>("");
   const isMounted = useRef(true);
@@ -74,6 +68,7 @@ const SelecionarDia: React.FC = () => {
   const handleGetByCpf = async () => {
     await getByCpf(cpf);
   };
+
   const {
     register,
     handleSubmit,
@@ -154,6 +149,14 @@ const SelecionarDia: React.FC = () => {
       isMounted.current = false;
     };
   }, [payload?.cras, getAllSchedullingCras]);
+
+  useEffect(() => {
+    if (cpfData) {
+      setValue("name", cpfData.name);
+      setValue("cras", cpfData.cras);
+      setValue("usuario_id", cpfData.id);
+    }
+  }, [cpfData, setValue]);
 
   const horarios = useMemo(() => {
     return [
@@ -384,7 +387,7 @@ const SelecionarDia: React.FC = () => {
                             <Input
                               id="name"
                               {...register("name")}
-                              defaultValue={payload?.name}
+                              defaultValue={cpfData ? cpfData.name : payload?.name}
                             />
                             {errors.name && (
                               <Text color="red.500">{errors.name.message}</Text>
@@ -416,7 +419,7 @@ const SelecionarDia: React.FC = () => {
                             <Input
                               id="cras"
                               {...register("cras")}
-                              defaultValue={payload?.cras}
+                              defaultValue={cpfData ? cpfData.cras : payload?.cras}
                             />
                             {errors.cras && (
                               <Text color="red.500">{errors.cras.message}</Text>
@@ -442,7 +445,7 @@ const SelecionarDia: React.FC = () => {
                             <Input
                               id="usuario_id"
                               {...register("usuario_id")}
-                              defaultValue={payload?.id} // ou o valor correto do id do usuário
+                              defaultValue={cpfData ? cpfData.id : payload?.id}
                             />
                             {errors.usuario_id && (
                               <Text color="red.500">{errors.usuario_id.message}</Text>

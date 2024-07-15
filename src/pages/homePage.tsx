@@ -124,7 +124,6 @@ export const Home: React.FC = () => {
 			toast({
 				title: 'Sucesso',
 				description: 'Informações atualizadas com sucesso.',
-				status: 'success',
 				duration: 5000,
 				isClosable: true,
 				position: 'top-right',
@@ -182,7 +181,7 @@ export const Home: React.FC = () => {
 				className="stack"
 				gap={['15px', '15px', '18px', '18px']}
 				mt={['60px', 10, 10, 10]}
-				mb={6}
+				mb={4}
 				alignItems="center"
 				ml={[0, '30%', '25%', '20%']}
 			>
@@ -382,7 +381,7 @@ export const Home: React.FC = () => {
 					)}
 				</Box>
 			</Stack>
-			<Flex mb={10} flexDir={'column'}>
+			<Flex mb={10} flexDir={'column'} gap={4}>
 				<CardShowAgendamento />
 				{payload?.tipo_usuario !== 5 && <SelecionarDia />}
 			</Flex>

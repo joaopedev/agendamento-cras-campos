@@ -11,7 +11,6 @@ const CardShowAgendamento: React.FC = () => {
 			justifyContent={'center'}
 			ml={['0%', '30%', '25%', '20%']}
 			w={['100%', '70%', '75%', '80%']}
-			mb={4}
 			textAlign={'center'}
 		>
 			<Card

@@ -414,7 +414,7 @@ const SelecionarDia: React.FC = () => {
 																gap={2}
 															>
 																<Text fontWeight={'bold'}>Buscar usuário pelo CPF</Text>
-																<Flex gap={1} w={'100%'}>
+																<Flex gap={1} w={'80%'}>
 																	<Input
 																		maxLength={11}
 																		value={cpf}
@@ -427,7 +427,19 @@ const SelecionarDia: React.FC = () => {
 																	/>
 																	{/* <Button onClick={handleGetByCpf}>Buscar por CPF</Button> */}
 																	<Button
-																		sx={btnStyle}
+																		sx={{
+																			maxW: 'max-content',
+																			display: '-ms-grid',
+																			boxShadow: '1px 1px 2px hsla(0, 28%, 0%, 0.7)',
+																			color: '#fff',
+																			bg: '#2CA1FF',
+																			minW: ['80px', '80px', '90px', '100px'],
+																			fontSize: ['0.8rem', '0.8rem', '0.9rem', '1rem'],
+																			_hover: {
+																				bg: '#1C75BC',
+																				fontWeight: 'bold',
+																			},
+																		}}
 																		onClick={() => {
 																			if (cpf.length !== 11) {
 																				setError('O CPF deve conter exatamente 11 números.');

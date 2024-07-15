@@ -10,6 +10,7 @@ import {
 	useDisclosure,
 	useToast,
 	Select,
+	Thead,
 } from '@chakra-ui/react';
 import ModalAddFuncionario from '../components/ModalAddFuncionario';
 import SidebarHome from '../components/SidebarHome';
@@ -149,11 +150,12 @@ const Gerenciamento: React.FC = () => {
 			<Flex className="container__content" ml={['0vw', '30vw', '25vw', '20vw']} flexDir={'column'}>
 				<Flex
 					className="top__elements"
-					p={'50px 30px 20px 30px'}
-					justifyContent="space-around"
-					alignItems={'center'}
-					ml={['20px', '0', '0', '0']}
-					w={['110%', '100%', '100%', '100%']}
+					flexDir={['column', 'column', 'row', 'row']}
+					mt={'60px'}
+					gap={3}
+					p={'0px 24px 20px 24px'}
+					justifyContent="space-between"
+					alignItems={'flex-start'}
 				>
 					<Heading size={['lg']} fontSize={['18', '20', '22', '24']}>
 						Gerenciamento de Funcionários
@@ -161,7 +163,6 @@ const Gerenciamento: React.FC = () => {
 					<Button
 						minW="max-content"
 						colorScheme="blue"
-						bg={'#2CA1FF'}
 						_hover={{
 							bg: '#1C75BC',
 						}}
@@ -170,22 +171,26 @@ const Gerenciamento: React.FC = () => {
 						Adicionar Funcionário
 					</Button>
 				</Flex>
-				<Table size={['sm', 'sm', 'md', 'md']} variant="striped" colorScheme="blue">
-					<thead>
+				<Table variant="striped" colorScheme="blue">
+					<Thead>
 						<Tr>
-							<Th width="30%">Nome</Th>
-							<Th width="20%">CPF</Th>
-							<Th width="20%">CRAS</Th>
-							<Th width="20%">Ações</Th>
+							<Th fontSize={['12px', '12px', '14px', '16px']}>Nome</Th>
+							<Th fontSize={['12px', '12px', '14px', '16px']}>CPF</Th>
+							<Th fontSize={['12px', '12px', '14px', '16px']}>CRAS</Th>
+							<Th fontSize={['12px', '12px', '14px', '16px']}>Ações</Th>
 						</Tr>
-					</thead>
+					</Thead>
 					<tbody>
 						{employeeData && employeeData.length > 0 ? (
 							employeeData.map((employee, index) => (
-								<Tr key={index}>
-									<Td>{employee.name}</Td>
-									<Td>{employee.cpf}</Td>
-									<Td>
+								<Tr
+									h={'73px'}
+									// minH={'73px'}
+									key={index}
+								>
+									<Td fontSize={['12px', '12px', '14px', '16px']}>{employee.name}</Td>
+									<Td fontSize={['12px', '12px', '14px', '16px']}>{employee.cpf}</Td>
+									<Td fontSize={['12px', '12px', '14px', '16px']}>
 										{editingEmployee.index === index ? (
 											<Select
 												name="cras"
@@ -204,30 +209,36 @@ const Gerenciamento: React.FC = () => {
 											Cras[employee.cras]
 										)}
 									</Td>
-									<Td minWidth="180px">
-										<Flex alignItems="center">
+									<Td
+									//  minWidth="180px"
+									>
+										<Flex
+											gap={2}
+											justifyContent={'flex-start'}
+											flexDir={['column', 'column', 'column', 'row']}
+										>
 											{editingEmployee.index === index ? (
-												<Button size="sm" colorScheme="green" ml={2} onClick={saveEdit}>
+												<Button maxW={'63px'} size="sm" colorScheme="green" onClick={saveEdit}>
 													Salvar
 												</Button>
 											) : (
 												<Button
+													maxW={'63px'}
 													size="sm"
 													colorScheme="blue"
-													ml={2}
 													onClick={() => setEditingEmployee({ index, data: employee })}
 												>
 													Editar
 												</Button>
 											)}
 											<Button
+												maxW={'63px'}
 												size="sm"
 												colorScheme="red"
-												ml={2}
 												// onClick={() => handleEmployeeAction(employee, "delete")}
 												onClick={onConfirmationOpen}
 											>
-												Excluir Funcionario
+												Excluir
 											</Button>
 											<ConfirmationModal
 												isOpen={isConfirmationOpen}

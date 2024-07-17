@@ -1,8 +1,8 @@
 import { ptBR } from 'date-fns/locale/pt-BR';
-import { format, addDays } from 'date-fns';
+import { format, addDays, getDay } from 'date-fns';
 import * as React from 'react';
 import { useState, useEffect, useContext, useRef } from 'react';
-import DatePicker, { registerLocale } from 'react-datepicker';
+import DatePicker, { CalendarContainer, registerLocale } from 'react-datepicker';
 import {
 	Button,
 	Box,
@@ -51,6 +51,18 @@ const SelecionarDiaFuncionario: React.FC = () => {
 	// const [showAgendamento, setShowAgendamento] = useState(false);
 	const [elapsedTime, setElapsedTime] = useState(0);
 	// const { isOpen, onOpen, onClose } = useDisclosure();
+	const getSelectedDay = () => {
+		if (getDay(selectedDate) === 6) {
+			setSelectedDate(addDays(selectedDate, 2));
+			console.log(typeof selectedDate);
+			return;
+		}
+		if (getDay(selectedDate) === 0) {
+			setSelectedDate(addDays(selectedDate, 1));
+			return console.log(typeof selectedDate);
+		}
+	};
+	getSelectedDay();
 
 	useEffect(() => {
 		isMounted.current = true;
@@ -206,16 +218,39 @@ const SelecionarDiaFuncionario: React.FC = () => {
 						borderRadius={5}
 						border={'1px solid #999'}
 						p={'1px'}
-						// mx={'auto'}
 					>
 						<DatePicker
-							isClearable
 							locale={'pt-BR'}
 							dateFormat="dd/MMMM/yyyy"
 							filterDate={date => date.getDay() !== 0 && date.getDay() !== 6 && date <= maxDate}
 							minDate={new Date()}
 							selected={selectedDate}
 							onChange={(date: Date) => setSelectedDate(date)}
+							calendarContainer={({ className, children }) => (
+								<Box
+									style={{
+										borderRadius: '10px',
+										padding: '16px',
+										background: '#2ca1ff',
+										color: '#fff',
+										boxShadow: '1px 1px 10px hsla(0, 28%, 0%, 0.4)',
+									}}
+								>
+									<CalendarContainer className={className}>
+										<Text
+											textAlign={'center'}
+											style={{
+												background: '#2ca1ff',
+												padding: '4px',
+												color: 'white',
+											}}
+										>
+											Selecione um dia
+										</Text>
+										<Text style={{ position: 'relative' }}>{children}</Text>
+									</CalendarContainer>
+								</Box>
+							)}
 						/>
 					</Box>
 					{/* <Button

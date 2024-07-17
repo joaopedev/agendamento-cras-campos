@@ -49,7 +49,7 @@ const SelecionarDia: React.FC = () => {
 	const maxDate = addDays(new Date(), 31);
 	const [selectedDate, setSelectedDate] = useState<Date>(addDays(new Date(), 1));
 	const { isOpen, onOpen, onClose } = useDisclosure();
-	const { payload, registerSchedulling, getAllSchedullingCras, getByCpf, cpfData } =
+	const { payload, registerSchedulling, getAllSchedullingCras, getByCpf, cpfData, getAllUsers } =
 		useContext(AuthContext);
 	const [schedullingData, setSchedullingData] = useState<ISchedulingModel[]>([]);
 	const [loading, setLoading] = useState(true);
@@ -57,16 +57,32 @@ const SelecionarDia: React.FC = () => {
 	const [cpf, setCpf] = useState<string>('');
 	const isMounted = useRef(true);
 	const toast = useToast();
+	const [funcionariosPorCras, setFuncionariosPorCras] = useState();
+
+	useEffect(() => {
+		const fetchUsers = async () => {
+			try {
+				const data = await getAllUsers();
+				setFuncionariosPorCras(
+					data.contas
+						.filter((c: any) => c.tipo_usuario === 2)
+						.filter((c: any) => c.cras === payload?.cras).length
+				);
+			} catch (error) {
+				console.error('Erro ao buscar usuários:', error);
+			}
+		};
+		fetchUsers();
+	}, [getAllUsers]);
 
 	const getSelectedDay = () => {
 		if (getDay(selectedDate) === 7) {
 			setSelectedDate(addDays(selectedDate, 2));
-			console.log(typeof selectedDate);
 			return;
 		}
 		if (getDay(selectedDate) === 8) {
 			setSelectedDate(addDays(selectedDate, 1));
-			return console.log(typeof selectedDate);
+			return;
 		}
 	};
 	getSelectedDay();
@@ -165,14 +181,23 @@ const SelecionarDia: React.FC = () => {
 	const horarios = useMemo(() => {
 		return [
 			{ hora: '08:00', disponivel: true },
+			{ hora: '08:30', disponivel: true },
 			{ hora: '09:00', disponivel: true },
+			{ hora: '09:30', disponivel: true },
 			{ hora: '10:00', disponivel: true },
+			{ hora: '10:30', disponivel: true },
 			{ hora: '11:00', disponivel: true },
+			{ hora: '11:30', disponivel: true },
 			{ hora: '12:00', disponivel: true },
+			{ hora: '12:30', disponivel: true },
 			{ hora: '13:00', disponivel: true },
+			{ hora: '13:30', disponivel: true },
 			{ hora: '14:00', disponivel: true },
+			{ hora: '14:30', disponivel: true },
 			{ hora: '15:00', disponivel: true },
+			{ hora: '15:30', disponivel: true },
 			{ hora: '16:00', disponivel: true },
+			{ hora: '16:30', disponivel: true },
 		];
 	}, []);
 
@@ -187,9 +212,12 @@ const SelecionarDia: React.FC = () => {
 					)
 					.map(agendamentos => format(new Date(agendamentos.data_hora), 'HH:mm'));
 
+				const countAgendados = horariosAgendados.filter(h => h === horario.hora).length;
+
 				return {
 					...horario,
-					disponivel: !horariosAgendados.includes(horario.hora),
+					disponivel: countAgendados < Number(funcionariosPorCras),
+					// disponivel: countAgendados < 5,
 				};
 			}
 			return horario;
@@ -220,7 +248,6 @@ const SelecionarDia: React.FC = () => {
 			justifyContent={'center'}
 			alignItems={'center'}
 			gap={'10px'}
-			p={['10px', '0', '0', '0']}
 			pl={['0%', '30%', '25%', '20%']}
 			w="100%"
 			flexDir={'column'}

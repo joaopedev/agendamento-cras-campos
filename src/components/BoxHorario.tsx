@@ -36,10 +36,10 @@ const BoxHorario: React.FC<BoxHorarioProps> = ({
 
 	return (
 		<Button
-			bg={horario.disponivel ? '#2CA1FF' : 'red'}
+			bg={horario.disponivel ? '#2CA1FF' : 'red.500'}
 			color="white"
 			_hover={{
-				bg: horario.disponivel ? '#1C75BC' : 'red',
+				bg: horario.disponivel ? '#1C75BC' : 'red.500',
 				cursor: horario.disponivel ? 'pointer' : 'auto',
 			}}
 			onClick={handleOpenModal}

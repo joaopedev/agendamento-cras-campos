@@ -168,10 +168,16 @@ export const Home: React.FC = () => {
 					<ModalCloseButton />
 					<ModalBody>Gostaria de editar suas informações?</ModalBody>
 					<ModalFooter>
-						<Button colorScheme="blue" mr={3} onClick={handleConfirmEdit}>
+						<Button
+							bgColor={'#2CA1FF'}
+							_hover={{ backgroundColor: '#1C75BC' }}
+							color={'white'}
+							mr={3}
+							onClick={handleConfirmEdit}
+						>
 							Sim
 						</Button>
-						<Button variant="ghost" onClick={onClose}>
+						<Button colorScheme="red" onClick={onClose}>
 							Não
 						</Button>
 					</ModalFooter>
@@ -345,8 +351,16 @@ export const Home: React.FC = () => {
 										/>
 									</Stack>
 									{!isEditing && (
-										<Button onClick={handleEdit} borderRadius={'100%'} transform="auto">
-											<EditIcon color={'#2CA1FF'} />
+										<Button
+											maxW={10}
+											maxH={10}
+											onClick={handleEdit}
+											borderRadius={'100%'}
+											transform="auto"
+											bgColor={'#2CA1FF'}
+											_hover={{ backgroundColor: '#1C75BC' }}
+										>
+											<EditIcon color={'white'} />
 										</Button>
 									)}
 
@@ -358,15 +372,16 @@ export const Home: React.FC = () => {
 												maxH={10}
 												borderRadius={'100%'}
 												transform="auto"
-												bgColor={'#2CA1FF'}
-												_hover={{ backgroundColor: '#2CA1FF' }}
+												colorScheme="green"
+												// bgColor={'#2CA1FF'}
+												// _hover={{ backgroundColor: '#2CA1FF' }}
 											>
-												<CheckIcon _hover={{ backgroundColor: '#2CA1FF' }} color={'white'} />
+												<CheckIcon color={'white'} />
 											</Button>
 											<Button
 												maxW={10}
 												maxH={10}
-												bg={'red.500'}
+												colorScheme="red"
 												onClick={handleCancelEdit}
 												borderRadius={'100%'}
 												transform="auto"

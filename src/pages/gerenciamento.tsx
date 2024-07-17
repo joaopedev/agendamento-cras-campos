@@ -161,104 +161,131 @@ const Gerenciamento: React.FC = () => {
 						Gerenciamento de Funcionários
 					</Heading>
 					<Button
-						minW="max-content"
-						colorScheme="blue"
+						minW={'198px'}
+						bg={'#2CA1FF'}
+						color={'white'}
 						_hover={{
 							bg: '#1C75BC',
+							fontWeight: 'bold',
 						}}
 						onClick={onOpen}
 					>
 						Adicionar Funcionário
 					</Button>
 				</Flex>
-				<Table variant="striped" colorScheme="blue">
-					<Thead>
-						<Tr>
-							<Th fontSize={['12px', '12px', '14px', '16px']}>Nome</Th>
-							<Th fontSize={['12px', '12px', '14px', '16px']}>CPF</Th>
-							<Th fontSize={['12px', '12px', '14px', '16px']}>CRAS</Th>
-							<Th fontSize={['12px', '12px', '14px', '16px']}>Ações</Th>
-						</Tr>
-					</Thead>
-					<tbody>
-						{employeeData && employeeData.length > 0 ? (
-							employeeData.map((employee, index) => (
-								<Tr
-									h={'73px'}
-									// minH={'73px'}
-									key={index}
-								>
-									<Td fontSize={['12px', '12px', '14px', '16px']}>{employee.name}</Td>
-									<Td fontSize={['12px', '12px', '14px', '16px']}>{employee.cpf}</Td>
-									<Td fontSize={['12px', '12px', '14px', '16px']}>
-										{editingEmployee.index === index ? (
-											<Select
-												name="cras"
-												value={editingEmployee.data?.cras || ''}
-												onChange={handleEditChange}
-											>
-												{Object.entries(Cras)
-													.filter(([key]) => isNaN(Number(key)))
-													.map(([key, value]) => (
-														<option key={value} value={value}>
-															{key}
-														</option>
-													))}
-											</Select>
-										) : (
-											Cras[employee.cras]
-										)}
-									</Td>
-									<Td
-									//  minWidth="180px"
-									>
-										<Flex
-											gap={2}
-											justifyContent={'flex-start'}
-											flexDir={['column', 'column', 'column', 'row']}
-										>
-											{editingEmployee.index === index ? (
-												<Button maxW={'63px'} size="sm" colorScheme="green" onClick={saveEdit}>
-													Salvar
-												</Button>
-											) : (
-												<Button
-													maxW={'63px'}
-													size="sm"
-													colorScheme="blue"
-													onClick={() => setEditingEmployee({ index, data: employee })}
-												>
-													Editar
-												</Button>
-											)}
-											<Button
-												maxW={'63px'}
-												size="sm"
-												colorScheme="red"
-												// onClick={() => handleEmployeeAction(employee, "delete")}
-												onClick={onConfirmationOpen}
-											>
-												Excluir
-											</Button>
-											<ConfirmationModal
-												isOpen={isConfirmationOpen}
-												onClose={onConfirmationClose}
-												onConfirm={() => {
-													onConfirmationClose();
-													handleEmployeeAction(employee, 'delete');
-												}}
-											/>
-										</Flex>
-									</Td>
-								</Tr>
-							))
-						) : (
+				<Flex overflow={'auto'}>
+					<Table variant="striped" colorScheme="blue">
+						<Thead>
 							<Tr>
-								<Td colSpan={4}>Nenhum funcionário encontrado.</Td>
+								<Th fontSize={['12px', '12px', '14px', '16px']}>Nome</Th>
+								<Th fontSize={['12px', '12px', '14px', '16px']}>CPF</Th>
+								<Th fontSize={['12px', '12px', '14px', '16px']}>CRAS</Th>
+								<Th fontSize={['12px', '12px', '14px', '16px']}>Ações</Th>
 							</Tr>
-						)}
-					</tbody>
-				</Table>
+						</Thead>
+						<tbody>
+							{employeeData && employeeData.length > 0 ? (
+								employeeData.map((employee, index) => (
+									<Tr
+										h={'73px'}
+										// minH={'73px'}
+										key={index}
+									>
+										<Td fontSize={['12px', '12px', '14px', '16px']}>{employee.name}</Td>
+										{/* <Td fontSize={['12px', '12px', '14px', '16px']}>{employee.cpf}</Td> */}
+										<Td fontSize={['12px', '12px', '14px', '16px']}>
+											{employee.cpf
+												.replace(/[^\d]/g, '')
+												.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4')}
+										</Td>
+										<Td fontSize={['12px', '12px', '14px', '16px']}>
+											{editingEmployee.index === index ? (
+												<Select
+													// maxW={'241px'}
+													size={'md'}
+													name="cras"
+													value={editingEmployee.data?.cras || ''}
+													onChange={handleEditChange}
+												>
+													{Object.entries(Cras)
+														.filter(([key]) => isNaN(Number(key)))
+														.map(([key, value]) => (
+															<option key={value} value={value}>
+																{key}
+															</option>
+														))}
+												</Select>
+											) : (
+												Cras[employee.cras]
+											)}
+										</Td>
+										<Td
+										//  minWidth="180px"
+										>
+											<Flex
+												gap={2}
+												justifyContent={'flex-start'}
+												flexDir={['column', 'column', 'column', 'row']}
+											>
+												{editingEmployee.index === index ? (
+													<Button
+														minW={'68px'}
+														_hover={{
+															fontWeight: 'bold',
+														}}
+														size="sm"
+														colorScheme="green"
+														onClick={saveEdit}
+													>
+														Salvar
+													</Button>
+												) : (
+													<Button
+														minW={'68px'}
+														size="sm"
+														bg={'#2CA1FF'}
+														color={'white'}
+														_hover={{
+															bg: '#1C75BC',
+															fontWeight: 'bold',
+														}}
+														onClick={() => setEditingEmployee({ index, data: employee })}
+													>
+														Editar
+													</Button>
+												)}
+												<Button
+													minW={'68px'}
+													size="sm"
+													colorScheme="red"
+													// onClick={() => handleEmployeeAction(employee, "delete")}
+													onClick={onConfirmationOpen}
+													_hover={{
+														fontWeight: 'bold',
+													}}
+												>
+													Excluir
+												</Button>
+												<ConfirmationModal
+													isOpen={isConfirmationOpen}
+													onClose={onConfirmationClose}
+													onConfirm={() => {
+														onConfirmationClose();
+														handleEmployeeAction(employee, 'delete');
+													}}
+												/>
+											</Flex>
+										</Td>
+									</Tr>
+								))
+							) : (
+								<Tr>
+									<Td colSpan={4}>Nenhum funcionário encontrado.</Td>
+								</Tr>
+							)}
+						</tbody>
+					</Table>
+				</Flex>
 				<ModalAddFuncionario
 					isOpen={isOpen}
 					onClose={onClose}

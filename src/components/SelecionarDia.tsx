@@ -24,7 +24,7 @@ import {
 } from '@chakra-ui/react';
 import DatePicker, { CalendarContainer, registerLocale } from 'react-datepicker';
 import { ptBR } from 'date-fns/locale/pt-BR';
-import { format, addDays } from 'date-fns';
+import { format, addDays, getDay } from 'date-fns';
 import { AuthContext } from '../context/AuthContext';
 import {
 	ISchedulingModel,
@@ -57,6 +57,19 @@ const SelecionarDia: React.FC = () => {
 	const [cpf, setCpf] = useState<string>('');
 	const isMounted = useRef(true);
 	const toast = useToast();
+
+	const getSelectedDay = () => {
+		if (getDay(selectedDate) === 7) {
+			setSelectedDate(addDays(selectedDate, 2));
+			console.log(typeof selectedDate);
+			return;
+		}
+		if (getDay(selectedDate) === 8) {
+			setSelectedDate(addDays(selectedDate, 1));
+			return console.log(typeof selectedDate);
+		}
+	};
+	getSelectedDay();
 
 	const handleGetByCpf = async () => {
 		await getByCpf(cpf);
@@ -266,6 +279,7 @@ const SelecionarDia: React.FC = () => {
 												padding: '16px',
 												background: '#2ca1ff',
 												color: '#fff',
+												boxShadow: '1px 1px 10px hsla(0, 28%, 0%, 0.4)',
 											}}
 										>
 											<CalendarContainer className={className}>

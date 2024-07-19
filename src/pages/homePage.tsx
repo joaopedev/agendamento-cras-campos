@@ -155,11 +155,7 @@ export const Home: React.FC = () => {
 	}, [selectedBairro, setValue]);
 
 	return (
-		<Flex
-			h="100vh"
-			flexDir={'column'}
-			// justifyContent={'center'}
-		>
+		<Flex h="100vh" flexDir={'column'}>
 			<SidebarHome />
 			<HamburgerMenu />
 			<Modal isOpen={isOpen} onClose={onClose}>
@@ -184,223 +180,231 @@ export const Home: React.FC = () => {
 					</ModalFooter>
 				</ModalContent>
 			</Modal>
-			<Stack
-				className="stack"
-				gap={['15px', '15px', '18px', '18px']}
-				mt={['60px', 10, 10, 10]}
-				mb={4}
-				alignItems="center"
-				ml={[0, '30%', '25%', '20%']}
-			>
-				<Box
-					borderRadius="md"
-					boxShadow="2px 2px 5px hsla(0, 28%, 0%, 0.5)"
-					w={'80%'}
-					position={['relative', 'static', 'static', 'static']}
-				>
-					{payload && (
-						<form onSubmit={handleSubmit(handleSave)}>
-							<Card p={4} bg={'#F4F4F4'}>
-								<Flex
-									flexDir={['column', 'column', 'row', 'row']}
-									justifyContent={'space-evenly'}
-									alignItems={'center'}
-									gap={2}
-								>
-									<Avatar
-										bg={'#2CA1FF'}
-										color={'white'}
-										size={['md', 'md', 'lg', 'xl']}
-										name={payload?.name}
-									/>
-									<Stack w={['90%', '90%', '30%', '35%']}>
-										<FormControl isInvalid={!!errors.name} isDisabled={!isEditing}>
-											<InputGroup>
-												<InputLeftElement pointerEvents="none" />
-												<Input
-													isDisabled
-													sx={textStyle1}
-													id="name"
-													placeholder={payload.name}
-													_placeholder={{ opacity: 1, color: 'black' }}
-													size="md"
-													{...register('name')}
-												/>
-											</InputGroup>
-											<FormErrorMessage>{errors.name && errors.name.message}</FormErrorMessage>
-										</FormControl>
-										<FormControl isInvalid={!!errors.cpf} isDisabled={!isEditing}>
-											<InputGroup>
-												<InputLeftElement pointerEvents="none" />
-												<Input
-													isDisabled
-													sx={textStyle1}
-													id="cpf"
-													placeholder={payload.cpf}
-													_placeholder={{ opacity: 1, color: 'black' }}
-													size="md"
-													{...register('cpf')}
-												/>
-											</InputGroup>
-											<FormErrorMessage>{errors.cpf && errors.cpf.message}</FormErrorMessage>
-										</FormControl>
-
-										<FormControl isInvalid={!!errors.email} isDisabled={!isEditing}>
-											<InputGroup>
-												<InputLeftElement pointerEvents="none" />
-												<Input
-													sx={textStyle1}
-													id="email"
-													placeholder={payload.email || 'Email'}
-													_placeholder={{ opacity: 1, color: 'black' }}
-													size="md"
-													{...register('email')}
-												/>
-											</InputGroup>
-											<FormErrorMessage>{errors.email && errors.email.message}</FormErrorMessage>
-										</FormControl>
-										<FormControl isInvalid={!!errors.telefone} isDisabled={!isEditing}>
-											<InputGroup>
-												<InputLeftElement pointerEvents="none" />
-												<InputLeftAddon sx={textStyle1}>+55</InputLeftAddon>
-												<Input
-													sx={textStyle1}
-													id="telefone"
-													placeholder={payload.telefone || 'Celular'}
-													_placeholder={{ opacity: 1 }}
-													size="md"
-													value={inputTelefone} // Use formatted input
-													onChange={handleTelefoneChange} // Use formatted input handler
-												/>
-											</InputGroup>
-											<FormErrorMessage>
-												{errors.telefone && errors.telefone.message}
-											</FormErrorMessage>
-										</FormControl>
-									</Stack>
-									<Stack w={['90%', '90%', '30%', '35%']}>
-										<FormControl isInvalid={!!errors.endereco?.rua} isDisabled={!isEditing}>
-											<InputGroup>
-												<InputLeftElement pointerEvents="none" />
-												<Input
-													sx={textStyle1}
-													id="rua"
-													placeholder={payload?.endereco?.rua || 'Rua'} // Optional Chaining
-													_placeholder={{ opacity: 1, color: 'black' }}
-													size="md"
-													{...register('endereco.rua')}
-												/>
-											</InputGroup>
-											<FormErrorMessage>
-												{errors.endereco?.rua && errors.endereco?.rua.message}
-											</FormErrorMessage>
-										</FormControl>
-										<FormControl isInvalid={!!errors.endereco?.numero} isDisabled={!isEditing}>
-											<InputGroup>
-												<InputLeftElement pointerEvents="none" />
-												<Input
-													sx={textStyle1}
-													id="numero"
-													placeholder={payload?.endereco?.numero?.toString() || 'Número'} // Add optional chaining
-													_placeholder={{ opacity: 1, color: 'black' }}
-													size="md"
-													{...register('endereco.numero')}
-												/>
-											</InputGroup>
-											<FormErrorMessage>
-												{errors.endereco?.numero && errors.endereco?.numero.message}
-											</FormErrorMessage>
-										</FormControl>
-										<Controller // Controller for bairro
-											control={control}
-											name="endereco.bairro"
-											render={({ field }) => (
-												<FormControl isInvalid={!!errors.endereco?.bairro} isDisabled={!isEditing}>
-													<Select
-														sx={textStyle1}
-														id="bairro"
-														variant="outline"
-														{...field} // Binding field props directly to Select
-														value={field.value} // Setting the value directly
-													>
-														{Object.values(Bairros).map(bairro => (
-															<option key={bairro} value={bairro}>
-																{bairro}
-															</option>
-														))}
-													</Select>
-													<FormErrorMessage>
-														{errors.endereco?.bairro && errors.endereco?.bairro.message}
-													</FormErrorMessage>
-												</FormControl>
-											)}
-										/>
-										<Controller
-											control={control}
-											name="cras"
-											render={({ field }) => (
-												<FormControl isInvalid={!!errors.cras}>
-													<Select isDisabled sx={textStyle1} id="cras" variant="outline" {...field}>
-														{Object.values(Cras).map(cras => (
-															<option key={cras} value={cras}>
-																{Cras[payload?.cras]}
-															</option>
-														))}
-													</Select>
-												</FormControl>
-											)}
-										/>
-									</Stack>
-									{!isEditing && (
-										<Button
-											maxW={10}
-											maxH={10}
-											onClick={handleEdit}
-											borderRadius={'100%'}
-											transform="auto"
-											bgColor={'#2CA1FF'}
-											_hover={{ backgroundColor: '#1C75BC' }}
-										>
-											<EditIcon color={'white'} />
-										</Button>
-									)}
-
-									{isEditing && (
-										<Flex gap={2} flexDir={['row', 'row', 'column', 'column']}>
-											<Button
-												type="submit"
-												maxW={10}
-												maxH={10}
-												borderRadius={'100%'}
-												transform="auto"
-												colorScheme="green"
-												// bgColor={'#2CA1FF'}
-												// _hover={{ backgroundColor: '#2CA1FF' }}
-											>
-												<CheckIcon color={'white'} />
-											</Button>
-											<Button
-												maxW={10}
-												maxH={10}
-												colorScheme="red"
-												onClick={handleCancelEdit}
-												borderRadius={'100%'}
-												transform="auto"
-											>
-												<CloseButton w={0} h={0} color={'white'} />
-											</Button>
-										</Flex>
-									)}
-								</Flex>
-							</Card>
-						</form>
-					)}
-				</Box>
-			</Stack>
 			<Flex mb={10} flexDir={'column'} gap={4}>
+				<Stack
+					className="stack"
+					gap={['15px', '15px', '18px', '18px']}
+					mt={['60px', 10, 10, 10]}
+					alignItems="center"
+					ml={[0, '30%', '25%', '20%']}
+				>
+					<Box
+						borderRadius="md"
+						boxShadow="2px 2px 5px hsla(0, 28%, 0%, 0.5)"
+						w={'80%'}
+						position={['relative', 'static', 'static', 'static']}
+					>
+						{payload && (
+							<form onSubmit={handleSubmit(handleSave)}>
+								<Card p={4} bg={'#F4F4F4'}>
+									<Flex
+										flexDir={['column', 'column', 'row', 'row']}
+										justifyContent={'space-evenly'}
+										alignItems={'center'}
+										gap={2}
+									>
+										<Avatar
+											bg={'#2CA1FF'}
+											color={'white'}
+											size={['md', 'md', 'lg', 'xl']}
+											name={payload?.name}
+										/>
+										<Stack w={['90%', '90%', '30%', '35%']}>
+											<FormControl isInvalid={!!errors.name} isDisabled={!isEditing}>
+												<InputGroup>
+													<InputLeftElement pointerEvents="none" />
+													<Input
+														isDisabled
+														sx={textStyle1}
+														id="name"
+														placeholder={payload.name}
+														_placeholder={{ opacity: 1, color: 'black' }}
+														size="md"
+														{...register('name')}
+													/>
+												</InputGroup>
+												<FormErrorMessage>{errors.name && errors.name.message}</FormErrorMessage>
+											</FormControl>
+											<FormControl isInvalid={!!errors.cpf} isDisabled={!isEditing}>
+												<InputGroup>
+													<InputLeftElement pointerEvents="none" />
+													<Input
+														isDisabled
+														sx={textStyle1}
+														id="cpf"
+														placeholder={payload.cpf}
+														_placeholder={{ opacity: 1, color: 'black' }}
+														size="md"
+														{...register('cpf')}
+													/>
+												</InputGroup>
+												<FormErrorMessage>{errors.cpf && errors.cpf.message}</FormErrorMessage>
+											</FormControl>
+
+											<FormControl isInvalid={!!errors.email} isDisabled={!isEditing}>
+												<InputGroup>
+													<InputLeftElement pointerEvents="none" />
+													<Input
+														sx={textStyle1}
+														id="email"
+														placeholder={payload.email || 'Email'}
+														_placeholder={{ opacity: 1, color: 'black' }}
+														size="md"
+														{...register('email')}
+													/>
+												</InputGroup>
+												<FormErrorMessage>{errors.email && errors.email.message}</FormErrorMessage>
+											</FormControl>
+											<FormControl isInvalid={!!errors.telefone} isDisabled={!isEditing}>
+												<InputGroup>
+													<InputLeftElement pointerEvents="none" />
+													<InputLeftAddon sx={textStyle1}>+55</InputLeftAddon>
+													<Input
+														sx={textStyle1}
+														id="telefone"
+														placeholder={payload.telefone || 'Celular'}
+														_placeholder={{ opacity: 1 }}
+														size="md"
+														value={inputTelefone} // Use formatted input
+														onChange={handleTelefoneChange} // Use formatted input handler
+													/>
+												</InputGroup>
+												<FormErrorMessage>
+													{errors.telefone && errors.telefone.message}
+												</FormErrorMessage>
+											</FormControl>
+										</Stack>
+										<Stack w={['90%', '90%', '30%', '35%']}>
+											<FormControl isInvalid={!!errors.endereco?.rua} isDisabled={!isEditing}>
+												<InputGroup>
+													<InputLeftElement pointerEvents="none" />
+													<Input
+														sx={textStyle1}
+														id="rua"
+														placeholder={payload?.endereco?.rua || 'Rua'} // Optional Chaining
+														_placeholder={{ opacity: 1, color: 'black' }}
+														size="md"
+														{...register('endereco.rua')}
+													/>
+												</InputGroup>
+												<FormErrorMessage>
+													{errors.endereco?.rua && errors.endereco?.rua.message}
+												</FormErrorMessage>
+											</FormControl>
+											<FormControl isInvalid={!!errors.endereco?.numero} isDisabled={!isEditing}>
+												<InputGroup>
+													<InputLeftElement pointerEvents="none" />
+													<Input
+														sx={textStyle1}
+														id="numero"
+														placeholder={payload?.endereco?.numero?.toString() || 'Número'} // Add optional chaining
+														_placeholder={{ opacity: 1, color: 'black' }}
+														size="md"
+														{...register('endereco.numero')}
+													/>
+												</InputGroup>
+												<FormErrorMessage>
+													{errors.endereco?.numero && errors.endereco?.numero.message}
+												</FormErrorMessage>
+											</FormControl>
+											<Controller // Controller for bairro
+												control={control}
+												name="endereco.bairro"
+												render={({ field }) => (
+													<FormControl
+														isInvalid={!!errors.endereco?.bairro}
+														isDisabled={!isEditing}
+													>
+														<Select
+															sx={textStyle1}
+															id="bairro"
+															variant="outline"
+															{...field} // Binding field props directly to Select
+															value={field.value} // Setting the value directly
+														>
+															{Object.values(Bairros).map(bairro => (
+																<option key={bairro} value={bairro}>
+																	{bairro}
+																</option>
+															))}
+														</Select>
+														<FormErrorMessage>
+															{errors.endereco?.bairro && errors.endereco?.bairro.message}
+														</FormErrorMessage>
+													</FormControl>
+												)}
+											/>
+											<Controller
+												control={control}
+												name="cras"
+												render={({ field }) => (
+													<FormControl isInvalid={!!errors.cras}>
+														<Select
+															isDisabled
+															sx={textStyle1}
+															id="cras"
+															variant="outline"
+															{...field}
+														>
+															{Object.values(Cras).map(cras => (
+																<option key={cras} value={cras}>
+																	{Cras[payload?.cras]}
+																</option>
+															))}
+														</Select>
+													</FormControl>
+												)}
+											/>
+										</Stack>
+										{!isEditing && (
+											<Button
+												maxW={10}
+												maxH={10}
+												onClick={handleEdit}
+												borderRadius={'100%'}
+												transform="auto"
+												bgColor={'#2CA1FF'}
+												_hover={{ backgroundColor: '#1C75BC' }}
+											>
+												<EditIcon color={'white'} />
+											</Button>
+										)}
+
+										{isEditing && (
+											<Flex gap={2} flexDir={['row', 'row', 'column', 'column']}>
+												<Button
+													type="submit"
+													maxW={10}
+													maxH={10}
+													borderRadius={'100%'}
+													transform="auto"
+													colorScheme="green"
+													// bgColor={'#2CA1FF'}
+													// _hover={{ backgroundColor: '#2CA1FF' }}
+												>
+													<CheckIcon color={'white'} />
+												</Button>
+												<Button
+													maxW={10}
+													maxH={10}
+													colorScheme="red"
+													onClick={handleCancelEdit}
+													borderRadius={'100%'}
+													transform="auto"
+												>
+													<CloseButton w={0} h={0} color={'white'} />
+												</Button>
+											</Flex>
+										)}
+									</Flex>
+								</Card>
+							</form>
+						)}
+					</Box>
+				</Stack>
 				<CardShowAgendamento />
 				{payload?.tipo_usuario !== 5 && <SelecionarDia />}
-				<SelecionarDiaAdm />
+				{payload?.tipo_usuario === 3 && <SelecionarDiaAdm />}
 			</Flex>
 		</Flex>
 	);
@@ -412,13 +416,6 @@ const textStyle1 = {
 	borderRadius: '5px',
 	p: 2,
 };
-
-// const textStyle2 = {
-// 	fontSize: ['0.7rem', '0.8rem', '0.9rem', '1rem'],
-// 	fontWeight: 'bold',
-// 	mt: '10px',
-// 	mb: '3px',
-// };
 
 export const boxStyle = {
 	w: '60%',

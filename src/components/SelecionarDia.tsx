@@ -73,14 +73,14 @@ const SelecionarDia: React.FC = () => {
 			}
 		};
 		fetchUsers();
-	}, [getAllUsers]);
+	}, [getAllUsers, payload]);
 
 	const getSelectedDay = () => {
-		if (getDay(selectedDate) === 7) {
+		if (getDay(selectedDate) === 6) {
 			setSelectedDate(addDays(selectedDate, 2));
 			return;
 		}
-		if (getDay(selectedDate) === 8) {
+		if (getDay(selectedDate) === 0) {
 			setSelectedDate(addDays(selectedDate, 1));
 			return;
 		}
@@ -222,7 +222,7 @@ const SelecionarDia: React.FC = () => {
 			}
 			return horario;
 		});
-	}, [horarios, selectedDate, schedullingData]);
+	}, [horarios, selectedDate, schedullingData, funcionariosPorCras]);
 
 	const handleDateChange = (date: Date) => {
 		if (date && horarioSelecionado) {

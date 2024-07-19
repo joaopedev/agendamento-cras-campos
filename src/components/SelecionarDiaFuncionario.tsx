@@ -158,7 +158,6 @@ const SelecionarDiaFuncionario: React.FC = () => {
 			});
 			toast({
 				title: 'Status atualizado com sucesso',
-				status: 'success',
 				duration: 5000,
 				isClosable: true,
 				position: 'top-right',

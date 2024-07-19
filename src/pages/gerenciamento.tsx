@@ -60,7 +60,6 @@ const Gerenciamento: React.FC = () => {
 				await updateUser(employee.id!, { ativo: true });
 				toast({
 					title: 'Funcionário autorizado com sucesso',
-					status: 'success',
 					duration: 5000,
 					isClosable: true,
 					position: 'top-right',
@@ -74,7 +73,6 @@ const Gerenciamento: React.FC = () => {
 					});
 					toast({
 						title: 'Funcionário excluído com sucesso',
-						status: 'success',
 						duration: 5000,
 						isClosable: true,
 						position: 'top-right',
@@ -123,7 +121,6 @@ const Gerenciamento: React.FC = () => {
 				await updateUser(editingEmployee.data.id!, editingEmployee.data);
 				toast({
 					title: 'Funcionário editado com sucesso',
-					status: 'success',
 					duration: 5000,
 					isClosable: true,
 					position: 'top-right',

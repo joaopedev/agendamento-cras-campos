@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState, useMemo, useRef } from 'react';
+import { useContext, useEffect, useState, useRef } from 'react';
 import {
 	Button,
 	Box,
@@ -13,12 +13,7 @@ import {
 	ModalCloseButton,
 	useDisclosure,
 	Radio,
-	RadioGroup,
-	Stack,
 	useToast,
-	FormControl,
-	FormLabel,
-	Input,
 	Divider,
 } from '@chakra-ui/react';
 import DatePicker, { CalendarContainer, registerLocale } from 'react-datepicker';
@@ -35,25 +30,27 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { RegisterSchedullingModel } from '../types/auth-data';
 import { btnStyle } from '../pages/loginPage';
-import { Cras } from '../interface/User';
 
 registerLocale('pt-BR', ptBR);
 
 const SelecionarDiaAdm: React.FC = () => {
-	const [showForm, setShowForm] = useState(false);
 	const [horarioSelecionado, setHorarioSelecionado] = useState<string | null>(null);
-	const [selectedOption, setSelectedOption] = useState<string>('');
 	const [, setAgendamentoRealizado] = useState(false);
+	const [showConfirmar, setShowConfirmar] = useState(false);
 	const [selectedDate, setSelectedDate] = useState<Date>(addDays(new Date(), 30));
 	const { isOpen, onOpen, onClose } = useDisclosure();
-	const { payload, registerSchedulling, getAllSchedullingCras, getByCpf, cpfData, getAllUsers } =
-		useContext(AuthContext);
+	const { payload, registerSchedulling, getAllSchedullingCras, cpfData } = useContext(AuthContext);
 	const [schedullingData, setSchedullingData] = useState<ISchedulingModel[]>([]);
 	const [loading, setLoading] = useState(true);
-	const [error, setError] = useState('');
-	const [cpf, setCpf] = useState<string>('');
 	const isMounted = useRef(true);
 	const toast = useToast();
+	const [periodoSelecionado, setPeriodoSelecionado] = useState<
+		'manha' | 'tarde' | 'dia_inteiro' | null
+	>(null);
+	const handleOpen = (periodo: 'manha' | 'tarde' | 'dia_inteiro') => {
+		setPeriodoSelecionado(periodo);
+		onOpen();
+	};
 
 	const getSelectedDay = () => {
 		if (getDay(selectedDate) === 7) {
@@ -66,10 +63,6 @@ const SelecionarDiaAdm: React.FC = () => {
 		}
 	};
 	getSelectedDay();
-
-	const handleGetByCpf = async () => {
-		await getByCpf(cpf);
-	};
 
 	const {
 		register,
@@ -265,13 +258,17 @@ const SelecionarDiaAdm: React.FC = () => {
 							{/* <Text pb={1} fontSize={['12px', '12px', '15px', '15px']} fontWeight="bold">
 								HORÁRIOS DISPONÍVEIS
 							</Text> */}
-							<Button w={'max-content'} colorScheme={'blue'}>
+							<Button w={'max-content'} colorScheme={'blue'} onClick={() => handleOpen('manha')}>
 								MANHÃ
 							</Button>
-							<Button w={'max-content'} colorScheme={'blue'}>
+							<Button w={'max-content'} colorScheme={'blue'} onClick={() => handleOpen('tarde')}>
 								TARDE
 							</Button>
-							<Button w={'max-content'} colorScheme={'blue'}>
+							<Button
+								onClick={() => handleOpen('dia_inteiro')}
+								w={'max-content'}
+								colorScheme={'blue'}
+							>
 								DIA INTEIRO
 							</Button>
 						</Flex>
@@ -279,201 +276,71 @@ const SelecionarDiaAdm: React.FC = () => {
 							isOpen={isOpen}
 							onClose={() => {
 								onClose();
-								setShowForm(false);
+								setShowConfirmar(false);
 							}}
 							isCentered
 							size={['xs', 'sm', 'md', 'lg']}
 						>
 							<ModalOverlay />
 							<ModalContent minW={['90%', '27em', '30em', '48em']} textAlign={'center'}>
-								<ModalHeader mt={5}>Selecione uma opção para continuar:</ModalHeader>
+								<ModalHeader mt={5}>TEM CERTEZA DISSO?</ModalHeader>
 								<ModalCloseButton />
 								<ModalBody>
-									<form onSubmit={handleSubmit(onSubmit)}>
-										<Flex flexDir="column" alignItems="center">
-											<FormControl isInvalid={!!errors.servico}>
-												<RadioGroup
-													onChange={value => {
-														setSelectedOption(value as string);
-														setShowForm(true);
-													}}
-												>
-													<Stack direction="row" justifyContent="space-around">
-														<Radio
-															{...register('servico')}
-															id="cadastramento"
-															value="1"
-															isChecked={selectedOption === '1'}
-														>
-															Cadastramento
-														</Radio>
-														<Radio
-															{...register('servico')}
-															id="atualizacao"
-															value="2"
-															isChecked={selectedOption === '2'}
-														>
-															Atualização Cadastral
-														</Radio>
-													</Stack>
-												</RadioGroup>
-											</FormControl>
-											<Box display={'none'}>
-												<FormControl isInvalid={!!errors.name}>
-													<FormLabel htmlFor="name">Nome</FormLabel>
-													<Input
-														id="name"
-														{...register('name')}
-														defaultValue={cpfData ? cpfData.name : payload?.name}
-													/>
-													{errors.name && <Text color="red.500">{errors.name.message}</Text>}
-												</FormControl>
-												<FormControl isInvalid={!!errors.data_hora}>
-													<FormLabel htmlFor="data_hora">Data e Hora</FormLabel>
-													<Input
-														id="data_hora"
-														defaultValue={
-															selectedDate ? format(selectedDate, 'yyyy-MM-dd HH:mm') : ''
-														}
-														{...register('data_hora')}
-														readOnly
-													/>
-													{errors.data_hora && (
-														<Text color="red.500">{errors.data_hora.message}</Text>
-													)}
-												</FormControl>
-
-												<FormControl isInvalid={!!errors.cras}>
-													<FormLabel htmlFor="cras">Cras</FormLabel>
-													<Input
-														id="cras"
-														{...register('cras')}
-														defaultValue={cpfData ? cpfData.cras : payload?.cras}
-													/>
-													{errors.cras && <Text color="red.500">{errors.cras.message}</Text>}
-												</FormControl>
-
-												<FormControl isInvalid={!!errors.status}>
-													<FormLabel htmlFor="status">Status</FormLabel>
-													<Input id="status" {...register('status')} defaultValue={2} />
-													{errors.status && <Text color="red.500">{errors.status.message}</Text>}
-												</FormControl>
-
-												<FormControl isInvalid={!!errors.usuario_id}>
-													<FormLabel htmlFor="usuario_id">Usuário ID</FormLabel>
-													<Input
-														id="usuario_id"
-														{...register('usuario_id')}
-														defaultValue={cpfData ? cpfData.id : payload?.id}
-													/>
-													{errors.usuario_id && (
-														<Text color="red.500">{errors.usuario_id.message}</Text>
-													)}
-												</FormControl>
-											</Box>
-										</Flex>
-
-										{showForm && (
-											<>
-												{payload?.tipo_usuario !== 1 && (
-													<Flex flexDir={'column'} mt={4} gap={4}>
-														<Flex p={0} w={'100%'} alignItems={'center'} flexDir={'column'} gap={2}>
-															<Text fontWeight={'bold'}>Buscar usuário pelo CPF</Text>
-															<Flex gap={1} w={'80%'}>
-																<Input
-																	maxLength={11}
-																	value={cpf}
-																	type="number"
-																	onChange={e => {
-																		setCpf(e.target.value);
-																		setError('');
-																	}}
-																	placeholder="Digite o CPF"
-																/>
-																{/* <Button onClick={handleGetByCpf}>Buscar por CPF</Button> */}
-																<Button
-																	sx={{
-																		maxW: 'max-content',
-																		display: '-ms-grid',
-																		boxShadow: '1px 1px 2px hsla(0, 28%, 0%, 0.7)',
-																		color: '#fff',
-																		bg: '#2CA1FF',
-																		minW: ['80px', '80px', '90px', '100px'],
-																		fontSize: ['0.8rem', '0.8rem', '0.9rem', '1rem'],
-																		_hover: {
-																			bg: '#1C75BC',
-																			fontWeight: 'bold',
-																		},
-																	}}
-																	onClick={() => {
-																		if (cpf.length !== 11) {
-																			setError('O CPF deve conter exatamente 11 números.');
-																		} else {
-																			setShowForm(true);
-																			handleGetByCpf();
-																		}
-																	}}
-																>
-																	Buscar
-																</Button>
-															</Flex>
-														</Flex>
-														{error && (
-															<Text fontSize={12} color="red.500">
-																{error}
-															</Text>
-														)}
-														{cpfData && (
-															<Box p={4} borderWidth="1px" borderRadius="md" bg="gray.100">
-																<Text>
-																	<strong>Nome:</strong> {cpfData.name}
-																</Text>
-																<Text>
-																	<strong>CRAS:</strong> {cpfData.cras}
-																</Text>
-															</Box>
-														)}
-													</Flex>
-												)}
-												{payload?.tipo_usuario === 1 && (
-													<ModalFooter justifyContent={'center'}>
-														<Text>
-															Deseja confirmar o seu agendamento para o dia{' '}
-															<strong>{selectedDate && format(selectedDate, 'dd/MM/yyyy')}</strong>{' '}
-															às <strong>{horarioSelecionado}</strong> no{' '}
-															{payload && <strong>CRAS - {Cras[payload.cras]}?</strong>}
-														</Text>
-													</ModalFooter>
-												)}
-											</>
-										)}
-										<ModalFooter justifyContent={'center'}>
-											<Button
-												minW={['100px', '100px', '150px', '150px']}
-												boxShadow={'1px 1px 2px hsla(0, 28%, 0%, 0.7)'}
-												fontSize={['0.8rem', '0.8rem', '0.9rem', '1rem']}
-												colorScheme="red"
-												variant="solid"
-												mr={3}
-												onClick={onClose}
-											>
-												Cancelar
-											</Button>
-											{showForm && (
-												<Button
-													onClick={() => {
-														onClose();
-														setShowForm(false);
-													}}
-													sx={btnStyle}
-													type="submit"
-												>
-													Confirmar
-												</Button>
-											)}
-										</ModalFooter>
-									</form>
+									<Text>
+										{periodoSelecionado === 'manha' &&
+											`Ao confirmar, todos os atendimentos marcados para manhã do dia ${format(
+												selectedDate,
+												'dd/MM/yy'
+											)} serão cancelados. ⚠`}
+										{periodoSelecionado === 'tarde' &&
+											`Ao confirmar, todos os atendimentos marcados para tarde do dia ${format(
+												selectedDate,
+												'dd/MM/yy'
+											)} serão cancelados. ⚠`}
+										{periodoSelecionado === 'dia_inteiro' &&
+											`Ao confirmar, todos os atendimentos marcados para o dia ${format(
+												selectedDate,
+												'dd/MM/yy'
+											)} serão cancelados. ⚠`}
+									</Text>
+									<Radio
+										mt={4}
+										onChange={() => {
+											setShowConfirmar(true);
+										}}
+									>
+										Tenho certeza!
+									</Radio>
 								</ModalBody>
+								<ModalFooter justifyContent={'center'}>
+									<Flex>
+										<Button
+											minW={['100px', '100px', '150px', '150px']}
+											boxShadow={'1px 1px 2px hsla(0, 28%, 0%, 0.7)'}
+											fontSize={['0.8rem', '0.8rem', '0.9rem', '1rem']}
+											colorScheme="red"
+											variant="solid"
+											mr={3}
+											onClick={() => {
+												onClose();
+												setShowConfirmar(false);
+											}}
+										>
+											Cancelar
+										</Button>
+										{showConfirmar && (
+											<Button
+												onClick={() => {
+													onClose();
+												}}
+												sx={btnStyle}
+												type="submit"
+											>
+												Confirmar
+											</Button>
+										)}
+									</Flex>
+								</ModalFooter>
 							</ModalContent>
 						</Modal>
 					</Flex>

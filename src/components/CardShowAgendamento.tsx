@@ -13,8 +13,8 @@ const CardShowAgendamento: React.FC = () => {
 		p: '8px 0',
 	};
 	const isMounted = useRef(true);
-	const [schedullingData, setSchedullingData] = useState<ISchedulingModel[]>([]);
 	const hoje = new Date();
+	const [schedullingData, setSchedullingData] = useState<ISchedulingModel[]>([]);
 	const agendamentosFuturos = schedullingData.filter(agendamento => {
 		if (typeof agendamento.data_hora === 'string') {
 			const dataAgendamento = parseISO(agendamento.data_hora);
@@ -27,7 +27,7 @@ const CardShowAgendamento: React.FC = () => {
 		return false;
 	});
 	const primeiroAgendamento = agendamentosFuturos.length > 0 ? agendamentosFuturos[0] : null;
-	const showAgendamento = schedullingData.filter(a => a.usuario_id === payload?.id).length > 0;
+	const showAgendamento = agendamentosFuturos?.length > 0;
 
 	useEffect(() => {
 		isMounted.current = true;

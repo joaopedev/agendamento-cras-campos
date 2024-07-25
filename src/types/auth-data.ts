@@ -28,3 +28,13 @@ export interface RegisterSchedullingModel {
   duracao_estimada: string;
   data_hora: string;
 }
+
+export interface BloqueioAgendamentoModel {
+  id?: string;
+  usuario_id: string;
+  cras: number;
+  data: Date;
+  tipo_bloqueio: 'matutino' | 'vespertino' | 'diario'; // Tipos de bloqueio
+  motivo: string;
+  ativo: boolean;
+}

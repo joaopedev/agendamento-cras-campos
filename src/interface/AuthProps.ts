@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react';
-import { SignIn, RegisterUserModel, RegisterSchedullingModel } from '../types/auth-data';
+import { SignIn, RegisterUserModel, RegisterSchedullingModel, BloqueioAgendamentoModel } from '../types/auth-data';
 import { IAllUsers, IUserModel } from './User';
 import { ISchedulingModel, ISchedulingResponse } from './Schedulling';
 
@@ -32,6 +32,8 @@ export interface IAuthContext {
 	token: string | null;
 	cpfData: IUserModel;
 	payload: IPayload | null;
+	datasBloqueadas: BloqueioAgendamentoModel | null;
+	allUsers: IAllUsers | null;
 	setPayload: React.Dispatch<React.SetStateAction<IPayload | null>>;
 	signIn: (data: SignIn) => Promise<void>;
 	signOut: () => Promise<void>;
@@ -41,6 +43,7 @@ export interface IAuthContext {
 	getByCpf: (cpf: string) => Promise<void>;
 	getAllSchedulling: () => Promise<ISchedulingModel>;
 	registerSchedulling: (data: RegisterSchedullingModel) => Promise<void>;
+	registerBlock: (data: BloqueioAgendamentoModel) => Promise<void>;
 	getAllSchedullingCras: (cras: number) => Promise<ISchedulingResponse>;
 	updateScheduling: (
 		id: number,

@@ -1,5 +1,5 @@
 import { api } from '../api';
-import { SignIn, RegisterUserModel, RegisterSchedullingModel } from '../types/auth-data';
+import { SignIn, RegisterUserModel, RegisterSchedullingModel, BloqueioAgendamentoModel } from '../types/auth-data';
 import { AxiosError } from 'axios';
 import { IErrorResponse } from '../interface/Feedeback';
 import { ISchedulingModel } from '../interface/Schedulling';
@@ -122,6 +122,22 @@ export const getSchedullingRequest = async () => {
 export const registerSchedullingRequest = async (data: RegisterSchedullingModel) => {
 	try {
 		const response = await api.post('private/registerScheduling', data);
+		return response;
+	} catch (error) {
+		const errors = error as AxiosError;
+		let errorMessage = '';
+		if (errors.response && errors.response.data) {
+			errorMessage = (errors.response.data as IErrorResponse).message;
+			throw new Error(errorMessage);
+		} else {
+			throw new Error(errors?.message);
+		}
+	}
+};
+
+export const registerSchedullingBlockRequest = async (data: BloqueioAgendamentoModel) => {
+	try {
+		const response = await api.post('private/registerBlock', data);
 		return response;
 	} catch (error) {
 		const errors = error as AxiosError;

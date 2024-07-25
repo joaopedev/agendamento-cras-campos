@@ -1,5 +1,11 @@
 import React, { ReactNode } from 'react';
-import { SignIn, RegisterUserModel, RegisterSchedullingModel, BloqueioAgendamentoModel } from '../types/auth-data';
+import {
+	SignIn,
+	RegisterUserModel,
+	RegisterSchedullingModel,
+	BloqueioAgendamentoModel,
+	ITodosBloqueiosModel,
+} from '../types/auth-data';
 import { IAllUsers, IUserModel } from './User';
 import { ISchedulingModel, ISchedulingResponse } from './Schedulling';
 
@@ -43,6 +49,7 @@ export interface IAuthContext {
 	getAllSchedulling: () => Promise<ISchedulingModel>;
 	registerSchedulling: (data: RegisterSchedullingModel) => Promise<void>;
 	registerBlock: (data: BloqueioAgendamentoModel) => Promise<void>;
+	getSchedullingBlock: () => Promise<ITodosBloqueiosModel>;
 	getAllSchedullingCras: (cras: number) => Promise<ISchedulingResponse>;
 	updateScheduling: (
 		id: number,

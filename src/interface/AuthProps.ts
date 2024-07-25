@@ -33,7 +33,6 @@ export interface IAuthContext {
 	cpfData: IUserModel;
 	payload: IPayload | null;
 	datasBloqueadas: BloqueioAgendamentoModel | null;
-	allUsers: IAllUsers | null;
 	setPayload: React.Dispatch<React.SetStateAction<IPayload | null>>;
 	signIn: (data: SignIn) => Promise<void>;
 	signOut: () => Promise<void>;

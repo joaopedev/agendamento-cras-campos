@@ -23,7 +23,6 @@ export const AuthContext = createContext({} as IAuthContext);
 export const AuthProvider = ({ children }: IAuthProvider) => {
 	const [payload, setPayload] = useState<IPayload | null>(null);
 	const [cpfData, setCpfData] = useState<any>(null);
-	const [allUsers, setAllUsers] = useState<IAllUsers | null>(null);
 	const [token, setToken] = useState<string | null>(null);
 	const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 	const [datasBloqueadas, setDatasBloqueadas] = useState<BloqueioAgendamentoModel | null>(null)
@@ -101,7 +100,6 @@ export const AuthProvider = ({ children }: IAuthProvider) => {
 
 	const getAllUsers = async (): Promise<IAllUsers> => {
 		const data = await getAllUsersRequest();
-		setAllUsers(data)
 		return data;
 	};
 
@@ -174,7 +172,6 @@ export const AuthProvider = ({ children }: IAuthProvider) => {
 				token,
 				cpfData,
 				datasBloqueadas,
-				allUsers,
 				getAllSchedulling,
 				registerSchedulling,
 				getAllSchedullingCras,

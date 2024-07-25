@@ -2,7 +2,13 @@ import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import { createContext, useEffect, useState, useCallback } from 'react';
 import { IAuthContext, IAuthProvider, IPayload } from '../interface/AuthProps';
-import { SignIn, RegisterUserModel, RegisterSchedullingModel, BloqueioAgendamentoModel } from '../types/auth-data';
+import {
+	SignIn,
+	RegisterUserModel,
+	RegisterSchedullingModel,
+	BloqueioAgendamentoModel,
+	ITodosBloqueiosModel,
+} from '../types/auth-data';
 import {
 	loginRequest,
 	registerRequest,
@@ -14,6 +20,7 @@ import {
 	updateSchedulingRequest,
 	getUserCpfRequest,
 	registerSchedullingBlockRequest,
+	getSchedullingBlockRequest,
 } from '../services/auth-request';
 import { IAllUsers, IUserModel } from '../interface/User';
 import { ISchedulingModel } from '../interface/Schedulling';
@@ -25,7 +32,7 @@ export const AuthProvider = ({ children }: IAuthProvider) => {
 	const [cpfData, setCpfData] = useState<any>(null);
 	const [token, setToken] = useState<string | null>(null);
 	const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-	const [datasBloqueadas, setDatasBloqueadas] = useState<BloqueioAgendamentoModel | null>(null)
+	const [datasBloqueadas, setDatasBloqueadas] = useState<BloqueioAgendamentoModel | null>(null);
 
 	const getUserFromToken = (token: string) => {
 		try {
@@ -129,9 +136,14 @@ export const AuthProvider = ({ children }: IAuthProvider) => {
 		});
 	};
 
+	const getSchedullingBlock = async (): Promise<ITodosBloqueiosModel> => {
+		const { data } = await getSchedullingBlockRequest();
+		return data;
+	};
+
 	const registerBlock = async (data: BloqueioAgendamentoModel) => {
 		await registerSchedullingBlockRequest(data);
-		setDatasBloqueadas(data)
+		setDatasBloqueadas(data);
 	};
 
 	const getAllSchedulling = async (): Promise<ISchedulingModel> => {
@@ -164,6 +176,7 @@ export const AuthProvider = ({ children }: IAuthProvider) => {
 			value={{
 				payload,
 				setPayload,
+				getSchedullingBlock,
 				isAuthenticated,
 				signIn,
 				registerUser,

@@ -31,7 +31,7 @@ export interface RegisterSchedullingModel {
 
 export interface ITodosBloqueiosModel {
 	message: string;
-	contas: BloqueioAgendamentoModel;
+	contas: BloqueioAgendamentoModel[];
 }
 
 export interface BloqueioAgendamentoModel {

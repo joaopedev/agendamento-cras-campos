@@ -34,7 +34,10 @@ import {
 } from '../interface/Schedulling';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useForm, SubmitHandler } from 'react-hook-form';
-import { RegisterSchedullingModel } from '../types/auth-data';
+import {
+	BloqueioAgendamentoModel,
+	RegisterSchedullingModel,
+} from '../types/auth-data';
 import { btnStyle } from '../pages/loginPage';
 import BoxHorario from './BoxHorario';
 import { Cras } from '../interface/User';
@@ -49,15 +52,23 @@ const SelecionarDia: React.FC = () => {
 	const maxDate = addDays(new Date(), 15);
 	const [selectedDate, setSelectedDate] = useState<Date>(addDays(new Date(), 1));
 	const { isOpen, onOpen, onClose } = useDisclosure();
-	const { payload, registerSchedulling, getAllSchedullingCras, getByCpf, cpfData, getAllUsers } =
-		useContext(AuthContext);
+	const {
+		payload,
+		getSchedullingBlock,
+		registerSchedulling,
+		getAllSchedullingCras,
+		getByCpf,
+		cpfData,
+		getAllUsers,
+	} = useContext(AuthContext);
 	const [schedullingData, setSchedullingData] = useState<ISchedulingModel[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState('');
 	const [cpf, setCpf] = useState<string>('');
 	const isMounted = useRef(true);
 	const toast = useToast();
-	const [funcionariosPorCras, setFuncionariosPorCras] = useState();
+	const [funcionariosPorCras, setFuncionariosPorCras] = useState<number>();
+	const [diasBloqueados, setDiasBloqueados] = useState<BloqueioAgendamentoModel[]>([]);
 	const hoje = new Date();
 	const agendamentosFuturos = schedullingData.filter(agendamento => {
 		if (typeof agendamento.data_hora === 'string') {
@@ -71,6 +82,18 @@ const SelecionarDia: React.FC = () => {
 		return false;
 	});
 	const showSelecionarDia = !(agendamentosFuturos?.length > 0);
+
+	useEffect(() => {
+		const fetchBlockDays = async () => {
+			try {
+				const data = await getSchedullingBlock();
+				setDiasBloqueados(data.contas);
+			} catch (error) {
+				console.error('Erro ao buscar dias bloqueados:', error);
+			}
+		};
+		fetchBlockDays();
+	}, [getSchedullingBlock]);
 
 	useEffect(() => {
 		const fetchUsers = async () => {
@@ -226,16 +249,31 @@ const SelecionarDia: React.FC = () => {
 					.map(agendamentos => format(new Date(agendamentos.data_hora), 'HH:mm'));
 
 				const countAgendados = horariosAgendados.filter(h => h === horario.hora).length;
+				const bloqueados = diasBloqueados.filter(
+					(bloqueio: BloqueioAgendamentoModel) => format(parseISO(bloqueio.data as unknown as string), 'yyyy-MM-dd') === dataSelecionadaFormatada
+				);
+
+				const isBlocked = bloqueados.some((bloqueio: BloqueioAgendamentoModel) => {
+					if (bloqueio.tipo_bloqueio === 'diario') {
+						return true;
+					}
+					if (bloqueio.tipo_bloqueio === 'matutino' && horaParaMinutos(horario.hora) < 780) {
+						return true;
+					}
+					if (bloqueio.tipo_bloqueio === 'vespertino' && horaParaMinutos(horario.hora) >= 780) {
+						return true;
+					}
+					return false;
+				});
 
 				return {
 					...horario,
-					disponivel: countAgendados < Number(funcionariosPorCras),
-					// disponivel: countAgendados < 5,
+					disponivel: countAgendados < Number(funcionariosPorCras) && !isBlocked,
 				};
 			}
 			return horario;
 		});
-	}, [horarios, selectedDate, schedullingData, funcionariosPorCras]);
+	}, [horarios, selectedDate, schedullingData, funcionariosPorCras, diasBloqueados]);
 
 	const handleDateChange = (date: Date) => {
 		if (date && horarioSelecionado) {

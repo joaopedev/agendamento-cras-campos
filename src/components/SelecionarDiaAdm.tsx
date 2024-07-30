@@ -15,35 +15,35 @@ import {
 	Radio,
 	useToast,
 	Divider,
+	Textarea,
 } from '@chakra-ui/react';
 import DatePicker, { CalendarContainer, registerLocale } from 'react-datepicker';
 import { ptBR } from 'date-fns/locale/pt-BR';
-import { format, addDays, getDay } from 'date-fns';
+import { format, addDays, getDay, closestTo, isAfter } from 'date-fns';
 import { AuthContext } from '../context/AuthContext';
-import {
-	ISchedulingModel,
-	ISchedulingResponse,
-	Status,
-	TipoServico,
-} from '../interface/Schedulling';
+import { ISchedulingModel, ISchedulingResponse } from '../interface/Schedulling';
 import 'react-datepicker/dist/react-datepicker.css';
-import { useForm, SubmitHandler } from 'react-hook-form';
-import { RegisterSchedullingModel } from '../types/auth-data';
+import { useForm } from 'react-hook-form';
+import { BloqueioAgendamentoModel, RegisterSchedullingModel } from '../types/auth-data';
 import { btnStyle } from '../pages/loginPage';
 
 registerLocale('pt-BR', ptBR);
 
 const SelecionarDiaAdm: React.FC = () => {
 	const [horarioSelecionado, setHorarioSelecionado] = useState<string | null>(null);
+
 	const [, setAgendamentoRealizado] = useState(false);
 	const [showConfirmar, setShowConfirmar] = useState(false);
-	const [selectedDate, setSelectedDate] = useState<Date>(addDays(new Date(), 30));
-	const { isOpen, onOpen, onClose } = useDisclosure();
-	const { payload, registerSchedulling, getAllSchedullingCras, cpfData } = useContext(AuthContext);
+	const [selectedDate, setSelectedDate] = useState<Date>(addDays(new Date(), 15));
+	const { isOpen, onOpen, onClose, onToggle } = useDisclosure();
+	const { payload, getAllSchedullingCras, cpfData, registerBlock, getSchedullingBlock } =
+		useContext(AuthContext);
 	const [schedullingData, setSchedullingData] = useState<ISchedulingModel[]>([]);
 	const [loading, setLoading] = useState(true);
+	const [diasBloqueados, setDiasBloqueados] = useState<BloqueioAgendamentoModel[]>([]);
 	const isMounted = useRef(true);
 	const toast = useToast();
+	const [motivo, setMotivo] = useState<string>('');
 	const [periodoSelecionado, setPeriodoSelecionado] = useState<
 		'manha' | 'tarde' | 'dia_inteiro' | null
 	>(null);
@@ -52,8 +52,13 @@ const SelecionarDiaAdm: React.FC = () => {
 		onOpen();
 	};
 
+	const blocksArray: any = [];
+	diasBloqueados.filter(d => d.cras === payload?.cras).filter(d => blocksArray.push(d.data));
+	const futureBlockDates = blocksArray.filter((date: Date) => isAfter(date, new Date()));
+	const closestDate = closestTo(new Date(), futureBlockDates);
+
 	const getSelectedDay = () => {
-		if (getDay(selectedDate) === 7) {
+		if (getDay(selectedDate) === 6) {
 			setSelectedDate(addDays(selectedDate, 2));
 			return;
 		}
@@ -64,48 +69,57 @@ const SelecionarDiaAdm: React.FC = () => {
 	};
 	getSelectedDay();
 
-	const {
-		register,
-		handleSubmit,
-		setValue,
-		formState: { errors },
-	} = useForm<RegisterSchedullingModel>();
+	useEffect(() => {
+		const fetchBlockDays = async () => {
+			try {
+				const data = await getSchedullingBlock();
+				setDiasBloqueados(data.contas);
+			} catch (error) {
+				console.error('Erro ao buscar dias bloqueados:', error);
+			}
+		};
+		fetchBlockDays();
+	}, [getSchedullingBlock]);
+	const { setValue } = useForm<RegisterSchedullingModel>();
 
-	const onSubmit: SubmitHandler<RegisterSchedullingModel> = async (
-		data: RegisterSchedullingModel
-	) => {
-		try {
-			await registerSchedulling(data);
-			setAgendamentoRealizado(true);
-			const novoAgendamento: ISchedulingModel = {
-				id: Math.random(), // Gere um ID único aqui conforme necessário
-				name: data.name,
-				usuario_id: data.usuario_id,
-				servico: data.servico as unknown as TipoServico,
-				description: '', // Ajuste conforme necessário
-				duracao_atendimento: 60, // Ajuste conforme necessário
-				data_hora: new Date(data.data_hora),
-				cras: data.cras,
-				status: data.status as unknown as Status,
-				message: '', // Ajuste conforme necessário
-				agendamentos: [], // Ajuste conforme necessário
+	const confirmarBloqueio = async () => {
+		if (!periodoSelecionado || !selectedDate) return;
+
+		const tipoBloqueio =
+			periodoSelecionado === 'manha'
+				? 'matutino'
+				: periodoSelecionado === 'tarde'
+				? 'vespertino'
+				: 'diario';
+
+		if (payload) {
+			const bloqueioData: BloqueioAgendamentoModel = {
+				usuario_id: payload?.id,
+				cras: payload?.cras,
+				data: selectedDate,
+				tipo_bloqueio: tipoBloqueio,
+				motivo, // Ajuste conforme necessário
+				ativo: true,
 			};
-			setSchedullingData(prevState => [...prevState, novoAgendamento]);
-			toast({
-				title: 'Agendamento realizado com sucesso',
-				duration: 5000,
-				isClosable: true,
-				position: 'top-right',
-			});
-		} catch (error) {
-			toast({
-				title: 'Erro ao realizar agendamento',
-				description: (error as Error).message,
-				status: 'error',
-				duration: 5000,
-				isClosable: true,
-				position: 'top-right',
-			});
+
+			try {
+				await registerBlock(bloqueioData);
+				toast({
+					title: 'Bloqueio realizado com sucesso',
+					duration: 5000,
+					isClosable: true,
+					position: 'top-right',
+				});
+			} catch (error) {
+				toast({
+					title: 'Erro ao realizar bloqueio',
+					description: (error as Error).message,
+					status: 'error',
+					duration: 5000,
+					isClosable: true,
+					position: 'top-right',
+				});
+			}
 		}
 	};
 
@@ -195,7 +209,7 @@ const SelecionarDiaAdm: React.FC = () => {
 					w={'80%'}
 				>
 					<Text fontWeight={'bold'} fontSize={['1rem', '1.2rem', '1.3rem', '1.4rem']}>
-						INDISPONIBILIZAR DIA
+						RESERVAR DIA
 					</Text>
 					<Divider />
 					<Flex gap={2} flexDirection={'column'}>
@@ -225,7 +239,7 @@ const SelecionarDiaAdm: React.FC = () => {
 									filterDate={date => date.getDay() !== 0 && date.getDay() !== 6}
 									onSelect={handleDateChange}
 									onChange={(date: Date) => setSelectedDate(date)}
-									minDate={addDays(new Date(), 30)}
+									minDate={addDays(new Date(), 15)}
 									className="customInput"
 									calendarContainer={({ className, children }) => (
 										<Box
@@ -272,11 +286,21 @@ const SelecionarDiaAdm: React.FC = () => {
 								DIA INTEIRO
 							</Button>
 						</Flex>
+
+						<Flex flexDir={'column'} justifyContent={'center'}>
+							<Text>
+								<strong>Esse CRAS já possui um dia reservado:</strong>
+							</Text>
+							<Text>
+								<strong>{format(closestDate as Date, 'dd/MM/yy')}</strong>
+							</Text>
+						</Flex>
 						<Modal
 							isOpen={isOpen}
 							onClose={() => {
 								onClose();
 								setShowConfirmar(false);
+								setMotivo('');
 							}}
 							isCentered
 							size={['xs', 'sm', 'md', 'lg']}
@@ -288,12 +312,12 @@ const SelecionarDiaAdm: React.FC = () => {
 								<ModalBody>
 									<Text>
 										{periodoSelecionado === 'manha' &&
-											`Ao confirmar, todos os atendimentos marcados para manhã do dia ${format(
+											`Ao confirmar, todos os atendimentos marcados para a manhã do dia ${format(
 												selectedDate,
 												'dd/MM/yy'
 											)} serão cancelados. ⚠`}
 										{periodoSelecionado === 'tarde' &&
-											`Ao confirmar, todos os atendimentos marcados para tarde do dia ${format(
+											`Ao confirmar, todos os atendimentos marcados para a tarde do dia ${format(
 												selectedDate,
 												'dd/MM/yy'
 											)} serão cancelados. ⚠`}
@@ -313,32 +337,49 @@ const SelecionarDiaAdm: React.FC = () => {
 									</Radio>
 								</ModalBody>
 								<ModalFooter justifyContent={'center'}>
-									<Flex>
-										<Button
-											minW={['100px', '100px', '150px', '150px']}
-											boxShadow={'1px 1px 2px hsla(0, 28%, 0%, 0.7)'}
-											fontSize={['0.8rem', '0.8rem', '0.9rem', '1rem']}
-											colorScheme="red"
-											variant="solid"
-											mr={3}
-											onClick={() => {
-												onClose();
-												setShowConfirmar(false);
-											}}
-										>
-											Cancelar
-										</Button>
+									<Flex gap={4} flexDir={'column'}>
 										{showConfirmar && (
+											// <Input placeholder="Qual o motivo?"  />
+											<Textarea
+												placeholder="Qual o motivo?"
+												minH="unset"
+												overflow="hidden"
+												w="100%"
+												h={'100px'}
+												value={motivo} // Vinculando o estado ao valor do Textarea
+												onChange={e => setMotivo(e.target.value)} // Atualizando o estado ao mudar o valor do Textarea
+											/>
+										)}
+										<Flex justifyContent={'center'} minW={['250px', '300px', '400px', '400px']}>
 											<Button
+												minW={['100px', '100px', '150px', '150px']}
+												boxShadow={'1px 1px 2px hsla(0, 28%, 0%, 0.7)'}
+												fontSize={['0.8rem', '0.8rem', '0.9rem', '1rem']}
+												colorScheme="red"
+												variant="solid"
+												mr={3}
 												onClick={() => {
 													onClose();
+													setShowConfirmar(false);
 												}}
-												sx={btnStyle}
-												type="submit"
 											>
-												Confirmar
+												Cancelar
 											</Button>
-										)}
+											{showConfirmar && (
+												<Button
+													onClick={() => {
+														confirmarBloqueio();
+														onClose();
+														setMotivo('');
+														setShowConfirmar(false);
+													}}
+													sx={btnStyle}
+													type="submit"
+												>
+													Confirmar
+												</Button>
+											)}
+										</Flex>
 									</Flex>
 								</ModalFooter>
 							</ModalContent>

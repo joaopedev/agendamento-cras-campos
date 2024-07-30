@@ -15,12 +15,11 @@ import {
 	Radio,
 	useToast,
 	Divider,
-	Input,
 	Textarea,
 } from '@chakra-ui/react';
 import DatePicker, { CalendarContainer, registerLocale } from 'react-datepicker';
 import { ptBR } from 'date-fns/locale/pt-BR';
-import { format, addDays, getDay } from 'date-fns';
+import { format, addDays, getDay, closestTo, isAfter } from 'date-fns';
 import { AuthContext } from '../context/AuthContext';
 import { ISchedulingModel, ISchedulingResponse } from '../interface/Schedulling';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -32,15 +31,19 @@ registerLocale('pt-BR', ptBR);
 
 const SelecionarDiaAdm: React.FC = () => {
 	const [horarioSelecionado, setHorarioSelecionado] = useState<string | null>(null);
+
 	const [, setAgendamentoRealizado] = useState(false);
 	const [showConfirmar, setShowConfirmar] = useState(false);
 	const [selectedDate, setSelectedDate] = useState<Date>(addDays(new Date(), 15));
-	const { isOpen, onOpen, onClose } = useDisclosure();
-	const { payload, getAllSchedullingCras, cpfData, registerBlock } = useContext(AuthContext);
+	const { isOpen, onOpen, onClose, onToggle } = useDisclosure();
+	const { payload, getAllSchedullingCras, cpfData, registerBlock, getSchedullingBlock } =
+		useContext(AuthContext);
 	const [schedullingData, setSchedullingData] = useState<ISchedulingModel[]>([]);
 	const [loading, setLoading] = useState(true);
+	const [diasBloqueados, setDiasBloqueados] = useState<BloqueioAgendamentoModel[]>([]);
 	const isMounted = useRef(true);
 	const toast = useToast();
+	const [motivo, setMotivo] = useState<string>('');
 	const [periodoSelecionado, setPeriodoSelecionado] = useState<
 		'manha' | 'tarde' | 'dia_inteiro' | null
 	>(null);
@@ -48,6 +51,12 @@ const SelecionarDiaAdm: React.FC = () => {
 		setPeriodoSelecionado(periodo);
 		onOpen();
 	};
+
+	const blocksArray: any = [];
+	diasBloqueados.filter(d => d.cras === payload?.cras).filter(d => blocksArray.push(d.data));
+	const futureBlockDates = blocksArray.filter((date: Date) => isAfter(date, new Date()));
+	const closestDate = closestTo(new Date(), futureBlockDates);
+
 	const getSelectedDay = () => {
 		if (getDay(selectedDate) === 6) {
 			setSelectedDate(addDays(selectedDate, 2));
@@ -60,6 +69,17 @@ const SelecionarDiaAdm: React.FC = () => {
 	};
 	getSelectedDay();
 
+	useEffect(() => {
+		const fetchBlockDays = async () => {
+			try {
+				const data = await getSchedullingBlock();
+				setDiasBloqueados(data.contas);
+			} catch (error) {
+				console.error('Erro ao buscar dias bloqueados:', error);
+			}
+		};
+		fetchBlockDays();
+	}, [getSchedullingBlock]);
 	const { setValue } = useForm<RegisterSchedullingModel>();
 
 	const confirmarBloqueio = async () => {
@@ -78,7 +98,7 @@ const SelecionarDiaAdm: React.FC = () => {
 				cras: payload?.cras,
 				data: selectedDate,
 				tipo_bloqueio: tipoBloqueio,
-				motivo: 'Motivo do bloqueio', // Ajuste conforme necessário
+				motivo, // Ajuste conforme necessário
 				ativo: true,
 			};
 
@@ -266,11 +286,21 @@ const SelecionarDiaAdm: React.FC = () => {
 								DIA INTEIRO
 							</Button>
 						</Flex>
+
+						<Flex flexDir={'column'} justifyContent={'center'}>
+							<Text>
+								<strong>Esse CRAS já possui um dia reservado:</strong>
+							</Text>
+							<Text>
+								<strong>{format(closestDate as Date, 'dd/MM/yy')}</strong>
+							</Text>
+						</Flex>
 						<Modal
 							isOpen={isOpen}
 							onClose={() => {
 								onClose();
 								setShowConfirmar(false);
+								setMotivo('');
 							}}
 							isCentered
 							size={['xs', 'sm', 'md', 'lg']}
@@ -316,9 +346,11 @@ const SelecionarDiaAdm: React.FC = () => {
 												overflow="hidden"
 												w="100%"
 												h={'100px'}
+												value={motivo} // Vinculando o estado ao valor do Textarea
+												onChange={e => setMotivo(e.target.value)} // Atualizando o estado ao mudar o valor do Textarea
 											/>
 										)}
-										<Flex>
+										<Flex justifyContent={'center'} minW={['250px', '300px', '400px', '400px']}>
 											<Button
 												minW={['100px', '100px', '150px', '150px']}
 												boxShadow={'1px 1px 2px hsla(0, 28%, 0%, 0.7)'}
@@ -338,6 +370,8 @@ const SelecionarDiaAdm: React.FC = () => {
 													onClick={() => {
 														confirmarBloqueio();
 														onClose();
+														setMotivo('');
+														setShowConfirmar(false);
 													}}
 													sx={btnStyle}
 													type="submit"

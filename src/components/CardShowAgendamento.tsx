@@ -1,4 +1,20 @@
-import { Card, CardBody, CardHeader, Divider, Flex, Text } from '@chakra-ui/react';
+import {
+	Button,
+	Card,
+	CardBody,
+	CardHeader,
+	Divider,
+	Flex,
+	Modal,
+	ModalBody,
+	ModalCloseButton,
+	ModalContent,
+	ModalFooter,
+	ModalHeader,
+	ModalOverlay,
+	Text,
+	useDisclosure,
+} from '@chakra-ui/react';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { ISchedulingModel, ISchedulingResponse } from '../interface/Schedulling';
@@ -7,16 +23,12 @@ import { ptBR } from 'date-fns/locale';
 
 const CardShowAgendamento: React.FC = () => {
 	const { payload, getAllSchedullingCras } = useContext(AuthContext);
-	const textStyle1 = {
-		fontSize: ['1.2rem', '1.3rem', '1.4rem', '1.5rem'],
-		borderRadius: '5px',
-		p: '8px 0',
-	};
+	const { isOpen, onOpen, onClose } = useDisclosure();
 	const isMounted = useRef(true);
 	const hoje = new Date();
 	const [schedullingData, setSchedullingData] = useState<ISchedulingModel[]>([]);
 	const agendamentosFuturos = schedullingData.filter(agendamento => {
-		if (typeof agendamento.data_hora === 'string') {
+		if (typeof agendamento.data_hora === 'string' && agendamento.status === 2) {
 			const dataAgendamento = parseISO(agendamento.data_hora);
 			return (
 				isValid(dataAgendamento) &&
@@ -71,12 +83,12 @@ const CardShowAgendamento: React.FC = () => {
 					bg={'#f4f4f4'}
 				>
 					<CardHeader>
-						<Text fontWeight={'bold'} sx={textStyle1}>
-							VOCÊ JÁ POSSUI UM AGENDAMENTO
+						<Text fontWeight={'bold'} fontSize={['xl', 'xl', '2xl', '3xl']}>
+							VOCÊ JÁ POSSUI UM AGENDAMENTO!
 						</Text>
-						<Divider />
 					</CardHeader>
-					<CardBody pt={0}>
+					<CardBody fontSize={'xl'} pt={0}>
+						<Divider mb={2} />
 						<Text>Próximo atendimento:</Text>
 						<Text>
 							dia{' '}
@@ -90,9 +102,34 @@ const CardShowAgendamento: React.FC = () => {
 									format(primeiroAgendamento?.data_hora, "HH'h'", { locale: ptBR })}
 							</strong>
 						</Text>
+
+						<Button // Novo botão para editar
+							mt={4} // Adiciona um pouco de margem superior
+							colorScheme="blue" // Cor azul padrão
+							bg={'#2CA1FF'}
+							onClick={onOpen}
+						>
+							Editar Agendamento
+						</Button>
 					</CardBody>
 				</Card>
 			)}
+			<Modal
+				isOpen={isOpen}
+				onClose={() => {
+					onClose();
+				}}
+				isCentered
+				size={['xs', 'sm', 'md', 'lg']}
+			>
+				<ModalOverlay />
+				<ModalContent minW={['90%', '27em', '30em', '48em']} textAlign={'center'}>
+					<ModalHeader mt={5}>O que você deseja fazer?</ModalHeader>
+					<ModalCloseButton />
+					<ModalBody></ModalBody>
+					<ModalFooter justifyContent={'center'}></ModalFooter>
+				</ModalContent>
+			</Modal>
 		</Flex>
 	);
 };

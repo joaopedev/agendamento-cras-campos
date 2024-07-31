@@ -34,7 +34,6 @@ import { EditIcon, CheckIcon } from '@chakra-ui/icons';
 import { updateUserRequest } from '../services/auth-request';
 import { BairroCras } from '../components/BairroCras';
 import CardShowAgendamento from '../components/CardShowAgendamento';
-import SelecionarDiaAdm from '../components/SelecionarDiaAdm';
 
 export const Home: React.FC = () => {
 	const { isOpen, onOpen, onClose } = useDisclosure();
@@ -404,7 +403,6 @@ export const Home: React.FC = () => {
 				</Stack>
 				<CardShowAgendamento />
 				{payload?.tipo_usuario !== 5 && <SelecionarDia />}
-				{payload?.tipo_usuario === 3 && <SelecionarDiaAdm />}
 			</Flex>
 		</Flex>
 	);

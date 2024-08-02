@@ -26,17 +26,26 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { useForm } from 'react-hook-form';
 import { BloqueioAgendamentoModel, RegisterSchedullingModel } from '../types/auth-data';
 import { btnStyle } from '../pages/loginPage';
+import { updateBlock } from 'typescript';
+import { updateBlockRequest } from '../services/auth-request';
 
 registerLocale('pt-BR', ptBR);
 
 const SelecionarDiaAdm: React.FC = () => {
 	const [showConfirmar, setShowConfirmar] = useState(false);
 	const [showCancelar, setShowCancelar] = useState(false);
+	const [idBloqueio, setIdBloqueio] = useState<number | null>(null);
 
 	const [selectedDate, setSelectedDate] = useState<Date>(addDays(new Date(), 1));
-	const { isOpen, onOpen, onClose, onToggle } = useDisclosure();
-	const { payload, getAllSchedullingCras, cpfData, registerBlock, getSchedullingBlock } =
-		useContext(AuthContext);
+	const { isOpen, onOpen, onClose } = useDisclosure();
+	const {
+		payload,
+		getAllSchedullingCras,
+		cpfData,
+		registerBlock,
+		updateBlock,
+		getSchedullingBlock,
+	} = useContext(AuthContext);
 	const [schedullingData, setSchedullingData] = useState<ISchedulingModel[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [diasBloqueados, setDiasBloqueados] = useState<BloqueioAgendamentoModel[]>([]);
@@ -76,6 +85,9 @@ const SelecionarDiaAdm: React.FC = () => {
 
 		if (reservaExistente) {
 			setPeriodoReservado(periodo);
+			if (reservaExistente.id !== undefined) {
+				setIdBloqueio(Number(reservaExistente.id));
+			}
 			setShowCancelar(true);
 		} else {
 			setPeriodoSelecionado(periodo);
@@ -85,7 +97,7 @@ const SelecionarDiaAdm: React.FC = () => {
 
 	const blocksArray: Date[] = [];
 	diasBloqueados
-		.filter(d => d.cras === payload?.cras)
+		.filter(d => d.cras === payload?.cras && d.ativo === true)
 		.forEach(d => blocksArray.push(new Date(d.data)));
 
 	const futureBlockDates = blocksArray
@@ -138,14 +150,14 @@ const SelecionarDiaAdm: React.FC = () => {
 			try {
 				await registerBlock(bloqueioData);
 				toast({
-					title: 'Bloqueio realizado com sucesso',
+					title: 'Reserva realizada com sucesso',
 					duration: 5000,
 					isClosable: true,
 					position: 'top-right',
 				});
 			} catch (error) {
 				toast({
-					title: 'Erro ao realizar bloqueio',
+					title: 'Erro ao realizar reserva',
 					description: (error as Error).message,
 					status: 'error',
 					duration: 5000,
@@ -156,20 +168,39 @@ const SelecionarDiaAdm: React.FC = () => {
 		}
 	};
 
-	const cancelarBloqueio = async () => {
-		if (!periodoReservado || !selectedDate) return;
-
-		const tipoBloqueio = mapPeriodoToTipoBloqueio(periodoReservado);
-
-		if (payload) {
-			try {
-			} catch (error) {}
+	const cancelarBloqueio = async (
+		id: number,
+		usuario_id: string,
+		updates: Partial<BloqueioAgendamentoModel>
+	) => {
+		try {
+			await updateBlockRequest(id, usuario_id, updates);
+			toast({
+				title: 'Reserva cancelada com sucesso',
+				duration: 5000,
+				isClosable: true,
+				position: 'top-right',
+			});
+			setDiasBloqueados(prevData =>
+				prevData.map(agendamento =>
+					agendamento.ativo === true
+						? {
+								...agendamento,
+								ativo: false,
+						  }
+						: agendamento
+				)
+			);
+		} catch (error) {
+			toast({
+				title: 'Erro ao cancelar o reserva',
+				description: (error as Error).message,
+				status: 'error',
+				duration: 5000,
+				isClosable: true,
+				position: 'top-right',
+			});
 		}
-	};
-
-	const horaParaMinutos = (horaString: string): number => {
-		const [horas, minutos] = horaString.split(':').map(Number);
-		return horas * 60 + minutos;
 	};
 
 	useEffect(() => {
@@ -245,7 +276,7 @@ const SelecionarDiaAdm: React.FC = () => {
 					<Text fontWeight={'bold'} fontSize={['2xl', '3xl', '4xl', '5xl']}>
 						RESERVAR DIA
 					</Text>
-					<Divider />
+					<Divider mb={3} />
 					<Flex gap={2} flexDirection={'column'}>
 						<Box
 							flexDir={['column', 'column', 'row', 'row']}
@@ -309,7 +340,8 @@ const SelecionarDiaAdm: React.FC = () => {
 									const reservaExistente = diasBloqueados.find(
 										d =>
 											new Date(d.data).toDateString() === selectedDate.toDateString() &&
-											d.tipo_bloqueio === tipoBloqueio
+											d.tipo_bloqueio === tipoBloqueio &&
+											d.ativo === true
 									);
 									return (
 										<Button
@@ -318,14 +350,16 @@ const SelecionarDiaAdm: React.FC = () => {
 											colorScheme={reservaExistente ? 'red' : showBlueButtons ? 'blue' : 'gray'}
 											onClick={() => {
 												if (reservaExistente) {
-													setPeriodoReservado(periodo as 'manha' | 'tarde' | 'dia_inteiro'); // Adicionada asserção de tipo
-													setShowCancelar(true); // ... (handle cancellation logic)
+													setPeriodoReservado(periodo as 'manha' | 'tarde' | 'dia_inteiro');
+													if (reservaExistente.id !== undefined) {
+														setIdBloqueio(Number(reservaExistente.id));
+													}
+													setShowCancelar(true);
+												} else if (showBlueButtons) {
+													handleOpen(periodo as 'manha' | 'tarde' | 'dia_inteiro');
 												}
-												if (showBlueButtons) {
-													return handleOpen(periodo as 'manha' | 'tarde' | 'dia_inteiro');
-												} // If not showing blue buttons, do nothing
 											}}
-											isDisabled={!showBlueButtons && !reservaExistente} // Disable when not showing and no reservation
+											isDisabled={!showBlueButtons && !reservaExistente}
 										>
 											{periodo.toUpperCase().replace('_', ' ')}
 										</Button>
@@ -487,10 +521,10 @@ const SelecionarDiaAdm: React.FC = () => {
 											>
 												Cancelar
 											</Button>
-											{showConfirmar && (
+											{showConfirmar && payload?.id && idBloqueio && (
 												<Button
 													onClick={() => {
-														cancelarBloqueio();
+														cancelarBloqueio(idBloqueio, payload.id, { ativo: false });
 														setShowCancelar(false);
 														setMotivo('');
 														setShowConfirmar(false);

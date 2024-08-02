@@ -239,6 +239,7 @@ const SelecionarDia: React.FC = () => {
 			if (selectedDate) {
 				const dataSelecionadaFormatada = format(selectedDate, 'yyyy-MM-dd');
 				const horariosAgendados = schedullingData
+					.filter(agendamentos => agendamentos?.status === 2)
 					.filter(
 						agendamentos =>
 							format(new Date(agendamentos.data_hora), 'yyyy-MM-dd') === dataSelecionadaFormatada

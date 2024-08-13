@@ -190,15 +190,15 @@ const Gerenciamento: React.FC = () => {
 								<Th px={2} fontSize={['12px', '12px', '14px', '16px']}>
 									CRAS
 								</Th>
-								<Th px={2} fontSize={['12px', '12px', '14px', '16px']}>
-									Ações
-								</Th>
 								{editingEmployee.index !== null && (
 									<Th fontSize={['12px', '12px', '14px', '16px']}>Senha</Th>
 								)}
+								<Th px={2} fontSize={['12px', '12px', '14px', '16px']}>
+									Ações
+								</Th>
 							</Tr>
 						</Thead>
-						<tbody>
+						{/* <tbody>
 							{employeeData && employeeData.length > 0 ? (
 								employeeData.map((employee, index) => (
 									<Tr h={'73px'} key={index}>
@@ -231,7 +231,34 @@ const Gerenciamento: React.FC = () => {
 												Cras[employee.cras]
 											)}
 										</Td>
-
+										{editingEmployee.index === index && (
+											<Td pl={2}>
+												<InputGroup>
+													<Input
+														placeholder="Nova senha"
+														type={showPassword ? 'text' : 'password'}
+														onChange={e =>
+															setEditingEmployee(prev => ({
+																...prev,
+																data: {
+																	...prev.data!,
+																	password: e.target.value,
+																},
+															}))
+														}
+													/>
+													<InputRightElement width="4.5rem">
+														<IconButton
+															h="1.75rem"
+															size="sm"
+															onClick={handleTogglePassword}
+															icon={showPassword ? <ViewOffIcon /> : <ViewIcon />}
+															aria-label={showPassword ? 'Hide password' : 'Show password'}
+														/>
+													</InputRightElement>
+												</InputGroup>
+											</Td>
+										)}
 										<Td px={2}>
 											<Flex
 												gap={2}
@@ -286,6 +313,47 @@ const Gerenciamento: React.FC = () => {
 												/>
 											</Flex>
 										</Td>
+									</Tr>
+								))
+							) : (
+								<Tr>
+									<Td colSpan={4}>Nenhum funcionário encontrado.</Td>
+								</Tr>
+							)}
+						</tbody> */}
+						<tbody>
+							{employeeData && employeeData.length > 0 ? (
+								employeeData.map((employee, index) => (
+									<Tr h={'73px'} key={index}>
+										<Td pr={2} fontSize={['12px', '12px', '14px', '16px']}>
+											{employee.name}
+										</Td>
+										<Td px={2} fontSize={['12px', '12px', '14px', '16px']}>
+											{employee.cpf
+												.replace(/[^\d]/g, '')
+												.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4')}
+										</Td>
+										<Td px={2} fontSize={['12px', '12px', '14px', '16px']}>
+											{editingEmployee.index === index ? (
+												<Select
+													ml={-2}
+													size={'md'}
+													name="cras"
+													value={editingEmployee.data?.cras || ''}
+													onChange={handleEditChange}
+												>
+													{Object.entries(Cras)
+														.filter(([key]) => isNaN(Number(key)))
+														.map(([key, value]) => (
+															<option key={value} value={value}>
+																{key}
+															</option>
+														))}
+												</Select>
+											) : (
+												Cras[employee.cras]
+											)}
+										</Td>
 										{editingEmployee.index === index && (
 											<Td pl={2}>
 												<InputGroup>
@@ -314,6 +382,54 @@ const Gerenciamento: React.FC = () => {
 												</InputGroup>
 											</Td>
 										)}
+										<Td px={2}>
+											<Flex
+												gap={2}
+												justifyContent={'flex-start'}
+												flexDir={['column', 'column', 'column', 'row']}
+											>
+												{editingEmployee.index === index ? (
+													<>
+														<Button
+															minW={'68px'}
+															_hover={{ fontWeight: 'bold' }}
+															size="sm"
+															colorScheme="green"
+															onClick={saveEdit}
+														>
+															Salvar
+														</Button>
+													</>
+												) : editingEmployee.index === null ? (
+													<>
+														<Button
+															minW={'68px'}
+															size="sm"
+															bg={'#2CA1FF'}
+															color={'white'}
+															_hover={{
+																bg: '#1C75BC',
+																fontWeight: 'bold',
+															}}
+															onClick={() => {
+																setEditingEmployee({ index, data: employee });
+															}}
+														>
+															Editar
+														</Button>
+														<Button
+															minW={'68px'}
+															size="sm"
+															colorScheme="red"
+															onClick={onConfirmationOpen}
+															_hover={{ fontWeight: 'bold' }}
+														>
+															Excluir
+														</Button>
+													</>
+												) : null}
+											</Flex>
+										</Td>
 									</Tr>
 								))
 							) : (

@@ -19,25 +19,33 @@ import {
 } from '@chakra-ui/react';
 import DatePicker, { CalendarContainer, registerLocale } from 'react-datepicker';
 import { ptBR } from 'date-fns/locale/pt-BR';
-import { format, addDays, getDay, closestTo, isAfter } from 'date-fns';
+import { format, addDays, getDay, differenceInDays, isAfter } from 'date-fns';
 import { AuthContext } from '../context/AuthContext';
 import { ISchedulingModel, ISchedulingResponse } from '../interface/Schedulling';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useForm } from 'react-hook-form';
 import { BloqueioAgendamentoModel, RegisterSchedullingModel } from '../types/auth-data';
 import { btnStyle } from '../pages/loginPage';
+import { updateBlock } from 'typescript';
+import { updateBlockRequest } from '../services/auth-request';
 
 registerLocale('pt-BR', ptBR);
 
 const SelecionarDiaAdm: React.FC = () => {
-	const [horarioSelecionado, setHorarioSelecionado] = useState<string | null>(null);
-
-	const [, setAgendamentoRealizado] = useState(false);
 	const [showConfirmar, setShowConfirmar] = useState(false);
-	const [selectedDate, setSelectedDate] = useState<Date>(addDays(new Date(), 15));
-	const { isOpen, onOpen, onClose, onToggle } = useDisclosure();
-	const { payload, getAllSchedullingCras, cpfData, registerBlock, getSchedullingBlock } =
-		useContext(AuthContext);
+	const [showCancelar, setShowCancelar] = useState(false);
+	const [idBloqueio, setIdBloqueio] = useState<number | null>(null);
+
+	const [selectedDate, setSelectedDate] = useState<Date>(addDays(new Date(), 1));
+	const { isOpen, onOpen, onClose } = useDisclosure();
+	const {
+		payload,
+		getAllSchedullingCras,
+		cpfData,
+		registerBlock,
+		updateBlock,
+		getSchedullingBlock,
+	} = useContext(AuthContext);
 	const [schedullingData, setSchedullingData] = useState<ISchedulingModel[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [diasBloqueados, setDiasBloqueados] = useState<BloqueioAgendamentoModel[]>([]);
@@ -47,15 +55,56 @@ const SelecionarDiaAdm: React.FC = () => {
 	const [periodoSelecionado, setPeriodoSelecionado] = useState<
 		'manha' | 'tarde' | 'dia_inteiro' | null
 	>(null);
-	const handleOpen = (periodo: 'manha' | 'tarde' | 'dia_inteiro') => {
-		setPeriodoSelecionado(periodo);
-		onOpen();
+	const [periodoReservado, setPeriodoReservado] = useState<
+		'manha' | 'tarde' | 'dia_inteiro' | null
+	>(null);
+	const showBlueButtons = differenceInDays(selectedDate, new Date()) >= 15;
+
+	const mapPeriodoToTipoBloqueio = (
+		periodo: 'manha' | 'tarde' | 'dia_inteiro'
+	): 'matutino' | 'vespertino' | 'diario' => {
+		switch (periodo) {
+			case 'manha':
+				return 'matutino';
+			case 'tarde':
+				return 'vespertino';
+			case 'dia_inteiro':
+				return 'diario';
+			default:
+				throw new Error('Período inválido');
+		}
 	};
 
-	const blocksArray: any = [];
-	diasBloqueados.filter(d => d.cras === payload?.cras).filter(d => blocksArray.push(d.data));
-	const futureBlockDates = blocksArray.filter((date: Date) => isAfter(date, new Date()));
-	const closestDate = closestTo(new Date(), futureBlockDates);
+	const handleOpen = (periodo: 'manha' | 'tarde' | 'dia_inteiro') => {
+		const tipoBloqueio = mapPeriodoToTipoBloqueio(periodo);
+		const reservaExistente = diasBloqueados.find(
+			d =>
+				new Date(d.data).toDateString() === selectedDate.toDateString() &&
+				d.tipo_bloqueio === tipoBloqueio
+		);
+
+		if (reservaExistente) {
+			setPeriodoReservado(periodo);
+			if (reservaExistente.id !== undefined) {
+				setIdBloqueio(Number(reservaExistente.id));
+			}
+			setShowCancelar(true);
+		} else {
+			setPeriodoSelecionado(periodo);
+			onOpen();
+		}
+	};
+
+	const blocksArray: Date[] = [];
+	diasBloqueados
+		.filter(d => d.cras === payload?.cras && d.ativo === true)
+		.forEach(d => blocksArray.push(new Date(d.data)));
+
+	const futureBlockDates = blocksArray
+		.filter((date: Date) => isAfter(date, new Date()))
+		.sort((a: Date, b: Date) => a.getTime() - b.getTime());
+
+	const closestDate = futureBlockDates.length > 0 ? futureBlockDates[0] : null;
 
 	const getSelectedDay = () => {
 		if (getDay(selectedDate) === 6) {
@@ -80,17 +129,13 @@ const SelecionarDiaAdm: React.FC = () => {
 		};
 		fetchBlockDays();
 	}, [getSchedullingBlock]);
+
 	const { setValue } = useForm<RegisterSchedullingModel>();
 
 	const confirmarBloqueio = async () => {
 		if (!periodoSelecionado || !selectedDate) return;
 
-		const tipoBloqueio =
-			periodoSelecionado === 'manha'
-				? 'matutino'
-				: periodoSelecionado === 'tarde'
-				? 'vespertino'
-				: 'diario';
+		const tipoBloqueio = mapPeriodoToTipoBloqueio(periodoSelecionado);
 
 		if (payload) {
 			const bloqueioData: BloqueioAgendamentoModel = {
@@ -98,21 +143,21 @@ const SelecionarDiaAdm: React.FC = () => {
 				cras: payload?.cras,
 				data: selectedDate,
 				tipo_bloqueio: tipoBloqueio,
-				motivo, // Ajuste conforme necessário
+				motivo,
 				ativo: true,
 			};
 
 			try {
 				await registerBlock(bloqueioData);
 				toast({
-					title: 'Bloqueio realizado com sucesso',
+					title: 'Reserva realizada com sucesso',
 					duration: 5000,
 					isClosable: true,
 					position: 'top-right',
 				});
 			} catch (error) {
 				toast({
-					title: 'Erro ao realizar bloqueio',
+					title: 'Erro ao realizar reserva',
 					description: (error as Error).message,
 					status: 'error',
 					duration: 5000,
@@ -123,9 +168,39 @@ const SelecionarDiaAdm: React.FC = () => {
 		}
 	};
 
-	const horaParaMinutos = (horaString: string): number => {
-		const [horas, minutos] = horaString.split(':').map(Number);
-		return horas * 60 + minutos;
+	const cancelarBloqueio = async (
+		id: number,
+		usuario_id: string,
+		updates: Partial<BloqueioAgendamentoModel>
+	) => {
+		try {
+			await updateBlockRequest(id, usuario_id, updates);
+			toast({
+				title: 'Reserva cancelada com sucesso',
+				duration: 5000,
+				isClosable: true,
+				position: 'top-right',
+			});
+			setDiasBloqueados(prevData =>
+				prevData.map(agendamento =>
+					agendamento.ativo === true
+						? {
+								...agendamento,
+								ativo: false,
+						  }
+						: agendamento
+				)
+			);
+		} catch (error) {
+			toast({
+				title: 'Erro ao cancelar o reserva',
+				description: (error as Error).message,
+				status: 'error',
+				duration: 5000,
+				isClosable: true,
+				position: 'top-right',
+			});
+		}
 	};
 
 	useEffect(() => {
@@ -165,16 +240,6 @@ const SelecionarDiaAdm: React.FC = () => {
 		}
 	}, [cpfData, setValue]);
 
-	const handleDateChange = (date: Date) => {
-		if (date && horarioSelecionado) {
-			const minutos = horaParaMinutos(horarioSelecionado);
-			date.setHours(Math.floor(minutos / 60));
-			date.setMinutes(minutos % 60);
-		}
-		setSelectedDate(date);
-		setAgendamentoRealizado(false); // Resetar o estado do agendamento realizado ao mudar a data
-	};
-
 	if (loading) {
 		return (
 			<Flex justifyContent="center" alignItems="center" height="100vh">
@@ -208,10 +273,10 @@ const SelecionarDiaAdm: React.FC = () => {
 					alignSelf={'center'}
 					w={'80%'}
 				>
-					<Text fontWeight={'bold'} fontSize={['1rem', '1.2rem', '1.3rem', '1.4rem']}>
+					<Text fontWeight={'bold'} fontSize={['2xl', '3xl', '4xl', '5xl']}>
 						RESERVAR DIA
 					</Text>
-					<Divider />
+					<Divider mb={3} />
 					<Flex gap={2} flexDirection={'column'}>
 						<Box
 							flexDir={['column', 'column', 'row', 'row']}
@@ -230,16 +295,14 @@ const SelecionarDiaAdm: React.FC = () => {
 								borderRadius={5}
 								border={'1px solid #999'}
 								p={'1px'}
-								// mx={'auto'}
 							>
 								<DatePicker
 									dateFormat="dd/MM/yyyy"
 									locale={'pt-BR'}
 									selected={selectedDate}
 									filterDate={date => date.getDay() !== 0 && date.getDay() !== 6}
-									onSelect={handleDateChange}
 									onChange={(date: Date) => setSelectedDate(date)}
-									minDate={addDays(new Date(), 15)}
+									minDate={addDays(new Date(), 1)}
 									className="customInput"
 									calendarContainer={({ className, children }) => (
 										<Box
@@ -269,30 +332,46 @@ const SelecionarDiaAdm: React.FC = () => {
 							</Box>
 						</Box>
 						<Flex flex={1} gap={1} justifyContent={'center'}>
-							{/* <Text pb={1} fontSize={['12px', '12px', '15px', '15px']} fontWeight="bold">
-								HORÁRIOS DISPONÍVEIS
-							</Text> */}
-							<Button w={'max-content'} colorScheme={'blue'} onClick={() => handleOpen('manha')}>
-								MANHÃ
-							</Button>
-							<Button w={'max-content'} colorScheme={'blue'} onClick={() => handleOpen('tarde')}>
-								TARDE
-							</Button>
-							<Button
-								onClick={() => handleOpen('dia_inteiro')}
-								w={'max-content'}
-								colorScheme={'blue'}
-							>
-								DIA INTEIRO
-							</Button>
+							{selectedDate &&
+								['manha', 'tarde', 'dia_inteiro'].map(periodo => {
+									const tipoBloqueio = mapPeriodoToTipoBloqueio(
+										periodo as 'manha' | 'tarde' | 'dia_inteiro'
+									);
+									const reservaExistente = diasBloqueados.find(
+										d =>
+											new Date(d.data).toDateString() === selectedDate.toDateString() &&
+											d.tipo_bloqueio === tipoBloqueio &&
+											d.ativo === true
+									);
+									return (
+										<Button
+											key={periodo}
+											w={'max-content'}
+											colorScheme={reservaExistente ? 'red' : showBlueButtons ? 'blue' : 'gray'}
+											onClick={() => {
+												if (reservaExistente) {
+													setPeriodoReservado(periodo as 'manha' | 'tarde' | 'dia_inteiro');
+													if (reservaExistente.id !== undefined) {
+														setIdBloqueio(Number(reservaExistente.id));
+													}
+													setShowCancelar(true);
+												} else if (showBlueButtons) {
+													handleOpen(periodo as 'manha' | 'tarde' | 'dia_inteiro');
+												}
+											}}
+											isDisabled={!showBlueButtons && !reservaExistente}
+										>
+											{periodo.toUpperCase().replace('_', ' ')}
+										</Button>
+									);
+								})}
 						</Flex>
-
 						<Flex flexDir={'column'} justifyContent={'center'}>
-							<Text>
-								<strong>Esse CRAS já possui um dia reservado:</strong>
-							</Text>
-							<Text>
-								<strong>{format(closestDate as Date, 'dd/MM/yy')}</strong>
+							<Text>O próximo dia reservado desse CRAS é:</Text>
+							<Text fontSize={['xl', '2xl', '3xl', '4xl']}>
+								<strong>
+									{closestDate ? format(closestDate, 'dd/MM/yy') : 'Nenhuma reserva futura'}
+								</strong>
 							</Text>
 						</Flex>
 						<Modal
@@ -339,15 +418,14 @@ const SelecionarDiaAdm: React.FC = () => {
 								<ModalFooter justifyContent={'center'}>
 									<Flex gap={4} flexDir={'column'}>
 										{showConfirmar && (
-											// <Input placeholder="Qual o motivo?"  />
 											<Textarea
 												placeholder="Qual o motivo?"
 												minH="unset"
 												overflow="hidden"
 												w="100%"
 												h={'100px'}
-												value={motivo} // Vinculando o estado ao valor do Textarea
-												onChange={e => setMotivo(e.target.value)} // Atualizando o estado ao mudar o valor do Textarea
+												value={motivo}
+												onChange={e => setMotivo(e.target.value)}
 											/>
 										)}
 										<Flex justifyContent={'center'} minW={['250px', '300px', '400px', '400px']}>
@@ -370,6 +448,84 @@ const SelecionarDiaAdm: React.FC = () => {
 													onClick={() => {
 														confirmarBloqueio();
 														onClose();
+														setMotivo('');
+														setShowConfirmar(false);
+													}}
+													sx={btnStyle}
+													type="submit"
+												>
+													Confirmar
+												</Button>
+											)}
+										</Flex>
+									</Flex>
+								</ModalFooter>
+							</ModalContent>
+						</Modal>
+
+						<Modal
+							isOpen={showCancelar}
+							onClose={() => {
+								setShowCancelar(false);
+								setMotivo('');
+								setShowConfirmar(false);
+							}}
+							isCentered
+							size={['xs', 'sm', 'md', 'lg']}
+						>
+							<ModalOverlay />
+							<ModalContent minW={['90%', '27em', '30em', '48em']} textAlign={'center'}>
+								<ModalHeader mt={5}>CANCELAR RESERVA?</ModalHeader>
+								<ModalCloseButton />
+								<ModalBody>
+									<Text>
+										{periodoReservado === 'manha' &&
+											`Ao confirmar, a reserva para a manhã do dia ${format(
+												selectedDate,
+												'dd/MM/yy'
+											)} será cancelada.`}
+										{periodoReservado === 'tarde' &&
+											`Ao confirmar, a reserva para a tarde do dia ${format(
+												selectedDate,
+												'dd/MM/yy'
+											)} será cancelada.`}
+										{periodoReservado === 'dia_inteiro' &&
+											`Ao confirmar, a reserva para o dia inteiro de ${format(
+												selectedDate,
+												'dd/MM/yy'
+											)} será cancelada.`}
+									</Text>
+									<Radio
+										mt={4}
+										onChange={() => {
+											setShowConfirmar(true);
+										}}
+									>
+										Tenho certeza!
+									</Radio>
+								</ModalBody>
+								<ModalFooter justifyContent={'center'}>
+									<Flex gap={4} flexDir={'column'}>
+										<Flex justifyContent={'center'} minW={['250px', '300px', '400px', '400px']}>
+											<Button
+												minW={['100px', '100px', '150px', '150px']}
+												boxShadow={'1px 1px 2px hsla(0, 28%, 0%, 0.7)'}
+												fontSize={['0.8rem', '0.8rem', '0.9rem', '1rem']}
+												colorScheme="red"
+												variant="solid"
+												mr={3}
+												onClick={() => {
+													setShowCancelar(false);
+													setShowConfirmar(false);
+												}}
+											>
+												Cancelar
+											</Button>
+											{showConfirmar && payload?.id && idBloqueio && (
+												<Button
+													onClick={() => {
+														cancelarBloqueio(idBloqueio, payload.id, { ativo: false });
+														setShowCancelar(false);
 														setMotivo('');
 														setShowConfirmar(false);
 													}}

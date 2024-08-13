@@ -18,6 +18,7 @@ import {
 	registerSchedullingRequest,
 	getAllSchedullingCrasRequest,
 	updateSchedulingRequest,
+	updateBlockRequest,
 	getUserCpfRequest,
 	registerSchedullingBlockRequest,
 	getSchedullingBlockRequest,
@@ -146,6 +147,14 @@ export const AuthProvider = ({ children }: IAuthProvider) => {
 		setDatasBloqueadas(data);
 	};
 
+	const updateBlock = async (
+		id: number,
+		usuario_id: string,
+		updates: Partial<BloqueioAgendamentoModel>
+	) => {
+		await updateBlockRequest(id, usuario_id, updates);
+	};
+
 	const getAllSchedulling = async (): Promise<ISchedulingModel> => {
 		const { data } = await getSchedullingRequest();
 		return data;
@@ -190,6 +199,7 @@ export const AuthProvider = ({ children }: IAuthProvider) => {
 				getAllSchedullingCras,
 				updateScheduling,
 				registerBlock,
+				updateBlock,
 				getByCpf,
 				updateUser,
 			}}

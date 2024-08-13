@@ -18,6 +18,7 @@ import { HamburgerMenu } from '../components/HamburgerMenu';
 import ConfirmationModal from '../components/ConfirmationModal';
 import { TipoUsuario, Cras, IUserModel, IAllUsers } from '../interface/User';
 import { AuthContext } from '../context/AuthContext';
+import SelecionarDiaAdm from '../components/SelecionarDiaAdm';
 
 const Gerenciamento: React.FC = () => {
 	const { isOpen, onOpen, onClose } = useDisclosure();
@@ -141,14 +142,13 @@ const Gerenciamento: React.FC = () => {
 	};
 
 	return (
-		<Flex h="100vh" flexDir={'column'}>
+		<Flex h="100vh" flexDir={'column'} pt={14}>
 			<SidebarHome />
 			<HamburgerMenu />
+			<SelecionarDiaAdm />
 			<Flex className="container__content" ml={['0vw', '30vw', '25vw', '20vw']} flexDir={'column'}>
 				<Flex
-					className="top__elements"
 					flexDir={['column', 'column', 'row', 'row']}
-					mt={'60px'}
 					gap={3}
 					p={'0px 24px 20px 24px'}
 					justifyContent="space-between"

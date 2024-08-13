@@ -210,3 +210,26 @@ export const updateSchedulingRequest = async (
 		throw new Error(errorMessage);
 	}
 };
+
+export const updateBlockRequest = async (
+	id: number,
+	usuario_id: string,
+	updates: Partial<BloqueioAgendamentoModel>
+) => {
+	try {
+		const response = await api.put(
+			`/private/updateBlock/?id=${id}&usuario_id=${usuario_id}`,
+			updates
+		);
+		return response;
+	} catch (error) {
+		const errors = error as AxiosError;
+		let errorMessage = '';
+		if (errors.response && errors.response.data) {
+			errorMessage = (errors.response.data as IErrorResponse).message;
+		} else {
+			errorMessage = errors?.message || 'Erro desconhecido';
+		}
+		throw new Error(errorMessage);
+	}
+};

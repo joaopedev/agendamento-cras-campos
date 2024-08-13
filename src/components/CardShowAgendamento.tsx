@@ -1,22 +1,43 @@
-import { Card, CardBody, CardHeader, Divider, Flex, Text } from '@chakra-ui/react';
+import {
+	Button,
+	Card,
+	CardBody,
+	CardHeader,
+	Divider,
+	Flex,
+	Modal,
+	ModalBody,
+	ModalCloseButton,
+	ModalContent,
+	ModalFooter,
+	ModalHeader,
+	ModalOverlay,
+	Radio,
+	Text,
+	useDisclosure,
+	useToast,
+} from '@chakra-ui/react';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { AuthContext } from '../context/AuthContext';
-import { ISchedulingModel, ISchedulingResponse } from '../interface/Schedulling';
+import { ISchedulingModel, ISchedulingResponse, Status } from '../interface/Schedulling';
 import { format, isAfter, parseISO, isValid } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
 const CardShowAgendamento: React.FC = () => {
-	const { payload, getAllSchedullingCras } = useContext(AuthContext);
-	const textStyle1 = {
-		fontSize: ['1.2rem', '1.3rem', '1.4rem', '1.5rem'],
-		borderRadius: '5px',
-		p: '8px 0',
-	};
+	const { payload, getAllSchedullingCras, updateScheduling } = useContext(AuthContext);
+	const [elapsedTime, setElapsedTime] = useState(0);
+	const [showConfirmar, setShowConfirmar] = useState(false);
+	const { isOpen, onOpen, onClose } = useDisclosure();
+	const toast = useToast();
 	const isMounted = useRef(true);
 	const hoje = new Date();
 	const [schedullingData, setSchedullingData] = useState<ISchedulingModel[]>([]);
+	const handleModalClose = () => {
+		onClose();
+		setShowConfirmar(false);
+	};
 	const agendamentosFuturos = schedullingData.filter(agendamento => {
-		if (typeof agendamento.data_hora === 'string') {
+		if (typeof agendamento.data_hora === 'string' && agendamento.status === 2) {
 			const dataAgendamento = parseISO(agendamento.data_hora);
 			return (
 				isValid(dataAgendamento) &&
@@ -28,6 +49,48 @@ const CardShowAgendamento: React.FC = () => {
 	});
 	const primeiroAgendamento = agendamentosFuturos.length > 0 ? agendamentosFuturos[0] : null;
 	const showAgendamento = agendamentosFuturos?.length > 0;
+
+	const handleUpdateScheduling = async (
+		id: number,
+		usuario_id: string | undefined,
+		newStatus: Status,
+		duracaoAtendimento: number
+	) => {
+		if (usuario_id) {
+			try {
+				await updateScheduling(id, usuario_id, {
+					status: newStatus,
+					duracao_atendimento: Math.floor(duracaoAtendimento / 60) || 0,
+				});
+				toast({
+					title: 'Atendimento cancelado com sucesso',
+					duration: 5000,
+					isClosable: true,
+					position: 'top-right',
+				});
+				setSchedullingData(prevData =>
+					prevData.map(agendamento =>
+						agendamento.id === id
+							? {
+									...agendamento,
+									status: newStatus,
+									duracao_atendimento: duracaoAtendimento,
+							  }
+							: agendamento
+					)
+				);
+			} catch (error) {
+				toast({
+					title: 'Erro ao atualizar o status',
+					description: (error as Error).message,
+					status: 'error',
+					duration: 5000,
+					isClosable: true,
+					position: 'top-right',
+				});
+			}
+		}
+	};
 
 	useEffect(() => {
 		isMounted.current = true;
@@ -71,12 +134,12 @@ const CardShowAgendamento: React.FC = () => {
 					bg={'#f4f4f4'}
 				>
 					<CardHeader>
-						<Text fontWeight={'bold'} sx={textStyle1}>
-							VOCÊ JÁ POSSUI UM AGENDAMENTO
+						<Text fontWeight={'bold'} fontSize={['xl', 'xl', '2xl', '3xl']}>
+							VOCÊ JÁ POSSUI UM AGENDAMENTO!
 						</Text>
-						<Divider />
 					</CardHeader>
-					<CardBody pt={0}>
+					<CardBody fontSize={'xl'} pt={0}>
+						<Divider mb={2} />
 						<Text>Próximo atendimento:</Text>
 						<Text>
 							dia{' '}
@@ -90,9 +153,48 @@ const CardShowAgendamento: React.FC = () => {
 									format(primeiroAgendamento?.data_hora, "HH'h'", { locale: ptBR })}
 							</strong>
 						</Text>
+
+						<Button // Novo botão para editar
+							mt={4} // Adiciona um pouco de margem superior
+							colorScheme="red" // Cor azul padrão
+							onClick={onOpen}
+						>
+							Cancelar Agendamento
+						</Button>
 					</CardBody>
 				</Card>
 			)}
+			<Modal isOpen={isOpen} onClose={handleModalClose} isCentered size={['xs', 'sm', 'md', 'lg']}>
+				<ModalOverlay />
+				<ModalContent minW={['90%', '27em', '30em', '48em']} textAlign={'center'}>
+					<ModalHeader mt={5}>Deseja realmente cancelar seu atendimento?</ModalHeader>
+					<ModalCloseButton />
+					<ModalBody>
+						<Radio onChange={() => setShowConfirmar(true)}>Sim, desejo cancelar!</Radio>
+					</ModalBody>
+					<ModalFooter gap={2} justifyContent={'center'}>
+						<Button onClick={handleModalClose} colorScheme="red">
+							Cancelar
+						</Button>
+						{showConfirmar && (
+							<Button
+								onClick={() => {
+									handleModalClose();
+									handleUpdateScheduling(
+										primeiroAgendamento?.id as number,
+										primeiroAgendamento?.usuario_id,
+										Status.cancelado,
+										elapsedTime
+									);
+								}}
+								colorScheme="blue"
+							>
+								Confirmar
+							</Button>
+						)}
+					</ModalFooter>
+				</ModalContent>
+			</Modal>
 		</Flex>
 	);
 };

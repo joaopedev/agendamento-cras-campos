@@ -34,10 +34,7 @@ import {
 } from '../interface/Schedulling';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useForm, SubmitHandler } from 'react-hook-form';
-import {
-	BloqueioAgendamentoModel,
-	RegisterSchedullingModel,
-} from '../types/auth-data';
+import { BloqueioAgendamentoModel, RegisterSchedullingModel } from '../types/auth-data';
 import { btnStyle } from '../pages/loginPage';
 import BoxHorario from './BoxHorario';
 import { Cras } from '../interface/User';
@@ -242,6 +239,7 @@ const SelecionarDia: React.FC = () => {
 			if (selectedDate) {
 				const dataSelecionadaFormatada = format(selectedDate, 'yyyy-MM-dd');
 				const horariosAgendados = schedullingData
+					.filter(agendamentos => agendamentos?.status === 2)
 					.filter(
 						agendamentos =>
 							format(new Date(agendamentos.data_hora), 'yyyy-MM-dd') === dataSelecionadaFormatada
@@ -250,7 +248,9 @@ const SelecionarDia: React.FC = () => {
 
 				const countAgendados = horariosAgendados.filter(h => h === horario.hora).length;
 				const bloqueados = diasBloqueados.filter(
-					(bloqueio: BloqueioAgendamentoModel) => format(parseISO(bloqueio.data as unknown as string), 'yyyy-MM-dd') === dataSelecionadaFormatada
+					(bloqueio: BloqueioAgendamentoModel) =>
+						format(parseISO(bloqueio.data as unknown as string), 'yyyy-MM-dd') ===
+						dataSelecionadaFormatada
 				);
 
 				const isBlocked = bloqueados.some((bloqueio: BloqueioAgendamentoModel) => {
@@ -319,10 +319,10 @@ const SelecionarDia: React.FC = () => {
 							alignSelf={'center'}
 							w={'80%'}
 						>
-							<Text fontWeight={'bold'} fontSize={['1rem', '1.2rem', '1.3rem', '1.4rem']}>
+							<Text fontWeight={'bold'} fontSize={['xl', 'xl', '2xl', '3xl']}>
 								AGENDAR ATENDIMENTO
 							</Text>
-							<Divider />
+							<Divider my={2} />
 							<Flex gap={2} flexDirection={'column'}>
 								<Box
 									flexDir={['column', 'column', 'row', 'row']}
@@ -381,6 +381,7 @@ const SelecionarDia: React.FC = () => {
 										/>
 									</Box>
 								</Box>
+								<Divider my={1} />
 								<Box className="box__esquerda" flex={1}>
 									<Text pb={1} fontSize={['12px', '12px', '15px', '15px']} fontWeight="bold">
 										HORÁRIOS DISPONÍVEIS

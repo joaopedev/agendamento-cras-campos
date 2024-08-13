@@ -49,6 +49,11 @@ export interface IAuthContext {
 	getAllSchedulling: () => Promise<ISchedulingModel>;
 	registerSchedulling: (data: RegisterSchedullingModel) => Promise<void>;
 	registerBlock: (data: BloqueioAgendamentoModel) => Promise<void>;
+	updateBlock: (
+		id: number,
+		usuario_id: string,
+		updates: Partial<BloqueioAgendamentoModel>
+	) => Promise<void>;
 	getSchedullingBlock: () => Promise<ITodosBloqueiosModel>;
 	getAllSchedullingCras: (cras: number) => Promise<ISchedulingResponse>;
 	updateScheduling: (

@@ -1,11 +1,12 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { Flex, Divider, Tag } from '@chakra-ui/react';
+import { Flex, Divider, Tag, InputGroup, InputLeftElement, Input } from '@chakra-ui/react';
 import CrasPieChart, { PieChartData, CrasData } from '../components/CrasPieChart';
 import { AuthContext } from '../context/AuthContext';
 import { Cras } from '../interface/User';
 import { ISchedulingModel } from '../interface/Schedulling';
 import SidebarHome from '../components/SidebarHome';
 import { HamburgerMenu } from '../components/HamburgerMenu';
+import { SearchIcon } from '@chakra-ui/icons';
 
 export const Dashboard: React.FC = () => {
 	const { getAllSchedulling, payload } = useContext(AuthContext);
@@ -16,6 +17,11 @@ export const Dashboard: React.FC = () => {
 		{ name: 'Atendimentos Realizados', value: 0, color: '#38A169' },
 		{ name: 'Ausentes', value: 0, color: '#FF5757' },
 	]);
+	const [filterText, setFilterText] = useState(''); // Estado para o input
+
+	const filteredCrasData = crasData.filter(cras =>
+		cras.nome.toLowerCase().includes(filterText.toLowerCase())
+	);
 	const formatDuration = (durationStr: string | undefined): string => {
 		if (!durationStr) {
 			return 'Duração não disponível';
@@ -129,13 +135,23 @@ export const Dashboard: React.FC = () => {
 				ml={['0%', '30%', '25%', '20%']}
 				w={['100%', '70%', '75%', '80%']}
 			>
+				<InputGroup my={4} w={['50%', '55%', '40%', '30%']}>
+					<InputLeftElement pointerEvents="none">
+						<SearchIcon color="gray.300" />
+					</InputLeftElement>
+					<Input
+						placeholder="Pesquisar CRAS"
+						value={filterText}
+						onChange={e => setFilterText(e.target.value)}
+					/>
+				</InputGroup>
 				<CrasPieChart crasData={[{ nome: 'Total', data: totalData }]} crasNome="Total" />
 				<Divider
 					boxShadow={'0px 1px 3px 0px #00000070'}
 					w={'90%'}
 					borderBottom={'1px solid  rgba(112, 112, 112, .5)'}
 				/>
-				{crasData.map(cras => (
+				{filteredCrasData.map(cras => (
 					<Flex w={'100%'} flexDir={'column'} alignItems={'center'} key={cras.nome}>
 						<CrasPieChart crasData={[cras]} crasNome={cras.nome} />
 						<Tag colorScheme={getColorScheme(cras.averageDuration)} mb={3} textAlign={'center'}>

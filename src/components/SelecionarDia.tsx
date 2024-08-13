@@ -25,6 +25,7 @@ import {
 import DatePicker, { CalendarContainer, registerLocale } from 'react-datepicker';
 import { ptBR } from 'date-fns/locale/pt-BR';
 import { format, addDays, getDay, isAfter, isValid, parseISO } from 'date-fns';
+import { toZonedTime } from 'date-fns-tz'; // Importamos as funções necessárias
 import { AuthContext } from '../context/AuthContext';
 import {
 	ISchedulingModel,
@@ -40,6 +41,8 @@ import BoxHorario from './BoxHorario';
 import { Cras } from '../interface/User';
 
 registerLocale('pt-BR', ptBR);
+
+const timeZone = 'America/Sao_Paulo'; // Definimos o fuso horário de Brasília
 
 const SelecionarDia: React.FC = () => {
 	const [showForm, setShowForm] = useState(false);
@@ -69,7 +72,7 @@ const SelecionarDia: React.FC = () => {
 	const hoje = new Date();
 	const agendamentosFuturos = schedullingData.filter(agendamento => {
 		if (typeof agendamento.data_hora === 'string') {
-			const dataAgendamento = parseISO(agendamento.data_hora);
+			const dataAgendamento = toZonedTime(parseISO(agendamento.data_hora), timeZone); // Ajuste de fuso horário
 			return (
 				isValid(dataAgendamento) &&
 				agendamento.usuario_id === payload?.id &&
@@ -135,7 +138,11 @@ const SelecionarDia: React.FC = () => {
 		data: RegisterSchedullingModel
 	) => {
 		try {
-			await registerSchedulling(data);
+			// Ajustamos a data selecionada para UTC antes de enviar para o servidor
+			const adjustedDate = toZonedTime(new Date(data.data_hora), timeZone);
+
+			await registerSchedulling({ ...data, data_hora: String(adjustedDate)});
+
 			setAgendamentoRealizado(true);
 			const novoAgendamento: ISchedulingModel = {
 				id: Math.random(), // Gere um ID único aqui conforme necessário
@@ -144,7 +151,7 @@ const SelecionarDia: React.FC = () => {
 				servico: data.servico as unknown as TipoServico,
 				description: '', // Ajuste conforme necessário
 				duracao_atendimento: 60, // Ajuste conforme necessário
-				data_hora: new Date(data.data_hora),
+				data_hora: adjustedDate, // Armazenamos a data ajustada
 				cras: data.cras,
 				status: data.status as unknown as Status,
 				message: '', // Ajuste conforme necessário
@@ -242,14 +249,14 @@ const SelecionarDia: React.FC = () => {
 					.filter(agendamentos => agendamentos?.status === 2)
 					.filter(
 						agendamentos =>
-							format(new Date(agendamentos.data_hora), 'yyyy-MM-dd') === dataSelecionadaFormatada
+							format(toZonedTime(new Date(agendamentos.data_hora), timeZone), 'yyyy-MM-dd') === dataSelecionadaFormatada
 					)
 					.map(agendamentos => format(new Date(agendamentos.data_hora), 'HH:mm'));
 
 				const countAgendados = horariosAgendados.filter(h => h === horario.hora).length;
 				const bloqueados = diasBloqueados.filter(
 					(bloqueio: BloqueioAgendamentoModel) =>
-						format(parseISO(bloqueio.data as unknown as string), 'yyyy-MM-dd') ===
+						format(toZonedTime(parseISO(bloqueio.data as unknown as string), timeZone), 'yyyy-MM-dd') ===
 						dataSelecionadaFormatada
 				);
 

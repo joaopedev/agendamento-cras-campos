@@ -8,11 +8,13 @@ import {
 	InputGroup,
 	Button,
 	FormErrorMessage,
+	Text,
 	FormControl,
 	InputRightElement, // Import InputRightElement for the toggle
 	IconButton, // Import IconButton for the eye icon
 	FormLabel,
 	useToast,
+	Link,
 } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons'; // Eye icons
@@ -23,8 +25,12 @@ import { FooterLogin } from '../components/FooterLogin';
 import { SignIn } from '../types/auth-data';
 import { useAuth } from '../hook/useAuth';
 import { loginSchema } from '../validation/auth';
+import { useLocation } from 'react-router-dom';
 
 export const LoginFuncionario: React.FC = () => {
+	const location = useLocation();
+	const isFuncionario = location.pathname === '/funcionario';
+
 	const { signIn } = useAuth();
 	const navigate = useNavigate();
 	const [inputCpf, setInputCpf] = useState('');
@@ -90,7 +96,6 @@ export const LoginFuncionario: React.FC = () => {
 				pb={['130px', '0', '0', '0']}
 				m="auto"
 				paddingLeft={['0', '45%', '50%', '50%']}
-				gap={['20px', '20px', '30px', '30px']}
 				w={['60%', '60%', '60%', '80%']}
 				alignItems="center"
 			>
@@ -186,8 +191,15 @@ export const LoginFuncionario: React.FC = () => {
 					<Box sx={textStyle3}></Box>
 					{/* <Link as={RouterLink} to='/home' sx={textStyle4}>
             Esqueci minha senha
-          </Link> */}
+				</Link> */}
 				</Box>
+				<Link
+					display={['inline', 'none', 'none', 'none']}
+					href={isFuncionario ? '/' : '/funcionario'}
+					fontSize={'xs'}
+				>
+					<Text as={'u'}>{isFuncionario ? 'Entrar como usuário' : 'Entrar como funcionário'}</Text>
+				</Link>
 			</Stack>
 		</Flex>
 	);

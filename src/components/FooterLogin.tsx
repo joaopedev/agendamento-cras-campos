@@ -19,10 +19,11 @@ export const FooterLogin: React.FC = () => {
 			w="100%"
 			zIndex={2}
 		>
-			<Flex justifyContent="space-between" alignItems="center">
+			<Flex px={4} justifyContent="space-between" alignItems="center" textAlign={'center'}>
 				<Text fontSize={'20'}>
 					Bem vindo(a) à <b>central</b> de <b>agendamento</b> do <b>CRAS</b>
 				</Text>
+				{/*
 				<Divider
 					mx={'10px'}
 					orientation="vertical"
@@ -33,12 +34,12 @@ export const FooterLogin: React.FC = () => {
 					boxShadow="0px 2px 5px rgba(0, 0, 0, 0.3)"
 				/>
 				<Flex alignItems={'center'} gap={'5px'}>
-					{/* <Image
+					<Image
 						boxSize={['75px', '75px', '100px', '100px']}
 						objectFit="contain"
 						src="https://upload.wikimedia.org/wikipedia/commons/e/e1/Bras%C3%A3o_de_Campos_dos_Goytacazes.png"
 						alt="Brasão de Campos dos Goytacazes"
-					/> */}
+					/>
 					<Text
 						//  ml={'5px'}
 						fontSize={'16'}
@@ -46,6 +47,7 @@ export const FooterLogin: React.FC = () => {
 						Prefeitura Municipal de Campos dos Goytacazes
 					</Text>
 				</Flex>
+					*/}
 			</Flex>
 		</Box>
 	);

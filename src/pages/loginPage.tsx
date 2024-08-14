@@ -5,6 +5,7 @@ import {
 	Box,
 	Input,
 	Link,
+	Text,
 	InputLeftElement,
 	InputGroup,
 	Button,
@@ -22,9 +23,13 @@ import { FooterLogin } from '../components/FooterLogin';
 import { SignIn } from '../types/auth-data';
 import { useAuth } from '../hook/useAuth';
 import { loginSchema } from '../validation/auth';
+import { useLocation } from 'react-router-dom';
 
 export const Login: React.FC = () => {
 	const { signIn } = useAuth();
+	const location = useLocation();
+	const isFuncionario = location.pathname === '/funcionario';
+
 	const navigate = useNavigate();
 	const [inputCpf, setInputCpf] = useState('');
 	const [inputDataNascimento, setInputDataNascimento] = useState(''); // New state for unformatted date
@@ -107,7 +112,7 @@ export const Login: React.FC = () => {
 				pb={['130px', '0', '0', '0']}
 				m="auto"
 				paddingLeft={['0', '45%', '50%', '50%']}
-				gap={['20px', '20px', '30px', '30px']}
+				// gap={['20px', '20px', '30px', '30px']}
 				w={['60%', '60%', '60%', '80%']}
 				alignItems="center"
 			>
@@ -206,6 +211,13 @@ export const Login: React.FC = () => {
             Esqueci minha senha
           </Link> */}
 				</Box>
+				<Link
+					display={['inline', 'none', 'none', 'none']}
+					href={isFuncionario ? '/' : '/funcionario'}
+					fontSize={'xs'}
+				>
+					<Text as={'u'}>{isFuncionario ? 'Entrar como usuário' : 'Entrar como funcionário'}</Text>
+				</Link>
 			</Stack>
 		</Flex>
 	);

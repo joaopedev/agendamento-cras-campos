@@ -124,7 +124,18 @@ const SelecionarDia: React.FC = () => {
 	getSelectedDay();
 
 	const handleGetByCpf = async () => {
-		await getByCpf(cpf);
+		try {
+			await getByCpf(cpf.replace(/\D/g, ''));
+		} catch (error) {
+			toast({
+				title: 'Erro ao buscar usuário',
+				description: (error as Error).message,
+				status: 'error',
+				duration: 5000,
+				isClosable: true,
+				position: 'top-right',
+			});
+		}
 	};
 
 	const {
@@ -133,6 +144,14 @@ const SelecionarDia: React.FC = () => {
 		setValue,
 		formState: { errors },
 	} = useForm<RegisterSchedullingModel>();
+	const handleChange = (event: any) => {
+		formatarCPF(event.target.value);
+		setError('');
+	};
+	function formatarCPF(cpf: string) {
+		cpf = cpf.replace(/\D/g, '');
+		return setCpf(cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/g, '$1.$2.$3-$4'));
+	}
 
 	const onSubmit: SubmitHandler<RegisterSchedullingModel> = async (
 		data: RegisterSchedullingModel
@@ -141,7 +160,7 @@ const SelecionarDia: React.FC = () => {
 			// Ajustamos a data selecionada para UTC antes de enviar para o servidor
 			const adjustedDate = toZonedTime(new Date(data.data_hora), timeZone);
 
-			await registerSchedulling({ ...data, data_hora: String(adjustedDate)});
+			await registerSchedulling({ ...data, data_hora: String(adjustedDate) });
 
 			setAgendamentoRealizado(true);
 			const novoAgendamento: ISchedulingModel = {
@@ -249,15 +268,18 @@ const SelecionarDia: React.FC = () => {
 					.filter(agendamentos => agendamentos?.status === 2)
 					.filter(
 						agendamentos =>
-							format(toZonedTime(new Date(agendamentos.data_hora), timeZone), 'yyyy-MM-dd') === dataSelecionadaFormatada
+							format(toZonedTime(new Date(agendamentos.data_hora), timeZone), 'yyyy-MM-dd') ===
+							dataSelecionadaFormatada
 					)
 					.map(agendamentos => format(new Date(agendamentos.data_hora), 'HH:mm'));
 
 				const countAgendados = horariosAgendados.filter(h => h === horario.hora).length;
 				const bloqueados = diasBloqueados.filter(
 					(bloqueio: BloqueioAgendamentoModel) =>
-						format(toZonedTime(parseISO(bloqueio.data as unknown as string), timeZone), 'yyyy-MM-dd') ===
-						dataSelecionadaFormatada
+						format(
+							toZonedTime(parseISO(bloqueio.data as unknown as string), timeZone),
+							'yyyy-MM-dd'
+						) === dataSelecionadaFormatada
 				);
 
 				const isBlocked = bloqueados.some((bloqueio: BloqueioAgendamentoModel) => {
@@ -522,13 +544,9 @@ const SelecionarDia: React.FC = () => {
 																		<Text fontWeight={'bold'}>Buscar usuário pelo CPF</Text>
 																		<Flex gap={1} w={'80%'}>
 																			<Input
-																				maxLength={11}
 																				value={cpf}
-																				type="number"
-																				onChange={e => {
-																					setCpf(e.target.value);
-																					setError('');
-																				}}
+																				type="text"
+																				onChange={handleChange}
 																				placeholder="Digite o CPF"
 																			/>
 																			{/* <Button onClick={handleGetByCpf}>Buscar por CPF</Button> */}
@@ -547,7 +565,7 @@ const SelecionarDia: React.FC = () => {
 																					},
 																				}}
 																				onClick={() => {
-																					if (cpf?.length !== 11) {
+																					if (cpf?.length !== 14) {
 																						setError('O CPF deve conter exatamente 11 números.');
 																					} else {
 																						setShowForm(true);
@@ -570,7 +588,7 @@ const SelecionarDia: React.FC = () => {
 																				<strong>Nome:</strong> {cpfData.name}
 																			</Text>
 																			<Text>
-																				<strong>CRAS:</strong> {cpfData.cras}
+																				<strong>CRAS:</strong> {Cras[cpfData.cras]}
 																			</Text>
 																		</Box>
 																	)}

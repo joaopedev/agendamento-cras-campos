@@ -51,7 +51,6 @@ export const getUserCpfRequest = async (cpf: string): Promise<IAllUsers> => {
 		let errorMessage = '';
 		if (errors.response && errors.response.data) {
 			errorMessage = (errors.response.data as IErrorResponse).message;
-			alert(errorMessage);
 			throw new Error(errorMessage);
 		} else {
 			alert(errors?.message);

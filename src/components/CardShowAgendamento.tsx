@@ -20,12 +20,11 @@ import {
 import { useContext, useEffect, useRef, useState } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { ISchedulingModel, ISchedulingResponse, Status } from '../interface/Schedulling';
-import { format, isAfter, parseISO, isValid } from 'date-fns';
+import { format, isAfter, parseISO, isValid, compareAsc } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
 const CardShowAgendamento: React.FC = () => {
 	const { payload, getAllSchedullingCras, updateScheduling } = useContext(AuthContext);
-	const [elapsedTime, setElapsedTime] = useState(0);
 	const [showConfirmar, setShowConfirmar] = useState(false);
 	const { isOpen, onOpen, onClose } = useDisclosure();
 	const toast = useToast();
@@ -36,31 +35,37 @@ const CardShowAgendamento: React.FC = () => {
 		onClose();
 		setShowConfirmar(false);
 	};
-	const agendamentosFuturos = schedullingData.filter(agendamento => {
-		if (typeof agendamento.data_hora === 'string' && agendamento.status === 2) {
-			const dataAgendamento = parseISO(agendamento.data_hora);
-			return (
-				isValid(dataAgendamento) &&
-				agendamento.usuario_id === payload?.id &&
-				isAfter(dataAgendamento, hoje)
-			);
-		}
-		return false;
-	});
+
+	const agendamentosFuturos = schedullingData
+		.filter(agendamento => {
+			if (typeof agendamento.data_hora === 'string' && agendamento.status === 2) {
+				const dataAgendamento = parseISO(agendamento.data_hora);
+				return (
+					isValid(dataAgendamento) &&
+					agendamento.usuario_id === payload?.id &&
+					isAfter(dataAgendamento, hoje) // Verifica se a data do agendamento é futura
+				);
+			}
+			return false;
+		})
+		.sort((a, b) => {
+			const dataA = typeof a.data_hora === 'string' ? parseISO(a.data_hora) : a.data_hora;
+			const dataB = typeof b.data_hora === 'string' ? parseISO(b.data_hora) : b.data_hora;
+			return compareAsc(dataA, dataB);
+		});
+
 	const primeiroAgendamento = agendamentosFuturos.length > 0 ? agendamentosFuturos[0] : null;
 	const showAgendamento = agendamentosFuturos?.length > 0;
 
 	const handleUpdateScheduling = async (
 		id: number,
 		usuario_id: string | undefined,
-		newStatus: Status,
-		duracaoAtendimento: number
+		newStatus: Status
 	) => {
 		if (usuario_id) {
 			try {
 				await updateScheduling(id, usuario_id, {
 					status: newStatus,
-					duracao_atendimento: Math.floor(duracaoAtendimento / 60) || 0,
 				});
 				toast({
 					title: 'Atendimento cancelado com sucesso',
@@ -74,7 +79,6 @@ const CardShowAgendamento: React.FC = () => {
 							? {
 									...agendamento,
 									status: newStatus,
-									duracao_atendimento: duracaoAtendimento,
 							  }
 							: agendamento
 					)
@@ -183,8 +187,7 @@ const CardShowAgendamento: React.FC = () => {
 									handleUpdateScheduling(
 										primeiroAgendamento?.id as number,
 										primeiroAgendamento?.usuario_id,
-										Status.cancelado,
-										elapsedTime
+										Status.cancelado
 									);
 								}}
 								colorScheme="blue"

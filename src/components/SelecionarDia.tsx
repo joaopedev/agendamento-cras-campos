@@ -71,7 +71,7 @@ const SelecionarDia: React.FC = () => {
 	const [diasBloqueados, setDiasBloqueados] = useState<BloqueioAgendamentoModel[]>([]);
 	const hoje = new Date();
 	const agendamentosFuturos = schedullingData.filter(agendamento => {
-		if (typeof agendamento.data_hora === 'string') {
+		if (typeof agendamento.data_hora === 'string' && agendamento.status === 2) {
 			const dataAgendamento = toZonedTime(parseISO(agendamento.data_hora), timeZone); // Ajuste de fuso horário
 			return (
 				isValid(dataAgendamento) &&
@@ -230,33 +230,24 @@ const SelecionarDia: React.FC = () => {
 	}, [payload?.cras, getAllSchedullingCras]);
 
 	useEffect(() => {
-		if (cpfData) {
-			setValue('name', cpfData.name);
-			setValue('cras', cpfData.cras);
-			setValue('usuario_id', cpfData.id);
+		if (payload) {
+			setValue('name', payload.name);
+			setValue('cras', payload.cras);
+			setValue('usuario_id', payload.id);
 		}
-	}, [cpfData, setValue]);
+	}, [payload, setValue]);
 
 	const horarios = useMemo(() => {
 		return [
 			{ hora: '08:00', disponivel: true },
-			{ hora: '08:30', disponivel: true },
 			{ hora: '09:00', disponivel: true },
-			{ hora: '09:30', disponivel: true },
 			{ hora: '10:00', disponivel: true },
-			{ hora: '10:30', disponivel: true },
 			{ hora: '11:00', disponivel: true },
-			{ hora: '11:30', disponivel: true },
 			{ hora: '12:00', disponivel: true },
-			{ hora: '12:30', disponivel: true },
 			{ hora: '13:00', disponivel: true },
-			{ hora: '13:30', disponivel: true },
 			{ hora: '14:00', disponivel: true },
-			{ hora: '14:30', disponivel: true },
 			{ hora: '15:00', disponivel: true },
-			{ hora: '15:30', disponivel: true },
 			{ hora: '16:00', disponivel: true },
-			{ hora: '16:30', disponivel: true },
 		];
 	}, []);
 

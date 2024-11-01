@@ -20,8 +20,8 @@ import { useNavigate } from 'react-router-dom';
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons'; // Eye icons
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
-import SidebarLogin from '../components/SidebarLogin';
-import { FooterLogin } from '../components/FooterLogin';
+import SidebarLoginFuncionario from '../components/SidebarLoginFuncionario';
+import { FooterLoginFuncionario } from '../components/FooterLoginFuncionario';
 import { SignIn } from '../types/auth-data';
 import { useAuth } from '../hook/useAuth';
 import { loginSchema } from '../validation/auth';
@@ -92,8 +92,8 @@ export const LoginFuncionario: React.FC = () => {
 
   return (
     <Flex h='100vh' flex={['column', '', '', '']}>
-      <SidebarLogin />
-      <FooterLogin />
+      <SidebarLoginFuncionario />
+      <FooterLoginFuncionario />
       <Stack
         pt={['60px', '0', '0', '0']}
         pb={['130px', '0', '0', '0']}
@@ -187,7 +187,7 @@ export const LoginFuncionario: React.FC = () => {
             <Box sx={textStyle2}></Box>
             <Button
               type='submit'
-              style={{ backgroundColor: '#016234' }}
+              style={{ backgroundColor: '#1c75bc' }}
               variant='solid'
               isLoading={isSubmitting}
               color={'white'}

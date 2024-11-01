@@ -4,6 +4,7 @@ import {
   Box,
   Button,
   FormControl,
+  FormLabel,
   FormErrorMessage,
   Input,
   InputGroup,
@@ -228,6 +229,13 @@ export const Home: React.FC = () => {
                         isInvalid={!!errors.name}
                         isDisabled={!isEditing}
                       >
+                        <FormLabel
+                          htmlFor='name'
+                          fontWeight='bold'
+                          color='black'
+                        >
+                          Nome
+                        </FormLabel>
                         <InputGroup>
                           <InputLeftElement pointerEvents='none' />
                           <Input
@@ -248,6 +256,13 @@ export const Home: React.FC = () => {
                         isInvalid={!!errors.cpf}
                         isDisabled={!isEditing}
                       >
+                        <FormLabel
+                          htmlFor='name'
+                          fontWeight='bold'
+                          color='black'
+                        >
+                          CPF
+                        </FormLabel>
                         <InputGroup>
                           <InputLeftElement pointerEvents='none' />
                           <Input
@@ -266,28 +281,16 @@ export const Home: React.FC = () => {
                       </FormControl>
 
                       <FormControl
-                        isInvalid={!!errors.email}
-                        isDisabled={!isEditing}
-                      >
-                        <InputGroup>
-                          <InputLeftElement pointerEvents='none' />
-                          <Input
-                            sx={textStyle1}
-                            id='email'
-                            placeholder={payload.email || 'Email'}
-                            _placeholder={{ opacity: 1, color: 'black' }}
-                            size='md'
-                            {...register('email')}
-                          />
-                        </InputGroup>
-                        <FormErrorMessage>
-                          {errors.email && errors.email.message}
-                        </FormErrorMessage>
-                      </FormControl>
-                      <FormControl
                         isInvalid={!!errors.telefone}
                         isDisabled={!isEditing}
                       >
+                        <FormLabel
+                          htmlFor='name'
+                          fontWeight='bold'
+                          color='black'
+                        >
+                          Celular
+                        </FormLabel>
                         <InputGroup>
                           <InputLeftElement pointerEvents='none' />
                           <InputLeftAddon sx={textStyle1}>+55</InputLeftAddon>
@@ -311,6 +314,13 @@ export const Home: React.FC = () => {
                         isInvalid={!!errors.endereco?.rua}
                         isDisabled={!isEditing}
                       >
+                        <FormLabel
+                          htmlFor='name'
+                          fontWeight='bold'
+                          color='black'
+                        >
+                          Endereço
+                        </FormLabel>
                         <InputGroup>
                           <InputLeftElement pointerEvents='none' />
                           <Input
@@ -330,6 +340,13 @@ export const Home: React.FC = () => {
                         isInvalid={!!errors.endereco?.numero}
                         isDisabled={!isEditing}
                       >
+                        <FormLabel
+                          htmlFor='name'
+                          fontWeight='bold'
+                          color='black'
+                        >
+                          Número
+                        </FormLabel>
                         <InputGroup>
                           <InputLeftElement pointerEvents='none' />
                           <Input
@@ -356,6 +373,13 @@ export const Home: React.FC = () => {
                             isInvalid={!!errors.endereco?.bairro}
                             isDisabled={!isEditing}
                           >
+                            <FormLabel
+                              htmlFor='name'
+                              fontWeight='bold'
+                              color='black'
+                            >
+                              Bairro
+                            </FormLabel>
                             <Select
                               sx={textStyle1}
                               id='bairro'
@@ -381,6 +405,14 @@ export const Home: React.FC = () => {
                         name='cras'
                         render={({ field }) => (
                           <FormControl isInvalid={!!errors.cras}>
+                            <FormLabel
+                              htmlFor='name'
+                              fontWeight='bold'
+                              color='gray'
+                            >
+                              CRAS
+                            </FormLabel>
+
                             <Select
                               isDisabled
                               sx={textStyle1}

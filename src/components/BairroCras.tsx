@@ -78,7 +78,7 @@ export const BairroCras: Bairro[] = [
       'PARQUE SUMARE',
       'PARQUE TAMANDARE',
       'SANTA CRUZ',
-      'CENTRO (OU MATADOURO)',
+      'CENTRO (OU ESPLANADA)',
     ],
   },
 
@@ -120,7 +120,7 @@ export const BairroCras: Bairro[] = [
       'PARQUE RIACHUELO',
       'PARQUE SALO BRAND',
       'PARQUE TURF CLUB',
-      'CENTRO (OU ESPLANADA)',
+      'CENTRO (OU MATADOURO',
       'TIRA GOSTO',
     ],
   },
@@ -157,7 +157,7 @@ export const BairroCras: Bairro[] = [
   },
 
   {
-    cras: 'Goytacazes',
+    cras: 'Goitacazes',
     bairro: [
       'ALTO DA AREIA',
       'ALTO DO ELISEU',
@@ -181,7 +181,7 @@ export const BairroCras: Bairro[] = [
       'ESPINHO',
       'GAIVOTAS',
       'GOIABA',
-      'GOYTACAZES',
+      'GOITACAZES',
       'JARDIM PARAISO DE TOCOS',
       'JARDIM PRIMAVERA',
       'LINHA DO LIMÃO',
@@ -189,7 +189,7 @@ export const BairroCras: Bairro[] = [
       'MINEIROS',
       'MONTENEGRO',
       'MUTEMA',
-      'NOVA GOYTACAZES',
+      'NOVA GOITACAZES',
       'PARQUE REAL',
       'PARQUE SÃO SILVANO',
       'PARQUE SARAIVA',

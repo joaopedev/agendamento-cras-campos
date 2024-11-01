@@ -26,20 +26,20 @@ const ScrollUpButton: React.FC = () => {
   };
 
   return (
-    <Button className='top-button' bg={'#2CA1FF'}>
+    <Button className='top-button' bg={'#016234'}>
       <IconButton
         display='flex'
         justifyContent='center'
         alignItems='center'
         color={'white'}
         aria-label='Options'
-        bg={'#2CA1FF'}
+        bg={'#016234'}
         // variant="outline"
         m={'10px'}
         boxShadow={'1px 1px 2px hsla(0, 28%, 0%, 0.7)'}
         border={'none'}
         _hover={{
-          bg: '#1C75BC',
+          bg: '#00963f',
           fontWeight: 'bold',
         }}
         _active={{}}

@@ -1,29 +1,34 @@
 import {
-	Box,
-	Divider,
-	Flex,
-	// Image,
-	Text,
+  Box,
+  Divider,
+  Flex,
+  // Image,
+  Text,
 } from '@chakra-ui/react';
 export const FooterLogin: React.FC = () => {
-	return (
-		<Box
-			as="footer"
-			display={['', 'none', 'none', 'none']}
-			background={'linear-gradient(41deg, rgba(28,117,188,1) 0%, rgba(44,161,255,1) 100%)'}
-			color="white"
-			p={4}
-			position="fixed"
-			borderRadius="0 50px 0 0 "
-			bottom={0}
-			w="100%"
-			zIndex={2}
-		>
-			<Flex px={4} justifyContent="space-between" alignItems="center" textAlign={'center'}>
-				<Text fontSize={'20'}>
-					Bem vindo(a) à <b>central</b> de <b>agendamento</b> do <b>CRAS</b>
-				</Text>
-				{/*
+  return (
+    <Box
+      as='footer'
+      display={['', 'none', 'none', 'none']}
+      bg='hsla(145, 100%, 29%, 0.80)'
+      color='white'
+      p={4}
+      position='fixed'
+      borderRadius='0 50px 0 0 '
+      bottom={0}
+      w='100%'
+      zIndex={2}
+    >
+      <Flex
+        px={4}
+        justifyContent='space-between'
+        alignItems='center'
+        textAlign={'center'}
+      >
+        <Text fontSize={'20'}>
+          Bem vindo(a) à <b>central</b> de <b>agendamento</b> do <b>CadÚnico</b>
+        </Text>
+        {/*
 				<Divider
 					mx={'10px'}
 					orientation="vertical"
@@ -48,7 +53,7 @@ export const FooterLogin: React.FC = () => {
 					</Text>
 				</Flex>
 					*/}
-			</Flex>
-		</Box>
-	);
+      </Flex>
+    </Box>
+  );
 };

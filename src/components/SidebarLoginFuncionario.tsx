@@ -1,7 +1,7 @@
 import { Text, Stack, Box, Image, Divider, Flex, Link } from '@chakra-ui/react';
 import { useLocation } from 'react-router-dom';
 
-export const SidebarLogin: React.FC = () => {
+export const SidebarLoginFuncionario: React.FC = () => {
   const location = useLocation();
   const isFuncionario = location.pathname === '/funcionario';
   return (
@@ -28,7 +28,7 @@ export const SidebarLogin: React.FC = () => {
         pt={['50px', '60px', '75px', '90px']}
         pb={10}
         // gap={'50px'}
-        bg='hsla(145, 100%, 29%, 0.80)' // transparente
+        bg='hsla(207, 74%, 42%, 0.80)' // transparente
         // background={'linear-gradient(41deg, rgba(28,117,188,1) 0%, rgba(44,161,255,1) 100%)'}
         w='20%'
         h='100%'
@@ -100,4 +100,4 @@ export const SidebarLogin: React.FC = () => {
   );
 };
 
-export default SidebarLogin;
+export default SidebarLoginFuncionario;

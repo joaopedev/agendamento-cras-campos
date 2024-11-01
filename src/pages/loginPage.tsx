@@ -239,13 +239,13 @@ const textStyle2 = {
 };
 
 const textStyle3 = {
-  fontSize: ['0.6rem', '0.6rem', '0.7rem'],
+  fontSize: ['0.9rem', '0.9rem', '0.7rem'],
   borderRadius: '5px',
   p: '0px 0',
 };
 
 const textStyle4 = {
-  fontSize: ['0.6rem', '0.6rem', '0.7rem'],
+  fontSize: ['1 rem', '1rem', '1rem'],
   borderRadius: '2px',
   p: '2px 0',
   textDecoration: 'underline',

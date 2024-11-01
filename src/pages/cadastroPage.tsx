@@ -75,8 +75,45 @@ export const Cadastro: React.FC = () => {
         variant: 'custom-success',
       });
       navigate('/');
-    } catch (error) {
-      return error;
+    } catch (error: any) {
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message
+      ) {
+        const errorMessage = error.response.data.message;
+
+        if (errorMessage.includes('CPF já cadastrado')) {
+          toast({
+            title: 'Erro ao cadastrar usuário',
+            description: 'O CPF informado já está cadastrado.',
+            duration: 5000,
+            isClosable: true,
+            position: 'top-right',
+            status: 'error',
+            variant: 'custom-error',
+          });
+        } else {
+          toast({
+            title: 'Erro ao cadastrar usuário',
+            description: errorMessage,
+            duration: 5000,
+            isClosable: true,
+            position: 'top-right',
+            status: 'error',
+            variant: 'custom-error',
+          });
+        }
+      } else {
+        toast({
+          title: 'Erro ao cadastrar usuário',
+          description: 'O CPF informado já está cadastrado.',
+          duration: 5000,
+          isClosable: true,
+          position: 'top-right',
+          status: 'error',
+        });
+      }
     }
   };
 
@@ -282,42 +319,15 @@ export const Cadastro: React.FC = () => {
               </FormErrorMessage>
             </FormControl>
             <Box sx={textStyle2}></Box>
-            <FormControl isInvalid={!!errors.email}>
-              <FormLabel htmlFor='email'>Email</FormLabel>
-              <InputGroup>
-                {' '}
-                {/* Envolva os elementos Input e InputLeftElement */}
-                <Input
-                  id='email'
-                  placeholder='Email'
-                  size='md'
-                  sx={{
-                    fontSize: ['0.7rem', '0.8rem', '0.9rem', '1rem'],
-                    bg: 'white',
-                    borderRadius: '5px',
-                    p: '4px 0',
-                    mt: '0px',
-                    mb: '0px',
-                    paddingLeft: '16px',
-                  }}
-                  {...register('email')}
-                  _placeholder={{ paddingLeft: 0 }}
-                />
-                <InputLeftElement pointerEvents='none' children={' '} />
-              </InputGroup>
-              <FormErrorMessage>
-                {errors.email && errors.email.message}
-              </FormErrorMessage>
-            </FormControl>
-            <Box sx={textStyle2}></Box>
+
             <FormControl isInvalid={!!errors.endereco?.rua}>
-              <FormLabel htmlFor='rua'>Rua</FormLabel>
+              <FormLabel htmlFor='rua'>Endereço</FormLabel>
               <InputGroup>
                 {' '}
                 {/* Envolva os elementos Input e InputLeftElement */}
                 <Input
                   id='rua'
-                  placeholder='Rua'
+                  placeholder='Avenida / Rua / Estrada'
                   size='md'
                   sx={{
                     fontSize: ['0.7rem', '0.8rem', '0.9rem', '1rem'],
@@ -478,13 +488,13 @@ const textStyle2 = {
 };
 
 const textStyle3 = {
-  fontSize: ['0.6rem', '0.6rem', '0.7rem'],
+  fontSize: ['0.9rem', '0.9rem', '0.9rem'],
   borderRadius: '5px',
   p: '0px 0',
 };
 
 const textStyle4 = {
-  fontSize: ['0.6rem', '0.6rem', '0.7rem'],
+  fontSize: ['1rem', '1rem', '1rem'],
   borderRadius: '2px',
   p: '2px 0',
   textDecoration: 'underline',

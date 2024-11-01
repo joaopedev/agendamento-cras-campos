@@ -17,7 +17,7 @@ const theme = extendTheme({
       variants: {
         customLoading: {
           container: {
-            bg: '#2CA1FF',
+            bg: '#016234',
           },
         },
       },

@@ -69,7 +69,7 @@ export const SidebarHome: React.FC = () => {
             )}
           </NavLink>
 
-          {payload?.tipo_usuario === 3 && (
+          {/* {payload?.tipo_usuario === 3 && (
             <NavLink to='/dashboard'>
               {({ isActive }) => (
                 <Button isActive={isActive} sx={sideBtnStyle}>
@@ -77,7 +77,7 @@ export const SidebarHome: React.FC = () => {
                 </Button>
               )}
             </NavLink>
-          )}
+          )} */}
 
           {payload?.tipo_usuario === 3 && (
             <NavLink to='/gerenciamento'>

@@ -240,12 +240,12 @@ const SelecionarDia: React.FC = () => {
   }, [payload?.cras, getAllSchedullingCras]);
 
   useEffect(() => {
-    if (payload) {
-      setValue('name', payload.name);
-      setValue('cras', payload.cras);
-      setValue('usuario_id', payload.id);
+    if (cpfData) {
+      setValue('name', cpfData.name);
+      setValue('cras', cpfData.cras);
+      setValue('usuario_id', cpfData.id);
     }
-  }, [payload, setValue]);
+  }, [cpfData, setValue]);
 
   const horarios = useMemo(() => {
     return [

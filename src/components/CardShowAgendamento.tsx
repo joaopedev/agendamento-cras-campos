@@ -54,7 +54,8 @@ const CardShowAgendamento: React.FC = () => {
   const agendamentosFuturos = schedullingData
     .filter(agendamento => {
       if (
-        typeof agendamento.data_hora === 'string' ||
+        (typeof agendamento.data_hora === 'string' &&
+          agendamento.status === 2) ||
         agendamento.data_hora instanceof Date
       ) {
         const dataAgendamento =

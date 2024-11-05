@@ -11,6 +11,7 @@ import Dashboard from '../pages/Dashboard';
 import Gerenciamento from '../pages/gerenciamento';
 import PrivateRoute from '../components/PrivateRoute';
 import { useAuth } from '../hook/useAuth';
+import UserEdit from '../pages/UserEdit';
 
 const AppRoutes: React.FC = () => {
 	const { isAuthenticated } = useAuth();
@@ -35,6 +36,7 @@ const AppRoutes: React.FC = () => {
 						<Route path="/adm" element={<Adm />} />
 						<Route path="/agendar" element={<SchedulingPage />} />
 						<Route path="/agendamentos" element={<Agendamentos />} />
+						<Route path="/editar" element={<UserEdit />} />
 					</Route>
 				)}
 			</Routes>

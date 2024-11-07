@@ -26,7 +26,7 @@ export const FooterLoginFuncionario: React.FC = () => {
         textAlign={'center'}
       >
         <Text fontSize={'20'}>
-          Bem vindo(a) à <b>central</b> de <b>agendamento</b> do <b>CadÚnico</b>
+          Bem vindo(a) à <b>Central</b> de <b>Agendamento</b> do <b>CadÚnico</b>
         </Text>
         {/*
 				<Divider

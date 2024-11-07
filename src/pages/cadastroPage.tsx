@@ -89,7 +89,7 @@ export const Cadastro: React.FC = () => {
             description: 'O CPF informado já está cadastrado.',
             duration: 5000,
             isClosable: true,
-            position: 'top-right',
+            position: 'top',
             status: 'error',
             variant: 'custom-error',
           });
@@ -99,7 +99,7 @@ export const Cadastro: React.FC = () => {
             description: errorMessage,
             duration: 5000,
             isClosable: true,
-            position: 'top-right',
+            position: 'top',
             status: 'error',
             variant: 'custom-error',
           });
@@ -110,7 +110,7 @@ export const Cadastro: React.FC = () => {
           description: 'O CPF informado já está cadastrado.',
           duration: 5000,
           isClosable: true,
-          position: 'top-right',
+          position: 'top',
           status: 'error',
         });
       }

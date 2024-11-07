@@ -47,7 +47,7 @@ export const SidebarLogin: React.FC = () => {
             maxW={'350px'}
             textShadow='1px 1px 2px rgba(0, 0, 0, 0.5)' // Sombra sutil
           >
-            Bem vindo(a) à <b>central</b> de <b>agendamento</b> do{' '}
+            Bem vindo(a) à <b>Central</b> de <b>Agendamento</b> do{' '}
             <b>CadÚnico</b>
           </Text>
         </Box>

@@ -58,7 +58,7 @@ export const Login: React.FC = () => {
         title: 'Login realizado com sucesso!',
         duration: 5000,
         isClosable: true,
-        position: 'top-right',
+        position: 'top',
         status: 'success',
         variant: 'custom-success',
       });
@@ -70,7 +70,7 @@ export const Login: React.FC = () => {
         status: 'error',
         duration: 5000,
         isClosable: true,
-        position: 'top-right',
+        position: 'top',
       });
     }
   };
@@ -217,7 +217,7 @@ export const Login: React.FC = () => {
             Esqueci minha senha
           </Link> */}
         </Box>
-        <Link
+        {/* <Link
           display={['inline', 'none', 'none', 'none']}
           href={isFuncionario ? '/' : '/funcionario'}
           fontSize={'xs'}
@@ -225,7 +225,7 @@ export const Login: React.FC = () => {
           <Text as={'u'}>
             {isFuncionario ? 'Entrar como usuário' : 'Entrar como funcionário'}
           </Text>
-        </Link>
+        </Link> */}
       </Stack>
     </Flex>
   );

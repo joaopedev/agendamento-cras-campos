@@ -19,7 +19,7 @@ import { useNavigate } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm, Controller } from 'react-hook-form';
 import SidebarLogin from '../components/SidebarLogin';
-import { FooterLogin } from '../components/FooterLogin';
+// import { FooterLogin } from '../components/FooterLogin';
 import { RegisterUserModel } from '../types/auth-data';
 import { useAuth } from '../hook/useAuth';
 import { RegisterUserSchema } from '../validation/auth';
@@ -468,7 +468,7 @@ export const Cadastro: React.FC = () => {
           </Link>
         </Box>
       </Stack>
-      <FooterLogin />
+      {/* <FooterLogin /> */}
     </Flex>
   );
 };

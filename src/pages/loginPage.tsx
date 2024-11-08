@@ -66,7 +66,7 @@ export const Login: React.FC = () => {
     } catch (error) {
       toast({
         title: 'Erro ao realizar login',
-        description: 'Dados incorretos.',
+        description: 'Dados incorretos ou CPF não cadastrado.',
         status: 'error',
         duration: 5000,
         isClosable: true,

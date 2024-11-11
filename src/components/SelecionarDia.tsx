@@ -33,8 +33,6 @@ import { AuthContext } from '../context/AuthContext';
 import {
   ISchedulingModel,
   ISchedulingResponse,
-  Status,
-  TipoServico,
 } from '../interface/Schedulling';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useForm, SubmitHandler } from 'react-hook-form';
@@ -248,14 +246,15 @@ const SelecionarDia: React.FC = () => {
 
   const horarios = useMemo(() => {
     return [
-      { hora: '08:00', disponivel: true },
+      { hora: '08:15', disponivel: true },
       { hora: '09:00', disponivel: true },
-      { hora: '10:00', disponivel: true },
-      { hora: '11:00', disponivel: true },
-      { hora: '12:00', disponivel: true },
+      { hora: '09:45', disponivel: true },
+      { hora: '10:30', disponivel: true },
+      { hora: '11:15', disponivel: true },
       { hora: '13:00', disponivel: true },
-      { hora: '14:00', disponivel: true },
-      { hora: '15:00', disponivel: true },
+      { hora: '13:45', disponivel: true },
+      { hora: '14:30', disponivel: true },
+      { hora: '15:15', disponivel: true },
       { hora: '16:00', disponivel: true },
     ];
   }, []);

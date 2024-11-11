@@ -1,9 +1,6 @@
-import { Text, Stack, Box, Image, Divider, Flex, Link } from '@chakra-ui/react';
-import { useLocation } from 'react-router-dom';
+import { Text, Stack, Box, Image, Divider, Flex } from '@chakra-ui/react';
 
 export const SidebarLoginFuncionario: React.FC = () => {
-  const location = useLocation();
-  const isFuncionario = location.pathname === '/funcionario';
   return (
     <Box
       className='box'

@@ -35,7 +35,6 @@ import {
   RegisterSchedullingModel,
 } from '../types/auth-data';
 import { btnStyle } from '../pages/loginPage';
-import { updateBlock } from 'typescript';
 import { updateBlockRequest } from '../services/auth-request';
 
 registerLocale('pt-BR', ptBR);
@@ -54,12 +53,9 @@ const SelecionarDiaAdm: React.FC = () => {
     getAllSchedullingCras,
     cpfData,
     registerBlock,
-    updateBlock,
     getSchedullingBlock,
   } = useContext(AuthContext);
-  const [schedullingData, setSchedullingData] = useState<ISchedulingModel[]>(
-    []
-  );
+  const [, setSchedullingData] = useState<ISchedulingModel[]>([]);
   const [loading, setLoading] = useState(true);
   const [diasBloqueados, setDiasBloqueados] = useState<
     BloqueioAgendamentoModel[]

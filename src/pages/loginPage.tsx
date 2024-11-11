@@ -5,7 +5,6 @@ import {
   Box,
   Input,
   Link,
-  Text,
   InputLeftElement,
   InputGroup,
   Button,
@@ -23,12 +22,9 @@ import { FooterLogin } from '../components/FooterLogin';
 import { SignIn } from '../types/auth-data';
 import { useAuth } from '../hook/useAuth';
 import { loginSchema } from '../validation/auth';
-import { useLocation } from 'react-router-dom';
 
 export const Login: React.FC = () => {
   const { signIn } = useAuth();
-  const location = useLocation();
-  const isFuncionario = location.pathname === '/funcionario';
 
   const navigate = useNavigate();
   const [inputCpf, setInputCpf] = useState('');

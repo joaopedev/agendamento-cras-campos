@@ -174,7 +174,7 @@ const SelecionarDiaFuncionario: React.FC = () => {
         isClosable: true,
         position: 'top-right',
         status: 'success',
-      variant: 'custom-success',
+        variant: 'custom-success',
       });
       setSchedullingData(prevData =>
         prevData.map(agendamento =>
@@ -377,7 +377,7 @@ const SelecionarDiaFuncionario: React.FC = () => {
                             >
                               <Avatar
                                 borderRadius='full'
-                                bg={'#016234'}
+                                bg={'hsla(207, 74%, 42%, 0.80)'}
                                 color={'white'}
                                 boxSize='85px'
                                 name={schedulling?.name}

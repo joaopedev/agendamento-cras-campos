@@ -19,7 +19,6 @@ import {
 import ModalAddFuncionario from '../components/ModalAddFuncionario';
 import SidebarHome from '../components/SidebarHome';
 import { HamburgerMenu } from '../components/HamburgerMenu';
-import ConfirmationModal from '../components/ConfirmationModal';
 import { TipoUsuario, Cras, IUserModel, IAllUsers } from '../interface/User';
 import { AuthContext } from '../context/AuthContext';
 import SelecionarDiaAdm from '../components/SelecionarDiaAdm';
@@ -29,20 +28,14 @@ const Gerenciamento: React.FC = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { getAllUsers, payload, updateUser } = useContext(AuthContext);
   const [employeeData, setEmployeeData] = useState<IUserModel[]>([]);
-  const [employeeToDeleteIndex, setEmployeeToDeleteIndex] = useState<
-    number | null
-  >(null);
+
   const [showPassword, setShowPassword] = useState(false); // State for password visibility
   const handleTogglePassword = () => setShowPassword(!showPassword);
   const [editingEmployee, setEditingEmployee] = useState<{
     index: number | null;
     data: IUserModel | null;
   }>({ index: null, data: null });
-  const {
-    isOpen: isConfirmationOpen,
-    onOpen: onConfirmationOpen,
-    onClose: onConfirmationClose,
-  } = useDisclosure();
+  const { onOpen: onConfirmationOpen } = useDisclosure();
   const toast = useToast();
 
   const fetchEmployeeData = useCallback(async () => {
@@ -63,67 +56,6 @@ const Gerenciamento: React.FC = () => {
   useEffect(() => {
     fetchEmployeeData();
   }, [payload, getAllUsers, fetchEmployeeData]);
-
-  const handleEmployeeAction = async (
-    employee: IUserModel,
-    action: 'authorize' | 'delete'
-  ) => {
-    try {
-      if (action === 'authorize') {
-        await updateUser(employee.id!, { ativo: true });
-        toast({
-          title: 'Funcionário autorizado com sucesso',
-          duration: 5000,
-          isClosable: true,
-          position: 'top-right',
-          status: 'success',
-          variant: 'custom-success',
-        });
-      } else if (action === 'delete') {
-        if (employee.data_nascimento) {
-          const password = employee.data_nascimento.replace(/\//g, '');
-          await updateUser(employee.id!, {
-            tipo_usuario: TipoUsuario.comum,
-            password: password,
-          });
-          toast({
-            title: 'Funcionário excluído com sucesso',
-            duration: 5000,
-            isClosable: true,
-            position: 'top-right',
-            status: 'success',
-            variant: 'custom-success',
-          });
-        } else {
-          throw new Error(
-            'Data de nascimento não disponível para criar a senha.'
-          );
-        }
-      }
-      fetchEmployeeData();
-    } catch (error) {
-      toast({
-        title: `Erro ao ${
-          action === 'authorize' ? 'autorizar' : 'excluir'
-        } funcionário`,
-        description: (error as Error).message,
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-        position: 'top-right',
-      });
-    }
-  };
-
-  const confirmDelete = () => {
-    if (employeeToDeleteIndex !== null) {
-      setEmployeeData(prevEmployeeData =>
-        prevEmployeeData.filter((_, i) => i !== employeeToDeleteIndex)
-      );
-      setEmployeeToDeleteIndex(null);
-    }
-    onConfirmationClose();
-  };
 
   const handleEditChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;

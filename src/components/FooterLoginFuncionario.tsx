@@ -1,6 +1,5 @@
 import {
   Box,
-  Divider,
   Flex,
   // Image,
   Text,
@@ -10,7 +9,7 @@ export const FooterLoginFuncionario: React.FC = () => {
     <Box
       as='footer'
       display={['', 'none', 'none', 'none']}
-      bg='hsla(145, 100%, 29%, 0.80)'
+      bg='hsla(207, 74%, 42%, 0.80)'
       color='white'
       p={4}
       position='fixed'

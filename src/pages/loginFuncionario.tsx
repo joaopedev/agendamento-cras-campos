@@ -8,13 +8,11 @@ import {
   InputGroup,
   Button,
   FormErrorMessage,
-  Text,
   FormControl,
   InputRightElement, // Import InputRightElement for the toggle
   IconButton, // Import IconButton for the eye icon
   FormLabel,
   useToast,
-  Link,
 } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons'; // Eye icons
@@ -25,12 +23,8 @@ import { FooterLoginFuncionario } from '../components/FooterLoginFuncionario';
 import { SignIn } from '../types/auth-data';
 import { useAuth } from '../hook/useAuth';
 import { loginSchema } from '../validation/auth';
-import { useLocation } from 'react-router-dom';
 
 export const LoginFuncionario: React.FC = () => {
-  const location = useLocation();
-  const isFuncionario = location.pathname === '/funcionario';
-
   const { signIn } = useAuth();
   const navigate = useNavigate();
   const [inputCpf, setInputCpf] = useState('');
@@ -49,7 +43,7 @@ export const LoginFuncionario: React.FC = () => {
   const handleLogin = async (data: SignIn) => {
     try {
       await signIn(data);
-      navigate('/home');
+      navigate('/agendamentos');
       toast({
         title: 'Login realizado com sucesso!',
         duration: 5000,
@@ -202,15 +196,6 @@ export const LoginFuncionario: React.FC = () => {
             Esqueci minha senha
 				</Link> */}
         </Box>
-        <Link
-          display={['inline', 'none', 'none', 'none']}
-          href={isFuncionario ? '/' : '/funcionario'}
-          fontSize={'xs'}
-        >
-          <Text as={'u'}>
-            {isFuncionario ? 'Entrar como usuário' : 'Entrar como funcionário'}
-          </Text>
-        </Link>
       </Stack>
     </Flex>
   );
@@ -245,12 +230,12 @@ export const btnStyle = {
   display: '-ms-grid',
   boxShadow: '1px 1px 2px hsla(0, 28%, 0%, 0.7)',
   color: '#fff',
-  bg: '#016234',
+  bg: 'hsla(207, 74%, 42%, 0.80)',
   maxW: '500px',
   minW: ['100px', '100px', '150px', '150px'],
   fontSize: ['0.8rem', '0.8rem', '0.9rem', '1rem'],
   _hover: {
-    bg: '#00963f',
+    bg: 'hsla(207, 74%, 42%, 1)',
     fontWeight: 'bold',
   },
 };

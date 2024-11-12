@@ -198,8 +198,31 @@ const CardShowAgendamento: React.FC = () => {
               </strong>
             </Text>
             <Text>
-              Caso deseje alterar seu agendamento, entre em contato com seu
-              CRAS.
+              Documentos <strong>ORIGINAIS</strong> com foto de todos os
+              moradores da família necessários para o seu atendimento: <br />
+              <strong>
+                RG, CPF, CARTEIRA DE TRABALHO, COMPROVANTE DE RESIDÊNCIA EM NOME
+                DE ALGUM MORADOR DA SUA FAMÍLIA,
+              </strong>{' '}
+              <br />
+              <strong>
+                DECLARAÇÃO ESCOLAR DOS FILHOS DE 4 A 17 ANOS, COM VALIDADE DE 30
+                DIAS.
+              </strong>
+              <br />
+              <strong>
+                Não levar cópia, não levar documentos plastificados e não levar
+                documentos vencidos
+              </strong>
+            </Text>
+            <Text>
+              Caso deseje alterar seus dados, entre em contato com seu CRAS.
+              <br />
+              <strong>
+                Há uma tolerância de 10 minutos de atraso para o seu
+                atendimento, após o tempo de tolerância seu agendamento será
+                automaticamente cancelado.
+              </strong>
             </Text>
 
             {/* Conditionally render the Cancel Appointment button */}

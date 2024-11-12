@@ -256,7 +256,7 @@ const SelecionarDia: React.FC = () => {
   }, [cpfData, setValue]);
 
   const horarios = useMemo(() => {
-    return [
+    let baseHorarios = [
       { hora: '08:15', disponivel: true },
       { hora: '09:00', disponivel: true },
       { hora: '09:45', disponivel: true },
@@ -268,7 +268,16 @@ const SelecionarDia: React.FC = () => {
       { hora: '15:15', disponivel: true },
       { hora: '16:00', disponivel: true },
     ];
-  }, []);
+
+    if (payload?.cras === 5 || payload?.cras === 6) {
+      // Remove the last two time slots
+      baseHorarios = baseHorarios.filter(
+        horario => horario.hora !== '15:15' && horario.hora !== '16:00'
+      );
+    }
+
+    return baseHorarios;
+  }, [payload?.cras]);
 
   const horariosDisponiveis = useMemo(() => {
     return horarios.map(horario => {

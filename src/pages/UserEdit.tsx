@@ -320,7 +320,7 @@ export const UserEdit: React.FC = () => {
                         // sx={textStyle1}
                         id='telefone'
                         placeholder={cpfData?.telefone || 'Celular'}
-                        _placeholder={{ opacity: 1 }}
+                        _placeholder={{ opacity: 1, color: 'black' }}
                         size='md'
                         value={inputTelefone} // Use formatted input
                         onChange={handleTelefoneChange} // Use formatted input handler

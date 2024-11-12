@@ -70,7 +70,7 @@ export const HamburgerMenu: React.FC = () => {
             </NavLink>
           )}
 
-          {payload?.tipo_usuario === 3 && (
+          {/* {payload?.tipo_usuario === 3 && (
             <NavLink to={'/dashboard'}>
               <MenuItem
                 bg={'none'}
@@ -83,7 +83,7 @@ export const HamburgerMenu: React.FC = () => {
                 Dashboard
               </MenuItem>
             </NavLink>
-          )}
+          )} */}
 
           {payload?.tipo_usuario === 3 && (
             <NavLink to={'/gerenciamento'}>

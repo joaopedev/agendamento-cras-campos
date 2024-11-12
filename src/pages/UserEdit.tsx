@@ -24,8 +24,9 @@ import SidebarHome from '../components/SidebarHome';
 import { AuthContext } from '../context/AuthContext';
 import { Controller, useForm } from 'react-hook-form';
 import { CheckIcon, EditIcon } from '@chakra-ui/icons';
-import { IUserModel, Bairros } from '../interface/User';
+import { IUserModel, Bairros, Cras } from '../interface/User';
 import { updateUserRequest } from '../services/auth-request';
+import { BairroCras } from '../components/BairroCras';
 
 export const UserEdit: React.FC = () => {
   const { onClose } = useDisclosure();
@@ -54,10 +55,25 @@ export const UserEdit: React.FC = () => {
     control,
     reset,
     setValue,
+    watch,
     formState: { errors },
   } = useForm<IUserModel>({
-    defaultValues: payload || {},
+    defaultValues: cpfData || {},
   });
+
+  const selectedBairro = watch('endereco.bairro');
+  useEffect(() => {
+    if (selectedBairro) {
+      const bairroCras = BairroCras.find(item =>
+        item.bairro.includes(selectedBairro)
+      );
+
+      if (bairroCras) {
+        const crasEnum = Cras[bairroCras.cras as keyof typeof Cras];
+        setValue('cras', crasEnum);
+      }
+    }
+  }, [selectedBairro, setValue]); // Include setValue in the dependency array
 
   const handleConfirmEdit = () => {
     setIsEditing(true);
@@ -110,16 +126,16 @@ export const UserEdit: React.FC = () => {
       }
 
       const { data: updatedUserData } = await updateUserRequest(
-        payload.id,
+        cpfData?.id,
         data
       );
 
       // Atualiza apenas os campos necessários no payload
-      setPayload(prevPayload => ({
-        ...prevPayload,
+      setPayload(cpfData => ({
+        ...cpfData,
         ...updatedUserData,
         // Preserve campos críticos, se necessário
-        tipoUsuario: payload?.tipo_usuario,
+        tipoUsuario: cpfData?.tipo_usuario,
       }));
 
       setIsEditing(false);
@@ -148,7 +164,7 @@ export const UserEdit: React.FC = () => {
       setValue('name', cpfData.name);
       setValue('cras', cpfData.cras);
       setValue('usuario_id', cpfData.id);
-      setValue('cpf', cpfData.cpf);
+      // setValue('cpf', cpfData.cpf);
       setValue('endereco', cpfData.endereco);
     }
   }, [cpfData, setValue]);
@@ -269,7 +285,7 @@ export const UserEdit: React.FC = () => {
                       <Input
                         isDisabled
                         // sx={textStyle1}
-                        id='cpf'
+                        // id='cpf'
                         placeholder={cpfData?.cpf
                           .replace(/[^\d]/g, '')
                           .replace(
@@ -321,7 +337,7 @@ export const UserEdit: React.FC = () => {
                     isDisabled={!isEditing}
                   >
                     <FormLabel htmlFor='name' fontWeight='bold' color='black'>
-                      Endereço
+                      Rua
                     </FormLabel>
                     <InputGroup>
                       <InputLeftElement pointerEvents='none' />
@@ -383,13 +399,15 @@ export const UserEdit: React.FC = () => {
                           id='bairro'
                           variant='outline'
                           {...field} // Binding field props directly to Select
-                          value={field.value} // Setting the value directly
+                          // value={field.value} // Setting the value directly
                         >
-                          {Object.values(Bairros).map(bairro => (
-                            <option key={bairro} value={bairro}>
-                              {bairro}
-                            </option>
-                          ))}
+                          {Object.values(Bairros)
+                            .filter(bairro => typeof bairro === 'string')
+                            .map(bairro => (
+                              <option key={bairro} value={bairro}>
+                                {bairro}
+                              </option>
+                            ))}
                         </Select>
                         <FormErrorMessage>
                           {errors.endereco?.bairro &&
@@ -411,19 +429,27 @@ export const UserEdit: React.FC = () => {
                           CRAS
                         </FormLabel>
 
-                        <Select
-                          isDisabled
-                          // sx={textStyle1}
+                        <Input
                           id='cras'
-                          variant='outline'
-                          {...field}
-                        >
-                          {/* {Object.values(Cras).map(cras => (
-													<option key={cras} value={cras}>
-														{Cras[payload?.cras]}
-													</option>
-												))} */}
-                        </Select>
+                          sx={{
+                            fontSize: ['0.7rem', '0.8rem', '0.9rem', '1rem'],
+                            bg: 'white',
+                            borderRadius: '5px',
+                            p: '4px 0',
+                            mt: '0px',
+                            mb: '0px',
+                            paddingLeft: '16px',
+                          }}
+                          value={
+                            field.value
+                              ? Cras[field.value]
+                              : Cras[cpfData?.cras]
+                          }
+                          isDisabled
+                        />
+                        <FormErrorMessage>
+                          {errors.cras && errors.cras.message}
+                        </FormErrorMessage>
                       </FormControl>
                     )}
                   />
@@ -441,7 +467,6 @@ export const UserEdit: React.FC = () => {
                     <EditIcon color={'white'} />
                   </Button>
                 )}
-
                 {isEditing && (
                   <Flex gap={2} flexDir={['row', 'row', 'column', 'column']}>
                     <Button

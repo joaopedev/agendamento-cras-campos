@@ -71,6 +71,11 @@ export const Home: React.FC = () => {
     defaultValues: payload || {},
   });
 
+  const bgColor =
+    payload?.tipo_usuario !== 1
+      ? 'hsla(207, 74%, 42%, 1)'
+      : 'hsla(145, 100%, 29%, 0.80)';
+
   const handleEdit = () => {
     onOpen();
   };
@@ -221,7 +226,7 @@ export const Home: React.FC = () => {
                     gap={2}
                   >
                     <Avatar
-                      bg={'#016234'}
+                      bg={bgColor}
                       color={'white'}
                       size={['md', 'md', 'lg', 'xl']}
                       name={payload?.name}
@@ -300,7 +305,7 @@ export const Home: React.FC = () => {
                             sx={textStyle1}
                             id='telefone'
                             placeholder={payload.telefone || 'Celular'}
-                            _placeholder={{ opacity: 1 }}
+                            _placeholder={{ opacity: 1, color: 'black' }}
                             size='md'
                             value={inputTelefone} // Use formatted input
                             onChange={handleTelefoneChange} // Use formatted input handler
@@ -383,17 +388,19 @@ export const Home: React.FC = () => {
                               Bairro
                             </FormLabel>
                             <Select
-                              sx={textStyle1}
+                              // sx={textStyle1}
                               id='bairro'
                               variant='outline'
                               {...field} // Binding field props directly to Select
-                              value={field.value} // Setting the value directly
+                              // value={field.value} // Setting the value directly
                             >
-                              {Object.values(Bairros).map(bairro => (
-                                <option key={bairro} value={bairro}>
-                                  {bairro}
-                                </option>
-                              ))}
+                              {Object.values(Bairros)
+                                .filter(bairro => typeof bairro === 'string')
+                                .map(bairro => (
+                                  <option key={bairro} value={bairro}>
+                                    {bairro}
+                                  </option>
+                                ))}
                             </Select>
                             <FormErrorMessage>
                               {errors.endereco?.bairro &&
@@ -415,19 +422,32 @@ export const Home: React.FC = () => {
                               CRAS
                             </FormLabel>
 
-                            <Select
-                              isDisabled
-                              sx={textStyle1}
+                            <Input
                               id='cras'
-                              variant='outline'
-                              {...field}
-                            >
-                              {Object.values(Cras).map(cras => (
-                                <option key={cras} value={cras}>
-                                  {Cras[payload?.cras]}
-                                </option>
-                              ))}
-                            </Select>
+                              sx={{
+                                fontSize: [
+                                  '0.7rem',
+                                  '0.8rem',
+                                  '0.9rem',
+                                  '1rem',
+                                ],
+                                bg: 'white',
+                                borderRadius: '5px',
+                                p: '4px 0',
+                                mt: '0px',
+                                mb: '0px',
+                                paddingLeft: '16px',
+                              }}
+                              value={
+                                field.value
+                                  ? Cras[field.value]
+                                  : Cras[payload?.cras]
+                              }
+                              isDisabled
+                            />
+                            <FormErrorMessage>
+                              {errors.cras && errors.cras.message}
+                            </FormErrorMessage>
                           </FormControl>
                         )}
                       />
@@ -439,8 +459,8 @@ export const Home: React.FC = () => {
                         onClick={handleEdit}
                         borderRadius={'100%'}
                         transform='auto'
-                        bgColor={'#016234'}
-                        _hover={{ backgroundColor: '#00963f' }}
+                        bgColor={'hsla(207, 74%, 42%, 1)'}
+                        _hover={{ backgroundColor: 'hsla(215, 74%, 42%, 1)' }}
                       >
                         <EditIcon color={'white'} />
                       </Button>

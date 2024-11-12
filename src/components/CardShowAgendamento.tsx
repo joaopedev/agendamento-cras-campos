@@ -172,7 +172,9 @@ const CardShowAgendamento: React.FC = () => {
           </CardHeader>
           <CardBody fontSize={'xl'} pt={0}>
             <Divider mb={2} />
-            <Text>Próximo atendimento:</Text>
+            <Text>
+              Próximo atendimento de <strong>{payload?.name}:</strong>
+            </Text>
             <Text>
               dia{' '}
               <strong>
@@ -195,7 +197,7 @@ const CardShowAgendamento: React.FC = () => {
                       locale: ptBR,
                     }
                   )}
-              </strong>
+              </strong>{' '}
             </Text>
             <Text>
               Documentos <strong>ORIGINAIS</strong> com foto de todos os

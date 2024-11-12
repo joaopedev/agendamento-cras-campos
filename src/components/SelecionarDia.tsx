@@ -98,6 +98,11 @@ const SelecionarDia: React.FC = () => {
   });
   const showSelecionarDia = !(agendamentosFuturos?.length > 0);
 
+  const bgColor =
+    payload?.tipo_usuario !== 1
+      ? 'hsla(207, 74%, 42%, 1)'
+      : 'hsla(145, 100%, 29%, 1)';
+
   useEffect(() => {
     const fetchBlockDays = async () => {
       try {
@@ -418,7 +423,7 @@ const SelecionarDia: React.FC = () => {
                           style={{
                             borderRadius: '10px',
                             padding: '16px',
-                            background: '#016234',
+                            background: bgColor,
                             color: '#fff',
                             boxShadow: '1px 1px 10px hsla(0, 28%, 0%, 0.4)',
                           }}
@@ -426,7 +431,7 @@ const SelecionarDia: React.FC = () => {
                           <CalendarContainer className={className}>
                             <Text
                               style={{
-                                background: '#016234',
+                                background: bgColor,
                                 padding: '4px',
                                 color: 'white',
                               }}

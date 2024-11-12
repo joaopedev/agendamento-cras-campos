@@ -250,7 +250,7 @@ const SelecionarDiaFuncionario: React.FC = () => {
                   style={{
                     borderRadius: '10px',
                     padding: '16px',
-                    background: '#016234',
+                    background: 'hsla(207, 74%, 42%, 1)',
                     color: '#fff',
                     boxShadow: '1px 1px 10px hsla(0, 28%, 0%, 0.4)',
                   }}
@@ -259,7 +259,7 @@ const SelecionarDiaFuncionario: React.FC = () => {
                     <Text
                       textAlign={'center'}
                       style={{
-                        background: '#016234',
+                        background: 'hsla(207, 74%, 42%, 1)',
                         padding: '4px',
                         color: 'white',
                       }}

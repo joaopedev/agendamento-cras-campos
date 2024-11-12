@@ -30,6 +30,7 @@ export enum Cras {
   'Farol',
   'Jockey',
   'Ururaí',
+  'Praça Céu',
 }
 
 export interface IUserModel {
@@ -132,6 +133,7 @@ export enum Bairros {
   'JARDIM MARIA DE QUEIROZ',
   'JARDIM PARAISO DE TOCOS',
   'JARDIM PRIMAVERA',
+  'JARDIM RESIDENCIAL PLANICIE',
   'JOAO MARIA',
   'JOCKEY CLUB',
   'JOCKEY I',
@@ -223,6 +225,7 @@ export enum Bairros {
   'PARQUE SANTA CLARA',
   'PARQUE SANTA HELENA',
   'PARQUE SANTA ROSA',
+  'PARQUE SANTA ROSA (CASINHAS NOLITA)',
   'PARQUE SANTO AMARO',
   'PARQUE SANTO ANTONIO',
   'PARQUE SÃO BENEDITO',
@@ -263,7 +266,6 @@ export enum Bairros {
   'RADIO VELHO',
   'RES. VIVENDAS DA PENHA I',
   'RES. VIVENDAS DA PENHA II',
-  'RESIDENCIAL PLANICIE',
   'RETIRO',
   'RIBEIRO DO AMARO',
   'SABAO',

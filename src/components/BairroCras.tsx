@@ -10,10 +10,8 @@ export const BairroCras: Bairro[] = [
       'CODIN',
       'JARDIM BOA VISTA',
       'LAGOA DAS PEDRAS',
-      'NOVO ELDORADO',
       'PARQUE ELDORADO',
       'PARQUE JARDIM AEROPORTO',
-      'PARQUE JARDIM CEASA',
       'PARQUE SANTOS DUMONT',
       'PARQUE SÃO SILVESTRE',
       'TERRA PROMETIDA',
@@ -25,7 +23,6 @@ export const BairroCras: Bairro[] = [
   {
     cras: 'Custodópolis',
     bairro: [
-      'PARQUE BANDEIRANTES',
       'PARQUE BARAO DO RIO BRANCO',
       'PARQUE BONSUCESSO',
       'PARQUE CUSTODOPOLIS',
@@ -34,7 +31,6 @@ export const BairroCras: Bairro[] = [
       'PARQUE SANTA CLARA',
       'PARQUE SANTA ROSA',
       'PARQUE SÃO DOMINGOS',
-      'RESIDENCIAL PLANICIE',
       'COND SANTA ROSA',
       'COND SANTA ROSA 2',
       'COND. DOS NOGUEIRAS',
@@ -353,6 +349,16 @@ export const BairroCras: Bairro[] = [
       'TAPERA',
       'URURAI',
       'VIANA',
+    ],
+  },
+  {
+    cras: 'Praça Céu',
+    bairro: [
+      'JARDIM RESIDENCIAL PLANICIE',
+      'NOVO ELDORADO',
+      'PARQUE BANDEIRANTES',
+      'PARQUE JARDIM CEASA',
+      'PARQUE SANTA ROSA (CASINHAS NOLITA)',
     ],
   },
 ];

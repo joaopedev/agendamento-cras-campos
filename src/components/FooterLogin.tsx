@@ -1,10 +1,4 @@
-import {
-  Box,
-  Divider,
-  Flex,
-  // Image,
-  Text,
-} from '@chakra-ui/react';
+import { Box, Flex, Text } from '@chakra-ui/react';
 export const FooterLogin: React.FC = () => {
   return (
     <Box

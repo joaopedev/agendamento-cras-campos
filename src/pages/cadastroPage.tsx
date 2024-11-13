@@ -6,7 +6,6 @@ import {
   Input,
   InputLeftElement,
   InputGroup,
-  Select,
   Link,
   FormControl,
   FormLabel,
@@ -14,6 +13,7 @@ import {
   Button,
   useToast,
 } from '@chakra-ui/react'; // Importando componentes do Chakra UI
+import { Select } from 'chakra-react-select';
 import { Link as RouterLink } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -25,6 +25,11 @@ import { useAuth } from '../hook/useAuth';
 import { RegisterUserSchema } from '../validation/auth';
 import { TipoUsuario, Cras, Bairros } from '../interface/User';
 import { BairroCras } from '../components/BairroCras';
+
+type BairroOption = {
+  label: string;
+  value: string;
+};
 
 export const Cadastro: React.FC = () => {
   const [inputDataNascimento, setInputDataNascimento] = useState(''); // Novo estado para data de nascimento
@@ -49,7 +54,14 @@ export const Cadastro: React.FC = () => {
     },
   });
 
+  const bairroOptions = Object.values(Bairros)
+    .filter((bairro): bairro is string => typeof bairro === 'string')
+    .map(bairro => ({
+      label: bairro,
+      value: bairro,
+    }));
   const selectedBairro = watch('endereco.bairro');
+
   useEffect(() => {
     if (selectedBairro) {
       const bairroCras = BairroCras.find(item =>
@@ -61,7 +73,7 @@ export const Cadastro: React.FC = () => {
         setValue('cras', crasEnum);
       }
     }
-  }, [selectedBairro, setValue]); // Include setValue in the dependency array
+  }, [selectedBairro, setValue]);
 
   const handleRegister = async (data: RegisterUserModel) => {
     try {
@@ -376,52 +388,53 @@ export const Cadastro: React.FC = () => {
               </FormErrorMessage>
             </FormControl>
             <Box sx={textStyle2}></Box>
-            <Controller // Controlled (and read-only) CRAS Input
+            <Controller
               control={control}
               name='endereco.bairro'
-              render={({ field }) => (
-                <FormControl isInvalid={!!errors.endereco?.bairro}>
-                  <FormLabel htmlFor='bairro'>Bairro</FormLabel>
-                  <Select
-                    sx={{
-                      fontSize: ['0.7rem', '0.8rem', '0.9rem', '1rem'],
-                      bg: 'white',
-                      borderRadius: '5px',
-                      p: '4px 0',
-                      mt: '0px',
-                      mb: '0px',
-                      paddingLeft: '16px',
-                    }}
-                    id='bairro'
-                    variant='outline'
-                    {...field}
-                  >
-                    <option value=''>Selecione seu bairro</option>{' '}
-                    {/* Placeholder */}
-                    {Object.values(Bairros)
-                      .filter(bairro => typeof bairro === 'string')
-                      .map(bairro => (
-                        <option key={bairro} value={bairro}>
-                          {bairro}
-                        </option>
-                      ))}
-                  </Select>
-                  <FormErrorMessage>
-                    {errors.endereco?.bairro && errors.endereco?.bairro.message}
-                  </FormErrorMessage>
-                </FormControl>
-              )}
+              render={({ field }) => {
+                const selectedOption =
+                  bairroOptions.find(option => option.value === field.value) ||
+                  null;
+
+                return (
+                  <FormControl isInvalid={!!errors.endereco?.bairro}>
+                    <FormLabel htmlFor='bairro'>Bairro</FormLabel>
+                    <Select<BairroOption>
+                      id='bairro'
+                      name={field.name}
+                      options={bairroOptions}
+                      placeholder='Selecione seu bairro'
+                      isSearchable
+                      value={selectedOption}
+                      onChange={option => field.onChange(option?.value)}
+                      chakraStyles={{
+                        container: provided => ({
+                          ...provided,
+                          fontSize: ['0.7rem', '0.8rem', '0.9rem', '1rem'],
+                          bg: 'white',
+                          borderRadius: '5px',
+                        }),
+                      }}
+                    />
+                    <FormErrorMessage>
+                      {errors.endereco?.bairro &&
+                        errors.endereco?.bairro.message}
+                    </FormErrorMessage>
+                  </FormControl>
+                );
+              }}
             />
 
-            <Controller // Controlled (and read-only) CRAS Input
+            <Controller
               control={control}
               name='cras'
               render={({ field }) => (
                 <FormControl isInvalid={!!errors.cras}>
                   <FormLabel htmlFor='cras'>Cras</FormLabel>
-                  {/* Display the name (string) associated with the Cras enum value */}
                   <Input
                     id='cras'
+                    value={field.value ? Cras[field.value] : ''}
+                    isReadOnly
                     sx={{
                       fontSize: ['0.7rem', '0.8rem', '0.9rem', '1rem'],
                       bg: 'white',
@@ -431,8 +444,6 @@ export const Cadastro: React.FC = () => {
                       mb: '0px',
                       paddingLeft: '16px',
                     }}
-                    value={field.value ? Cras[field.value] : ''}
-                    isReadOnly
                   />
                   <FormErrorMessage>
                     {errors.cras && errors.cras.message}

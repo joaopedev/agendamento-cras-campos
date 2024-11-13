@@ -4,7 +4,6 @@ import {
   Box,
   InputGroup,
   Button,
-  Select,
   Text,
   useToast,
   Card,
@@ -18,6 +17,7 @@ import {
   CloseButton,
   useDisclosure,
 } from '@chakra-ui/react';
+import { Select } from 'chakra-react-select'; // Import chakra-react-select
 import React, { ChangeEvent, useState, useContext, useEffect } from 'react';
 import { HamburgerMenu } from '../components/HamburgerMenu';
 import SidebarHome from '../components/SidebarHome';
@@ -73,7 +73,20 @@ export const UserEdit: React.FC = () => {
         setValue('cras', crasEnum);
       }
     }
-  }, [selectedBairro, setValue]); // Include setValue in the dependency array
+  }, [selectedBairro, setValue]);
+
+  // Define BairroOption type
+  type BairroOption = {
+    label: string;
+    value: string;
+  };
+
+  const bairroOptions: BairroOption[] = Object.values(Bairros)
+    .filter((bairro): bairro is string => typeof bairro === 'string')
+    .map(bairro => ({
+      label: bairro,
+      value: bairro,
+    }));
 
   const handleConfirmEdit = () => {
     setIsEditing(true);
@@ -379,58 +392,77 @@ export const UserEdit: React.FC = () => {
                         errors.endereco?.numero.message}
                     </FormErrorMessage>
                   </FormControl>
-                  <Controller // Controller for bairro
+                  <Controller
                     control={control}
                     name='endereco.bairro'
-                    render={({ field }) => (
-                      <FormControl
-                        isInvalid={!!errors.endereco?.bairro}
-                        isDisabled={!isEditing}
-                      >
-                        <FormLabel
-                          htmlFor='name'
-                          fontWeight='bold'
-                          color='black'
+                    render={({ field }) => {
+                      const selectedOption =
+                        bairroOptions.find(
+                          option => option.value === field.value
+                        ) || null;
+
+                      return (
+                        <FormControl
+                          isInvalid={!!errors.endereco?.bairro}
+                          isDisabled={!isEditing}
                         >
-                          Bairro
-                        </FormLabel>
-                        <Select
-                          // sx={textStyle1}
-                          id='bairro'
-                          variant='outline'
-                          {...field} // Binding field props directly to Select
-                          // value={field.value} // Setting the value directly
-                        >
-                          {Object.values(Bairros)
-                            .filter(bairro => typeof bairro === 'string')
-                            .map(bairro => (
-                              <option key={bairro} value={bairro}>
-                                {bairro}
-                              </option>
-                            ))}
-                        </Select>
-                        <FormErrorMessage>
-                          {errors.endereco?.bairro &&
-                            errors.endereco?.bairro.message}
-                        </FormErrorMessage>
-                      </FormControl>
-                    )}
+                          <FormLabel
+                            htmlFor='bairro'
+                            fontWeight='bold'
+                            color='black'
+                          >
+                            Bairro
+                          </FormLabel>
+                          <Select<BairroOption>
+                            id='bairro'
+                            name={field.name}
+                            options={bairroOptions}
+                            placeholder='Selecione seu bairro'
+                            isSearchable
+                            value={selectedOption}
+                            onChange={option => {
+                              field.onChange(option?.value);
+                            }}
+                            chakraStyles={{
+                              container: provided => ({
+                                ...provided,
+                                fontSize: [
+                                  '0.7rem',
+                                  '0.8rem',
+                                  '0.9rem',
+                                  '1rem',
+                                ],
+                                bg: 'white',
+                                borderRadius: '5px',
+                              }),
+                            }}
+                            isDisabled={!isEditing}
+                          />
+                          <FormErrorMessage>
+                            {errors.endereco?.bairro &&
+                              errors.endereco?.bairro.message}
+                          </FormErrorMessage>
+                        </FormControl>
+                      );
+                    }}
                   />
+
                   <Controller
                     control={control}
                     name='cras'
                     render={({ field }) => (
-                      <FormControl isInvalid={!!errors.cras}>
+                      <FormControl isInvalid={!!errors.cras} isDisabled>
                         <FormLabel
-                          htmlFor='name'
+                          htmlFor='cras'
                           fontWeight='bold'
                           color='gray'
                         >
                           CRAS
                         </FormLabel>
-
                         <Input
                           id='cras'
+                          value={field.value ? Cras[field.value] : ''}
+                          isReadOnly
                           sx={{
                             fontSize: ['0.7rem', '0.8rem', '0.9rem', '1rem'],
                             bg: 'white',
@@ -440,12 +472,6 @@ export const UserEdit: React.FC = () => {
                             mb: '0px',
                             paddingLeft: '16px',
                           }}
-                          value={
-                            field.value
-                              ? Cras[field.value]
-                              : Cras[cpfData?.cras]
-                          }
-                          isDisabled
                         />
                         <FormErrorMessage>
                           {errors.cras && errors.cras.message}

@@ -31,6 +31,7 @@ export enum Cras {
   'Jockey',
   'Ururaí',
   'Praça Céu',
+  'Vazio',
 }
 
 export interface IUserModel {

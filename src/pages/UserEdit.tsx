@@ -239,7 +239,7 @@ export const UserEdit: React.FC = () => {
         )}
         {showCard && (
           <form onSubmit={handleSubmit(handleSave)}>
-            <Card p={4} bg={'#F4F4F4'}>
+            <Card p={4} bg={'#F4F4F4'} w={'1000px'}>
               <Flex
                 flexDir={['column', 'column', 'row', 'row']}
                 justifyContent={'space-evenly'}
@@ -270,6 +270,7 @@ export const UserEdit: React.FC = () => {
                         _placeholder={{ opacity: 1, color: 'black' }}
                         size='md'
                         {...register('name')}
+                        pl={'16px'}
                       />
                     </InputGroup>
                     <FormErrorMessage>
@@ -295,6 +296,7 @@ export const UserEdit: React.FC = () => {
                         _placeholder={{ opacity: 1, color: 'black' }}
                         size='md'
                         // {...register('cpf')}
+                        pl={'16px'}
                       />
                     </InputGroup>
                     <FormErrorMessage>
@@ -324,6 +326,7 @@ export const UserEdit: React.FC = () => {
                         size='md'
                         value={inputTelefone} // Use formatted input
                         onChange={handleTelefoneChange} // Use formatted input handler
+                        pl={'16px'}
                       />
                     </InputGroup>
                     <FormErrorMessage>
@@ -348,6 +351,7 @@ export const UserEdit: React.FC = () => {
                         _placeholder={{ opacity: 1, color: 'black' }}
                         size='md'
                         {...register('endereco.rua')}
+                        pl={'16px'}
                       />
                     </InputGroup>
                     <FormErrorMessage>
@@ -372,6 +376,8 @@ export const UserEdit: React.FC = () => {
                         _placeholder={{ opacity: 1, color: 'black' }}
                         size='md'
                         {...register('endereco.numero')}
+                        pl={'16px'}
+                        pr={'16px'}
                       />
                     </InputGroup>
                     <FormErrorMessage>

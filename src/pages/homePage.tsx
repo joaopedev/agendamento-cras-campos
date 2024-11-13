@@ -9,7 +9,6 @@ import {
   Input,
   InputGroup,
   InputLeftElement,
-  Select,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -24,6 +23,7 @@ import {
   useToast,
   CloseButton,
 } from '@chakra-ui/react';
+import { Select } from 'chakra-react-select'; // Import chakra-react-select
 import React, {
   useContext,
   useState,
@@ -41,6 +41,11 @@ import { EditIcon, CheckIcon } from '@chakra-ui/icons';
 import { updateUserRequest } from '../services/auth-request';
 import { BairroCras } from '../components/BairroCras';
 import CardShowAgendamento from '../components/CardShowAgendamento';
+
+type BairroOption = {
+  label: string;
+  value: string;
+};
 
 export const Home: React.FC = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -159,6 +164,14 @@ export const Home: React.FC = () => {
     }
   };
 
+  // Define bairroOptions
+  const bairroOptions: BairroOption[] = Object.values(Bairros)
+    .filter((bairro): bairro is string => typeof bairro === 'string')
+    .map(bairro => ({
+      label: bairro,
+      value: bairro,
+    }));
+
   const selectedBairro = watch('endereco.bairro');
 
   useEffect(() => {
@@ -169,7 +182,7 @@ export const Home: React.FC = () => {
 
       if (bairroCras) {
         const crasEnum = Cras[bairroCras.cras as keyof typeof Cras];
-        setValue('cras', crasEnum); // Set the correct CRAS value in the form
+        setValue('cras', crasEnum);
       }
     }
   }, [selectedBairro, setValue]);
@@ -372,58 +385,77 @@ export const Home: React.FC = () => {
                             errors.endereco?.numero.message}
                         </FormErrorMessage>
                       </FormControl>
-                      <Controller // Controller for bairro
+                      <Controller
                         control={control}
                         name='endereco.bairro'
-                        render={({ field }) => (
-                          <FormControl
-                            isInvalid={!!errors.endereco?.bairro}
-                            isDisabled={!isEditing}
-                          >
-                            <FormLabel
-                              htmlFor='name'
-                              fontWeight='bold'
-                              color='black'
+                        render={({ field }) => {
+                          const selectedOption =
+                            bairroOptions.find(
+                              option => option.value === field.value
+                            ) || null;
+
+                          return (
+                            <FormControl
+                              isInvalid={!!errors.endereco?.bairro}
+                              isDisabled={!isEditing}
                             >
-                              Bairro
-                            </FormLabel>
-                            <Select
-                              // sx={textStyle1}
-                              id='bairro'
-                              variant='outline'
-                              {...field} // Binding field props directly to Select
-                              // value={field.value} // Setting the value directly
-                            >
-                              {Object.values(Bairros)
-                                .filter(bairro => typeof bairro === 'string')
-                                .map(bairro => (
-                                  <option key={bairro} value={bairro}>
-                                    {bairro}
-                                  </option>
-                                ))}
-                            </Select>
-                            <FormErrorMessage>
-                              {errors.endereco?.bairro &&
-                                errors.endereco?.bairro.message}
-                            </FormErrorMessage>
-                          </FormControl>
-                        )}
+                              <FormLabel
+                                htmlFor='bairro'
+                                fontWeight='bold'
+                                color='black'
+                              >
+                                Bairro
+                              </FormLabel>
+                              <Select<BairroOption>
+                                id='bairro'
+                                name={field.name}
+                                options={bairroOptions}
+                                placeholder='Selecione seu bairro'
+                                isSearchable
+                                value={selectedOption}
+                                onChange={option => {
+                                  field.onChange(option?.value);
+                                }}
+                                chakraStyles={{
+                                  container: provided => ({
+                                    ...provided,
+                                    fontSize: [
+                                      '0.7rem',
+                                      '0.8rem',
+                                      '0.9rem',
+                                      '1rem',
+                                    ],
+                                    bg: 'white',
+                                    borderRadius: '5px',
+                                  }),
+                                }}
+                                isDisabled={!isEditing}
+                              />
+                              <FormErrorMessage>
+                                {errors.endereco?.bairro &&
+                                  errors.endereco?.bairro.message}
+                              </FormErrorMessage>
+                            </FormControl>
+                          );
+                        }}
                       />
+
                       <Controller
                         control={control}
                         name='cras'
                         render={({ field }) => (
                           <FormControl isInvalid={!!errors.cras}>
                             <FormLabel
-                              htmlFor='name'
+                              htmlFor='cras'
                               fontWeight='bold'
                               color='gray'
                             >
                               CRAS
                             </FormLabel>
-
                             <Input
                               id='cras'
+                              value={field.value ? Cras[field.value] : ''}
+                              isReadOnly
                               sx={{
                                 fontSize: [
                                   '0.7rem',
@@ -438,12 +470,6 @@ export const Home: React.FC = () => {
                                 mb: '0px',
                                 paddingLeft: '16px',
                               }}
-                              value={
-                                field.value
-                                  ? Cras[field.value]
-                                  : Cras[payload?.cras]
-                              }
-                              isDisabled
                             />
                             <FormErrorMessage>
                               {errors.cras && errors.cras.message}

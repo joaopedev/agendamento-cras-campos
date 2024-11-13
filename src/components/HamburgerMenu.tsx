@@ -129,21 +129,19 @@ export const HamburgerMenu: React.FC = () => {
             </NavLink>
           )}
 
-          {payload?.tipo_usuario !== 1 && (
-            <NavLink to={''}>
-              <MenuItem
-                onClick={buttonSingleOut}
-                bg={'none'}
-                _hover={{
-                  bg: 'hsla(207, 74%, 42%, 0.80)',
-                  fontWeight: 'bold',
-                }}
-                color={'white'}
-              >
-                Sair
-              </MenuItem>
-            </NavLink>
-          )}
+          <NavLink to={''}>
+            <MenuItem
+              onClick={buttonSingleOut}
+              bg={'none'}
+              _hover={{
+                bg: bgColor,
+                fontWeight: 'bold',
+              }}
+              color={'white'}
+            >
+              Sair
+            </MenuItem>
+          </NavLink>
         </MenuList>
       </Menu>
     </Box>

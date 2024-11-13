@@ -281,6 +281,7 @@ export enum Bairros {
   'SÃO ROQUE',
   'SÃO MARTINHO',
   'SÃO SEBASTIÃO',
+  'SATURNINO BRAGA',
   'SENTINELA DO IMBE',
   'SERRINHA',
   'SESMARIA',

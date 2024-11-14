@@ -12,13 +12,15 @@ import {
   FormControl,
   FormLabel,
   useToast,
+  Text,
+  useBreakpointValue,
 } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 import { Link as RouterLink } from 'react-router-dom';
 import SidebarLogin from '../components/SidebarLogin';
-// import { FooterLogin } from '../components/FooterLogin';
+import { FooterLogin } from '../components/FooterLogin';
 import { SignIn } from '../types/auth-data';
 import { useAuth } from '../hook/useAuth';
 import { loginSchema } from '../validation/auth';
@@ -29,6 +31,7 @@ export const Login: React.FC = () => {
   const navigate = useNavigate();
   const [inputCpf, setInputCpf] = useState('');
   const [inputDataNascimento, setInputDataNascimento] = useState(''); // New state for unformatted date
+  const isDesktop = useBreakpointValue({ base: false, lg: true });
   const toast = useToast();
   const {
     register,
@@ -104,7 +107,6 @@ export const Login: React.FC = () => {
   return (
     <Flex h='100vh' flex={['column', '', '', '']}>
       <SidebarLogin />
-      {/* <FooterLogin /> */}
       <Stack
         pt={['60px', '0', '0', '0']}
         pb={['130px', '0', '0', '0']}
@@ -211,18 +213,54 @@ export const Login: React.FC = () => {
           <Box sx={textStyle3}></Box>
           {/* <Link as={RouterLink} to='/home' sx={textStyle4}>
             Esqueci minha senha
-          </Link> */}
+            </Link> */}
         </Box>
         {/* <Link
           display={['inline', 'none', 'none', 'none']}
           href={isFuncionario ? '/' : '/funcionario'}
           fontSize={'xs'}
-        >
+          >
           <Text as={'u'}>
-            {isFuncionario ? 'Entrar como usuário' : 'Entrar como funcionário'}
+          {isFuncionario ? 'Entrar como usuário' : 'Entrar como funcionário'}
           </Text>
-        </Link> */}
+          </Link> */}
       </Stack>
+      <FooterLogin />
+      {isDesktop && (
+        <Flex
+          as='footer'
+          position='fixed'
+          bottom='0'
+          left='600px' // Set this to your sidebar width
+          width='calc(100% - 250px)' // Adjust the width accordingly
+          justify='center'
+          bg='transparent'
+          py={2}
+          zIndex='1' // Ensure the footer appears above other content if necessary
+        >
+          <Text fontSize='xs'>
+            <Link
+              href='/termos'
+              color='blue.500'
+              mr={2}
+              target='_blank'
+              rel='noopener noreferrer'
+            >
+              Termos de Serviço
+            </Link>
+            {' | '}
+            <Link
+              href='/privacidade'
+              color='blue.500'
+              ml={2}
+              target='_blank'
+              rel='noopener noreferrer'
+            >
+              Políticas de Privacidade
+            </Link>
+          </Text>
+        </Flex>
+      )}
     </Flex>
   );
 };

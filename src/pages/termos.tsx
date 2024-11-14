@@ -116,18 +116,6 @@ const TermosDeServico: React.FC = () => {
 
       <Divider my={8} />
 
-      <Box mb={8}>
-        <Heading as='h2' size='md' mb={4}>
-          8. Foro
-        </Heading>
-        <Text>
-          Para dirimir quaisquer questões relacionadas a estes Termos de
-          Serviço, fica eleito o Foro da Comarca de Campos dos Goytacazes,
-          Estado do Rio de Janeiro, renunciando-se a qualquer outro foro, por
-          mais privilegiado que seja.
-        </Text>
-      </Box>
-
       <Text textAlign='center' fontSize='sm' mt={10}>
         A SMDHS agradece a confiança e reafirma seu compromisso com a segurança
         e transparência no uso de nossos serviços.

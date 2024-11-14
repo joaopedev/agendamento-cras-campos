@@ -22,6 +22,9 @@ import {
   InputLeftAddon,
   useToast,
   CloseButton,
+  Text,
+  Link,
+  useBreakpointValue,
 } from '@chakra-ui/react';
 import { Select } from 'chakra-react-select'; // Import chakra-react-select
 import React, {
@@ -41,6 +44,7 @@ import { EditIcon, CheckIcon } from '@chakra-ui/icons';
 import { updateUserRequest } from '../services/auth-request';
 import { BairroCras } from '../components/BairroCras';
 import CardShowAgendamento from '../components/CardShowAgendamento';
+import { FooterHome } from '../components/FooterHome';
 
 type BairroOption = {
   label: string;
@@ -54,6 +58,7 @@ export const Home: React.FC = () => {
   const toast = useToast();
   const [inputTelefone, setInputTelefone] = useState('');
   const payloadRef = useRef(payload);
+  const isDesktop = useBreakpointValue({ base: false, lg: true });
 
   useEffect(() => {
     payloadRef.current = payload;
@@ -528,6 +533,42 @@ export const Home: React.FC = () => {
           </Box>
         </Stack>
       </Flex>
+      <FooterHome />
+      {isDesktop && (
+        <Flex
+          as='footer'
+          position='fixed'
+          bottom='0'
+          left='250px' // Set this to your sidebar width
+          width='calc(100% - 250px)' // Adjust the width accordingly
+          justify='center'
+          bg='transparent'
+          py={2}
+          zIndex='1' // Ensure the footer appears above other content if necessary
+        >
+          <Text fontSize='xs'>
+            <Link
+              href='/termos'
+              color='blue.500'
+              mr={2}
+              target='_blank'
+              rel='noopener noreferrer'
+            >
+              Termos de Serviço
+            </Link>
+            {' | '}
+            <Link
+              href='/privacidade'
+              color='blue.500'
+              ml={2}
+              target='_blank'
+              rel='noopener noreferrer'
+            >
+              Políticas de Privacidade
+            </Link>
+          </Text>
+        </Flex>
+      )}
     </Flex>
   );
 };

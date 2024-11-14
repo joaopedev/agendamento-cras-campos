@@ -116,7 +116,7 @@ export const BairroCras: Bairro[] = [
       'PARQUE RIACHUELO',
       'PARQUE SALO BRAND',
       'PARQUE TURF CLUB',
-      'CENTRO (OU MATADOURO',
+      'CENTRO (OU MATADOURO)',
       'TIRA GOSTO',
     ],
   },

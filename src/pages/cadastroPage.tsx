@@ -496,7 +496,7 @@ export const Cadastro: React.FC = () => {
                     Eu aceito os{' '}
                     <Link
                       as='a'
-                      href='/privacidade'
+                      href='/termos'
                       fontSize='sm'
                       color='blue.600'
                       textDecoration='underline'

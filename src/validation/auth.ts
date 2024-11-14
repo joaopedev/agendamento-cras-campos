@@ -17,7 +17,9 @@ export const EnderecoSchema = Yup.object().shape({
 });
 
 export const RegisterUserSchema = Yup.object().shape({
-  name: Yup.string().required('Nome completo é obrigatório'),
+  name: Yup.string()
+    .required('Nome completo é obrigatório')
+    .matches(/^[A-Za-zÀ-ÖØ-öø-ÿ\s'-]+$/, 'O nome deve conter apenas letras'),
   cpf: Yup.string()
     .required('CPF é obrigatório')
     .test('cpf', 'CPF inválido', value => isValidCPF(value)),

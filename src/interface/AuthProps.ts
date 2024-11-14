@@ -38,7 +38,7 @@ export interface IAuthContext {
 	token: string | null;
 	cpfData: IUserModel;
 	payload: IPayload | null;
-	datasBloqueadas: BloqueioAgendamentoModel | null;
+	datasBloqueadas: BloqueioAgendamentoModel[];
 	setPayload: React.Dispatch<React.SetStateAction<IPayload | null>>;
 	signIn: (data: SignIn) => Promise<void>;
 	signOut: () => Promise<void>;
@@ -48,7 +48,7 @@ export interface IAuthContext {
 	getByCpf: (cpf: string) => Promise<void>;
 	getAllSchedulling: () => Promise<ISchedulingModel>;
 	registerSchedulling: (data: RegisterSchedullingModel) => Promise<void>;
-	registerBlock: (data: BloqueioAgendamentoModel) => Promise<void>;
+	registerBlock: (data: BloqueioAgendamentoModel[]) => Promise<void>;
 	updateBlock: (
 		id: number,
 		usuario_id: string,

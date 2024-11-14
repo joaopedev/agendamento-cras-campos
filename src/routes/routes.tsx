@@ -33,18 +33,8 @@ const AppRoutes: React.FC = () => {
             isAuthenticated ? <Navigate to='/home' replace /> : <Cadastro />
           }
         />{' '}
-        <Route
-          path='/termos'
-          element={
-            isAuthenticated ? <Navigate to='/home' replace /> : <Termos />
-          }
-        />{' '}
-        <Route
-          path='/privacidade'
-          element={
-            isAuthenticated ? <Navigate to='/home' replace /> : <Privacidade />
-          }
-        />{' '}
+        <Route path='/termos' element={<Termos />} />
+        <Route path='/privacidade' element={<Privacidade />} />
         <Route
           path='/funcionario'
           element={

@@ -18,7 +18,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 import { Link as RouterLink } from 'react-router-dom';
 import SidebarLogin from '../components/SidebarLogin';
-import { FooterLogin } from '../components/FooterLogin';
+// import { FooterLogin } from '../components/FooterLogin';
 import { SignIn } from '../types/auth-data';
 import { useAuth } from '../hook/useAuth';
 import { loginSchema } from '../validation/auth';
@@ -104,7 +104,7 @@ export const Login: React.FC = () => {
   return (
     <Flex h='100vh' flex={['column', '', '', '']}>
       <SidebarLogin />
-      <FooterLogin />
+      {/* <FooterLogin /> */}
       <Stack
         pt={['60px', '0', '0', '0']}
         pb={['130px', '0', '0', '0']}

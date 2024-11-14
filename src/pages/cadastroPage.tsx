@@ -12,6 +12,7 @@ import {
   FormErrorMessage,
   Button,
   useToast,
+  Checkbox,
 } from '@chakra-ui/react'; // Importando componentes do Chakra UI
 import { Select } from 'chakra-react-select';
 import { Link as RouterLink } from 'react-router-dom';
@@ -35,6 +36,8 @@ export const Cadastro: React.FC = () => {
   const [inputDataNascimento, setInputDataNascimento] = useState(''); // Novo estado para data de nascimento
   const [inputTelefone, setInputTelefone] = useState(''); // New state for telefone
   const [inputCpf, setInputCpf] = useState(''); // New state for formatted CPF
+  const [termsAccepted, setTermsAccepted] = useState(false); // Estado para termos de serviço
+  const [privacyAccepted, setPrivacyAccepted] = useState(false); // Estado para política de privacidade
 
   const { registerUser } = useAuth();
   const navigate = useNavigate();
@@ -452,7 +455,65 @@ export const Cadastro: React.FC = () => {
               )}
             />
             <Box sx={textStyle2}></Box>
+            <Stack spacing={4} mt={4} w='100%' sx={leftAlignStyle}>
+              <FormControl isInvalid={!privacyAccepted} sx={leftAlignStyle}>
+                <Checkbox
+                  isChecked={privacyAccepted}
+                  onChange={e => setPrivacyAccepted(e.target.checked)}
+                  alignItems='flex-start'
+                  sx={{ fontSize: ['0.7rem', '0.8rem', '0.9rem', '1rem'] }}
+                >
+                  <Box textAlign={'right'}>
+                    Eu aceito as{' '}
+                    <Link
+                      as='a'
+                      href='/privacidade'
+                      fontSize='sm'
+                      color='blue.600'
+                      textDecoration='underline'
+                      target='_blank' // Abre em uma nova aba
+                      rel='noopener noreferrer' // Segurança
+                    >
+                      Políticas de Privacidade
+                    </Link>
+                  </Box>
+                </Checkbox>
+                {!privacyAccepted && (
+                  <FormErrorMessage>
+                    Você deve aceitar as Políticas de Privacidade.
+                  </FormErrorMessage>
+                )}
+              </FormControl>
 
+              <FormControl isInvalid={!termsAccepted} sx={leftAlignStyle}>
+                <Checkbox
+                  isChecked={termsAccepted}
+                  onChange={e => setTermsAccepted(e.target.checked)}
+                  alignItems='flex-start'
+                  sx={{ fontSize: ['0.7rem', '0.8rem', '0.9rem', '1rem'] }}
+                >
+                  <Box>
+                    Eu aceito os{' '}
+                    <Link
+                      as='a'
+                      href='/privacidade'
+                      fontSize='sm'
+                      color='blue.600'
+                      textDecoration='underline'
+                      target='_blank' // Abre em uma nova aba
+                      rel='noopener noreferrer' // Segurança
+                    >
+                      Termos de Serviço
+                    </Link>
+                  </Box>
+                </Checkbox>
+                {!termsAccepted && (
+                  <FormErrorMessage>
+                    Você deve aceitar os Termos de Serviço.
+                  </FormErrorMessage>
+                )}
+              </FormControl>
+            </Stack>
             <Box sx={textStyle2}></Box>
             <input type='hidden' {...register('tipo_usuario')} />
             <input type='hidden' {...register('ativo')} />
@@ -463,6 +524,7 @@ export const Cadastro: React.FC = () => {
               variant='solid'
               isLoading={isSubmitting}
               color={'white'}
+              isDisabled={!termsAccepted || !privacyAccepted} // Desabilita o botão se algum checkbox não estiver marcado
             >
               Cadastrar
             </Button>
@@ -509,6 +571,11 @@ const textStyle4 = {
   borderRadius: '2px',
   p: '2px 0',
   textDecoration: 'underline',
+};
+
+export const leftAlignStyle = {
+  textAlign: 'left',
+  width: '100%', // Ensure full width for proper alignment
 };
 
 export const boxStyle = {

@@ -61,7 +61,6 @@ const SelecionarDia: React.FC = () => {
   );
   const [selectedOption, setSelectedOption] = useState<string>('');
   const [, setAgendamentoRealizado] = useState(false);
-  const maxDate = addDays(new Date(), 7);
   const [selectedDate, setSelectedDate] = useState<Date>(
     addDays(new Date(), 1)
   );
@@ -88,6 +87,10 @@ const SelecionarDia: React.FC = () => {
     BloqueioAgendamentoModel[]
   >([]);
   const hoje = new Date();
+  const maxDate =
+    payload?.tipo_usuario === 1
+      ? addDays(new Date(), 7)
+      : addDays(new Date(), 600);
   const agendamentosFuturos = schedullingData.filter(agendamento => {
     if (typeof agendamento.data_hora === 'string' && agendamento.status === 2) {
       const dataAgendamento = toZonedTime(

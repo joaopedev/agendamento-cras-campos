@@ -155,7 +155,7 @@ export const registerSchedullingRequest = async (data: RegisterSchedullingModel)
 	}
 };
 
-export const registerSchedullingBlockRequest = async (data: BloqueioAgendamentoModel) => {
+export const registerSchedullingBlockRequest = async (data: BloqueioAgendamentoModel[]) => {
 	try {
 		const response = await api.post('private/registerBlock', data);
 		return response;

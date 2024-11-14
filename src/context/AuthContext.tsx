@@ -33,7 +33,7 @@ export const AuthProvider = ({ children }: IAuthProvider) => {
 	const [cpfData, setCpfData] = useState<any>(null);
 	const [token, setToken] = useState<string | null>(null);
 	const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-	const [datasBloqueadas, setDatasBloqueadas] = useState<BloqueioAgendamentoModel | null>(null);
+	const [datasBloqueadas, setDatasBloqueadas] = useState<BloqueioAgendamentoModel[]>([]);
 
 	const getUserFromToken = (token: string) => {
 		try {
@@ -142,7 +142,7 @@ export const AuthProvider = ({ children }: IAuthProvider) => {
 		return data;
 	};
 
-	const registerBlock = async (data: BloqueioAgendamentoModel) => {
+	const registerBlock = async (data: BloqueioAgendamentoModel[]) => {
 		await registerSchedullingBlockRequest(data);
 		setDatasBloqueadas(data);
 	};

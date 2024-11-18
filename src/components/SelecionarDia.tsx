@@ -47,6 +47,7 @@ const SelecionarDia: React.FC = () => {
 	const currentHour = currentTime.getHours();
 	const isBeforeNineAm = currentHour < 9;
 	const [showForm, setShowForm] = useState(false);
+	const [showConfirmar, setShowConfirmar] = useState(false);
 	const [horarioSelecionado, setHorarioSelecionado] = useState<string | null>(null);
 	const [selectedOption, setSelectedOption] = useState<string>('');
 	const [, setAgendamentoRealizado] = useState(false);
@@ -431,6 +432,7 @@ const SelecionarDia: React.FC = () => {
 														setSelectedDate(date);
 														setHorarioSelecionado(horario.hora);
 														onOpen();
+														payload?.tipo_usuario === 1 && setShowForm(true);
 													}}
 													setValue={setValue}
 												/>
@@ -441,186 +443,197 @@ const SelecionarDia: React.FC = () => {
 											onClose={() => {
 												onClose();
 												setShowForm(false);
+												setShowConfirmar(false);
 											}}
 											isCentered
 											size={['xs', 'sm', 'md', 'lg']}
 										>
 											<ModalOverlay />
 											<ModalContent minW={['90%', '27em', '30em', '48em']} textAlign={'center'}>
-												<ModalHeader mt={5}>Selecione uma opção para continuar:</ModalHeader>
 												<ModalCloseButton />
 												<ModalBody>
 													<form onSubmit={handleSubmit(onSubmit)}>
-														<Flex flexDir="column" alignItems="center">
-															<FormControl isInvalid={!!errors.servico}>
-																<RadioGroup
-																	onChange={value => {
-																		setSelectedOption(value as string);
-																		setShowForm(true);
-																	}}
+														{payload?.tipo_usuario !== 1 && (
+															<Flex flexDir={'column'} mt={4} gap={4}>
+																<Flex
+																	p={0}
+																	w={'100%'}
+																	alignItems={'center'}
+																	flexDir={'column'}
+																	gap={2}
 																>
-																	<Stack direction="row" justifyContent="space-around">
-																		<Radio
-																			{...register('servico')}
-																			id="cadastramento"
-																			value="1"
-																			isChecked={selectedOption === '1'}
+																	<ModalHeader fontWeight={'bold'}>
+																		Buscar usuário pelo CPF
+																	</ModalHeader>
+																	<Flex gap={1} w={'80%'}>
+																		<Input
+																			value={cpf}
+																			type="text"
+																			onChange={handleChange}
+																			placeholder="Digite o CPF"
+																		/>
+																		<Button
+																			sx={{
+																				maxW: 'max-content',
+																				display: '-ms-grid',
+																				boxShadow: '1px 1px 2px hsla(0, 28%, 0%, 0.7)',
+																				color: '#fff',
+																				bg: '#016234',
+																				minW: ['80px', '80px', '90px', '100px'],
+																				fontSize: ['0.8rem', '0.8rem', '0.9rem', '1rem'],
+																				_hover: {
+																					bg: '#00963f',
+																					fontWeight: 'bold',
+																				},
+																			}}
+																			onClick={() => {
+																				if (cpf?.length !== 14) {
+																					setError('O CPF deve conter exatamente 11 números.');
+																				} else {
+																					handleGetByCpf();
+																					setShowForm(true);
+																				}
+																			}}
 																		>
-																			Inclusão no CadÚnico
-																		</Radio>
-																		<Radio
-																			{...register('servico')}
-																			id="atualizacao"
-																			value="2"
-																			isChecked={selectedOption === '2'}
-																		>
-																			Atualização do CadÚnico
-																		</Radio>
-																	</Stack>
-																</RadioGroup>
-															</FormControl>
-															<Box display={'none'}>
-																<FormControl isInvalid={!!errors.name}>
-																	<FormLabel htmlFor="name">Nome</FormLabel>
-																	<Input
-																		id="name"
-																		{...register('name')}
-																		defaultValue={
-																			payload?.tipo_usuario === 1 ? payload?.name : cpfData?.name
-																		}
-																	/>
-																	{errors.name && (
-																		<Text color="red.500">{errors.name.message}</Text>
-																	)}
-																</FormControl>
-																<FormControl isInvalid={!!errors.data_hora}>
-																	<FormLabel htmlFor="data_hora">Data e Hora</FormLabel>
-																	<Input
-																		id="data_hora"
-																		defaultValue={
-																			selectedDate ? format(selectedDate, 'yyyy-MM-dd HH:mm') : ''
-																		}
-																		{...register('data_hora')}
-																		readOnly
-																	/>
-																	{errors.data_hora && (
-																		<Text color="red.500">{errors.data_hora.message}</Text>
-																	)}
-																</FormControl>
-
-																<FormControl isInvalid={!!errors.cras}>
-																	<FormLabel htmlFor="cras">Cras</FormLabel>
-																	<Input
-																		id="cras"
-																		{...register('cras')}
-																		defaultValue={
-																			payload?.tipo_usuario === 1 ? payload?.cras : cpfData?.cras
-																		}
-																	/>
-
-																	{errors.cras && (
-																		<Text color="red.500">{errors.cras.message}</Text>
-																	)}
-																</FormControl>
-																<FormControl isInvalid={!!errors.status}>
-																	<FormLabel htmlFor="status">Status</FormLabel>
-																	<Input id="status" {...register('status')} defaultValue={2} />
-																	{errors.status && (
-																		<Text color="red.500">{errors.status.message}</Text>
-																	)}
-																</FormControl>
-																<FormControl isInvalid={!!errors.usuario_id}>
-																	<FormLabel htmlFor="usuario_id">Usuário ID</FormLabel>
-																	<Input
-																		id="usuario_id"
-																		{...register('usuario_id')}
-																		defaultValue={
-																			payload?.tipo_usuario === 1 ? payload?.id : cpfData?.id
-																		}
-																	/>
-																	{errors.usuario_id && (
-																		<Text color="red.500">{errors.usuario_id.message}</Text>
-																	)}
-																</FormControl>
-															</Box>
-														</Flex>
+																			Buscar
+																		</Button>
+																	</Flex>
+																</Flex>
+																{error && (
+																	<Text fontSize={12} color="red.500">
+																		{error}
+																	</Text>
+																)}
+																{cpfData && (
+																	<Box p={4} borderWidth="1px" borderRadius="md" bg="gray.100">
+																		<Text>
+																			<strong>Nome:</strong> {cpfData.name}
+																		</Text>
+																		<Text>
+																			<strong>CRAS:</strong> {Cras[cpfData.cras]}
+																		</Text>
+																	</Box>
+																)}
+															</Flex>
+														)}
 
 														{showForm && (
 															<>
-																{payload?.tipo_usuario !== 1 && (
-																	<Flex flexDir={'column'} mt={4} gap={4}>
-																		<Flex
-																			p={0}
-																			w={'100%'}
-																			alignItems={'center'}
-																			flexDir={'column'}
-																			gap={2}
+																<ModalHeader fontWeight={'bold'}>
+																	Selecione uma opção para continuar:
+																</ModalHeader>
+
+																<Flex flexDir="column" alignItems="center">
+																	<FormControl isInvalid={!!errors.servico}>
+																		<RadioGroup
+																			onChange={value => {
+																				setSelectedOption(value as string);
+																				setShowConfirmar(true);
+																			}}
 																		>
-																			<Text fontWeight={'bold'}>Buscar usuário pelo CPF</Text>
-																			<Flex gap={1} w={'80%'}>
-																				<Input
-																					value={cpf}
-																					type="text"
-																					onChange={handleChange}
-																					placeholder="Digite o CPF"
-																				/>
-																				{/* <Button onClick={handleGetByCpf}>Buscar por CPF</Button> */}
-																				<Button
-																					sx={{
-																						maxW: 'max-content',
-																						display: '-ms-grid',
-																						boxShadow: '1px 1px 2px hsla(0, 28%, 0%, 0.7)',
-																						color: '#fff',
-																						bg: '#016234',
-																						minW: ['80px', '80px', '90px', '100px'],
-																						fontSize: ['0.8rem', '0.8rem', '0.9rem', '1rem'],
-																						_hover: {
-																							bg: '#00963f',
-																							fontWeight: 'bold',
-																						},
-																					}}
-																					onClick={() => {
-																						if (cpf?.length !== 14) {
-																							setError('O CPF deve conter exatamente 11 números.');
-																						} else {
-																							setShowForm(true);
-																							handleGetByCpf();
-																						}
-																					}}
+																			<Stack direction="row" justifyContent="space-around">
+																				<Radio
+																					{...register('servico')}
+																					id="cadastramento"
+																					value="1"
+																					isChecked={selectedOption === '1'}
 																				>
-																					Buscar
-																				</Button>
-																			</Flex>
-																		</Flex>
-																		{error && (
-																			<Text fontSize={12} color="red.500">
-																				{error}
-																			</Text>
-																		)}
-																		{cpfData && (
-																			<Box p={4} borderWidth="1px" borderRadius="md" bg="gray.100">
+																					Inclusão no CadÚnico
+																				</Radio>
+																				<Radio
+																					{...register('servico')}
+																					id="atualizacao"
+																					value="2"
+																					isChecked={selectedOption === '2'}
+																				>
+																					Atualização do CadÚnico
+																				</Radio>
+																			</Stack>
+																		</RadioGroup>
+																		{payload?.tipo_usuario === 1 && showConfirmar && (
+																			<ModalFooter justifyContent={'center'}>
 																				<Text>
-																					<strong>Nome:</strong> {cpfData.name}
+																					Deseja confirmar o seu agendamento para o dia{' '}
+																					<strong>
+																						{selectedDate && format(selectedDate, 'dd/MM/yyyy')}
+																					</strong>{' '}
+																					às <strong>{horarioSelecionado}</strong> no{' '}
+																					{payload && <strong>CRAS - {Cras[payload.cras]}?</strong>}
 																				</Text>
-																				<Text>
-																					<strong>CRAS:</strong> {Cras[cpfData.cras]}
-																				</Text>
-																			</Box>
+																			</ModalFooter>
 																		)}
-																	</Flex>
-																)}
-																{payload?.tipo_usuario === 1 && (
-																	<ModalFooter justifyContent={'center'}>
-																		<Text>
-																			Deseja confirmar o seu agendamento para o dia{' '}
-																			<strong>
-																				{selectedDate && format(selectedDate, 'dd/MM/yyyy')}
-																			</strong>{' '}
-																			às <strong>{horarioSelecionado}</strong> no{' '}
-																			{payload && <strong>CRAS - {Cras[payload.cras]}?</strong>}
-																		</Text>
-																	</ModalFooter>
-																)}
+																	</FormControl>
+																	<Box display={'none'}>
+																		<FormControl isInvalid={!!errors.name}>
+																			<FormLabel htmlFor="name">Nome</FormLabel>
+																			<Input
+																				id="name"
+																				{...register('name')}
+																				defaultValue={
+																					payload?.tipo_usuario === 1
+																						? payload?.name
+																						: cpfData?.name
+																				}
+																			/>
+																			{errors.name && (
+																				<Text color="red.500">{errors.name.message}</Text>
+																			)}
+																		</FormControl>
+																		<FormControl isInvalid={!!errors.data_hora}>
+																			<FormLabel htmlFor="data_hora">Data e Hora</FormLabel>
+																			<Input
+																				id="data_hora"
+																				defaultValue={
+																					selectedDate
+																						? format(selectedDate, 'yyyy-MM-dd HH:mm')
+																						: ''
+																				}
+																				{...register('data_hora')}
+																				readOnly
+																			/>
+																			{errors.data_hora && (
+																				<Text color="red.500">{errors.data_hora.message}</Text>
+																			)}
+																		</FormControl>
+
+																		<FormControl isInvalid={!!errors.cras}>
+																			<FormLabel htmlFor="cras">Cras</FormLabel>
+																			<Input
+																				id="cras"
+																				{...register('cras')}
+																				defaultValue={
+																					payload?.tipo_usuario === 1
+																						? payload?.cras
+																						: cpfData?.cras
+																				}
+																			/>
+
+																			{errors.cras && (
+																				<Text color="red.500">{errors.cras.message}</Text>
+																			)}
+																		</FormControl>
+																		<FormControl isInvalid={!!errors.status}>
+																			<FormLabel htmlFor="status">Status</FormLabel>
+																			<Input id="status" {...register('status')} defaultValue={2} />
+																			{errors.status && (
+																				<Text color="red.500">{errors.status.message}</Text>
+																			)}
+																		</FormControl>
+																		<FormControl isInvalid={!!errors.usuario_id}>
+																			<FormLabel htmlFor="usuario_id">Usuário ID</FormLabel>
+																			<Input
+																				id="usuario_id"
+																				{...register('usuario_id')}
+																				defaultValue={
+																					payload?.tipo_usuario === 1 ? payload?.id : cpfData?.id
+																				}
+																			/>
+																			{errors.usuario_id && (
+																				<Text color="red.500">{errors.usuario_id.message}</Text>
+																			)}
+																		</FormControl>
+																	</Box>
+																</Flex>
 															</>
 														)}
 														<ModalFooter justifyContent={'center'}>
@@ -635,11 +648,12 @@ const SelecionarDia: React.FC = () => {
 															>
 																Cancelar
 															</Button>
-															{showForm && (
+															{showConfirmar && (
 																<Button
 																	onClick={() => {
 																		onClose();
 																		setShowForm(false);
+																		setShowConfirmar(false);
 																	}}
 																	sx={btnStyle}
 																	type="submit"

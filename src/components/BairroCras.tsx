@@ -99,6 +99,7 @@ export const BairroCras: Bairro[] = [
       'CANTAGALO',
       'CAPAO',
       'PARQUE FAZENDA GRANDE',
+      'PARQUE TURF CLUB (CHATUBA)',
     ],
   },
 
@@ -115,7 +116,7 @@ export const BairroCras: Bairro[] = [
       'PARQUE OLIVEIRA BOTELHO',
       'PARQUE RIACHUELO',
       'PARQUE SALO BRAND',
-      'PARQUE TURF CLUB',
+      'PARQUE TURF CLUB (MATADOURO)',
       'CENTRO (OU MATADOURO)',
       'TIRA GOSTO',
     ],

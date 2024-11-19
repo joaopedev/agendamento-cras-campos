@@ -100,6 +100,25 @@ export const UserEdit: React.FC = () => {
       setInputTelefone(''); // Clear the inputTelefone state
     }
   };
+  const [inputDataNascimento, setInputDataNascimento] = useState('');
+
+  const formatDataNascimento = (data: string) => {
+    if (data.length > 2) {
+      data = data.slice(0, 2) + '/' + data.slice(2);
+    }
+    if (data.length > 5) {
+      data = data.slice(0, 5) + '/' + data.slice(5);
+    }
+    return data;
+  };
+
+  const handleDataNascimentoChange = (e: ChangeEvent<HTMLInputElement>) => {
+    let value = e.target.value.replace(/\D/g, ''); // Remove caracteres não numéricos
+    value = value.slice(0, 8); // Limita a 8 dígitos (DDMMAAAA)
+
+    setInputDataNascimento(value); // Atualiza o estado local
+    setValue('data_nascimento', value); // Atualiza o valor do formulário
+  };
 
   function formatarCPF(cpf: string) {
     cpf = cpf.replace(/\D/g, '');
@@ -124,8 +143,12 @@ export const UserEdit: React.FC = () => {
   const handleSave = async (data: IUserModel) => {
     try {
       if (!payload || !payload.id) {
-        throw new Error('User information not available');
+        throw new Error('Informações do usuário não disponíveis');
       }
+
+      // Verificar se a data de nascimento mudou
+      const dateOfBirthChanged =
+        data.data_nascimento !== payload.data_nascimento;
 
       const lastUpdated = new Date(payload.updated_at);
       const now = new Date();
@@ -134,8 +157,13 @@ export const UserEdit: React.FC = () => {
 
       if (hoursDifference <= 24) {
         throw new Error(
-          'Cannot update information within 24 hours of the last update'
+          'Não é possível atualizar as informações dentro de 24 horas da última atualização'
         );
+      }
+
+      // Atualizar a senha se a data de nascimento mudou
+      if (dateOfBirthChanged) {
+        data.password = data.data_nascimento;
       }
 
       const { data: updatedUserData } = await updateUserRequest(
@@ -143,11 +171,9 @@ export const UserEdit: React.FC = () => {
         data
       );
 
-      // Atualiza apenas os campos necessários no payload
       setPayload(cpfData => ({
         ...cpfData,
         ...updatedUserData,
-        // Preserve campos críticos, se necessário
         tipoUsuario: cpfData?.tipo_usuario,
       }));
 
@@ -172,13 +198,16 @@ export const UserEdit: React.FC = () => {
       });
     }
   };
+
   useEffect(() => {
     if (cpfData) {
       setValue('name', cpfData.name);
       setValue('cras', cpfData.cras);
       setValue('usuario_id', cpfData.id);
-      // setValue('cpf', cpfData.cpf);
       setValue('endereco', cpfData.endereco);
+      setValue('telefone', cpfData.telefone);
+      setValue('data_nascimento', cpfData.data_nascimento);
+      setInputDataNascimento(cpfData.data_nascimento || '');
     }
   }, [cpfData, setValue]);
 
@@ -195,6 +224,7 @@ export const UserEdit: React.FC = () => {
     setInputTelefone(value); // Update formatted input in state
     setValue('telefone', value); // Update form value with formatted number
   };
+  console.log(cpfData);
 
   return (
     <Flex h='100vh'>
@@ -276,8 +306,6 @@ export const UserEdit: React.FC = () => {
                     <InputGroup>
                       <InputLeftElement pointerEvents='none' />
                       <Input
-                        isDisabled
-                        // sx={textStyle1}
                         id='name'
                         placeholder={cpfData?.name}
                         _placeholder={{ opacity: 1, color: 'black' }}
@@ -314,6 +342,46 @@ export const UserEdit: React.FC = () => {
                     </InputGroup>
                     <FormErrorMessage>
                       {errors.cpf && errors.cpf.message}
+                    </FormErrorMessage>
+                  </FormControl>
+
+                  <FormControl
+                    isInvalid={!!errors.data_nascimento}
+                    isDisabled={!isEditing}
+                  >
+                    <FormLabel
+                      htmlFor='data-de-nascimento'
+                      fontWeight='bold'
+                      color='black'
+                    >
+                      Data de Nascimento
+                    </FormLabel>
+                    <InputGroup>
+                      <InputLeftElement pointerEvents='none' />
+                      <Input
+                        id='data-de-nascimento'
+                        placeholder={
+                          cpfData?.data_nascimento
+                            ? formatDataNascimento(cpfData.data_nascimento)
+                            : 'DD/MM/AAAA'
+                        }
+                        value={formatDataNascimento(inputDataNascimento)} // Valor formatado para exibição
+                        onChange={handleDataNascimentoChange} // Função de manipulação
+                        size='md'
+                        sx={{
+                          fontSize: ['0.7rem', '0.8rem', '0.9rem', '1rem'],
+                          bg: 'white',
+                          borderRadius: '5px',
+                          p: '4px 0',
+                          mt: '0px',
+                          mb: '0px',
+                          paddingLeft: '16px',
+                        }}
+                        isDisabled={!isEditing}
+                      />
+                    </InputGroup>
+                    <FormErrorMessage>
+                      {errors.data_nascimento && errors.data_nascimento.message}
                     </FormErrorMessage>
                   </FormControl>
 

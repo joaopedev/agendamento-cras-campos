@@ -199,6 +199,21 @@ const CardShowAgendamento: React.FC = () => {
                   )}
               </strong>{' '}
             </Text>
+            {payload?.cras && [1, 9, 15].includes(payload.cras) && (
+              <Text mt={4} as='span' color='red' fontWeight='bold'>
+                <Text as='span' color='red' fontWeight='bold'>
+                  ATENÇÃO!{' '}
+                </Text>{' '}
+                <br />
+                Seu atendimento será realizado na{' '}
+                <strong>Gestão do Bolsa Família</strong>, localizado no
+                endereço:{' '}
+                <strong>
+                  <br />
+                  Rua Tenente Coronel Cardoso (Formosa) 565, Centro
+                </strong>
+              </Text>
+            )}
             <Text>
               Documentos <strong>ORIGINAIS</strong> com foto de todos os
               moradores da família necessários para o seu atendimento: <br />

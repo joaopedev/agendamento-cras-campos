@@ -648,7 +648,7 @@ const SelecionarDia: React.FC = () => {
 															>
 																Cancelar
 															</Button>
-															{showConfirmar && (
+															{showConfirmar && cpfData?.name && (
 																<Button
 																	onClick={() => {
 																		onClose();

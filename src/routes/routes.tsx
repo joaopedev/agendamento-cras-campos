@@ -14,6 +14,7 @@ import { useAuth } from '../hook/useAuth';
 import UserEdit from '../pages/UserEdit';
 import Termos from '../pages/termos';
 import Privacidade from '../pages/privacidade';
+import Suporte from '../pages/suporte';
 
 const AppRoutes: React.FC = () => {
   const { isAuthenticated } = useAuth();
@@ -35,6 +36,7 @@ const AppRoutes: React.FC = () => {
         />{' '}
         <Route path='/termos' element={<Termos />} />
         <Route path='/privacidade' element={<Privacidade />} />
+        <Route path='/suporte' element={<Suporte />} />
         <Route
           path='/funcionario'
           element={

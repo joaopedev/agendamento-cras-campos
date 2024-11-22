@@ -344,7 +344,7 @@ const SelecionarDiaFuncionario: React.FC = () => {
 							locale={'pt-BR'}
 							dateFormat="dd/MMMM/yyyy"
 							filterDate={date => date.getDay() !== 0 && date.getDay() !== 6 && date <= maxDate}
-							minDate={new Date()}
+							// minDate={new Date()}
 							selected={selectedDate}
 							onChange={(date: Date) => setSelectedDate(date)}
 							calendarContainer={({ className, children }) => (

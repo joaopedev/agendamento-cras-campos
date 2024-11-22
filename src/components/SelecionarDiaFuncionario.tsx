@@ -132,6 +132,16 @@ const SelecionarDiaFuncionario: React.FC = () => {
 		).padStart(2, '0')}`;
 	};
 
+	useEffect(() => {
+		const savedActiveCardId = localStorage.getItem('activeCardId');
+		const savedStartTime = localStorage.getItem('startTime');
+
+		if (savedActiveCardId && savedStartTime) {
+			setActiveCardId(Number(savedActiveCardId));
+			setStartTime(Number(savedStartTime));
+		}
+	}, []);
+
 	const getStatusColor = (status: Status) => {
 		switch (status) {
 			case Status.cancelado:
@@ -155,21 +165,98 @@ const SelecionarDiaFuncionario: React.FC = () => {
 		);
 	}
 
-	const handleAtendimentoClick = (schedullingId: number) => {
+	const handleAtendimentoClick = async (schedullingId: number, usuarioId: string) => {
 		if (schedullingId === activeCardId) {
 			// Encerrar atendimento
-			setActiveCardId(null);
-			setStartTime(null);
-			setElapsedTime(0);
-			localStorage.removeItem('activeCardId');
-			localStorage.removeItem('startTime');
+			try {
+				// Atualiza o banco de dados antes de encerrar
+				await handleUpdateScheduling(
+					schedullingId,
+					usuarioId,
+					Status.realizado, // Define o status como realizado
+					elapsedTime // Tempo decorrido
+				);
+
+				// Reseta os estados locais
+				setActiveCardId(null);
+				setStartTime(null);
+				setElapsedTime(0);
+				localStorage.removeItem('activeCardId');
+				localStorage.removeItem('startTime');
+
+				// Exibe um toast de sucesso
+			} catch (error) {
+				// Exibe um toast de erro se a atualização falhar
+				toast({
+					title: 'Erro ao encerrar atendimento',
+					description: 'Não foi possível atualizar o status no banco de dados.',
+					status: 'error',
+					duration: 5000,
+					isClosable: true,
+					position: 'top',
+				});
+				console.error('Erro ao atualizar status:', error);
+			}
 		} else {
 			// Iniciar atendimento
+			if (activeCardId !== null) {
+				// Exibe um aviso se já houver um atendimento em andamento
+				toast({
+					title: 'Atenção',
+					description: (
+						<>
+							<Text>Já existe um atendimento em andamento:</Text>
+							<Text fontWeight="bold">
+								{schedullingData.find(item => item.id === activeCardId)?.name}
+							</Text>
+							<Text>
+								Dia{' '}
+								<strong>
+									{format(
+										new Date(
+											schedullingData.find(item => item.id === activeCardId)?.data_hora || ''
+										),
+										'dd/MM/yyyy'
+									)}
+								</strong>{' '}
+								às{' '}
+								<strong>
+									{format(
+										new Date(
+											schedullingData.find(item => item.id === activeCardId)?.data_hora || ''
+										),
+										'HH:mm'
+									)}
+								</strong>
+							</Text>
+						</>
+					),
+					status: 'error', // Ajuste o status conforme necessário
+					duration: 5000,
+					isClosable: true,
+					position: 'top',
+					// variant: 'subtle', // Use uma variante para manter o design uniforme
+				});
+
+				return;
+			}
+
+			// Inicia um novo atendimento
 			const currentTime = Date.now();
 			setActiveCardId(schedullingId);
 			setStartTime(currentTime);
 			localStorage.setItem('activeCardId', schedullingId.toString());
 			localStorage.setItem('startTime', currentTime.toString());
+
+			// Exibe um toast de sucesso
+			toast({
+				title: 'Atendimento iniciado',
+				description: 'O atendimento foi iniciado com sucesso.',
+				status: 'success',
+				duration: 3000,
+				isClosable: true,
+				position: 'top',
+			});
 		}
 	};
 
@@ -182,15 +269,15 @@ const SelecionarDiaFuncionario: React.FC = () => {
 		try {
 			await updateScheduling(id, usuario_id, {
 				status: newStatus,
-				duracao_atendimento: Math.floor(duracaoAtendimento / 60) || 0,
+				duracao_atendimento: Math.floor(duracaoAtendimento / 60) || 0, // Converte segundos para minutos
 			});
 			toast({
-				title: 'Status atualizado com sucesso',
-				duration: 5000,
-				isClosable: true,
-				position: 'top-right',
+				title: 'Atendimento encerrado',
+				description: 'O atendimento foi encerrado com sucesso.',
 				status: 'success',
-				variant: 'custom-success',
+				duration: 3000,
+				isClosable: true,
+				position: 'top',
 			});
 			setSchedullingData(prevData =>
 				prevData.map(agendamento =>
@@ -212,6 +299,7 @@ const SelecionarDiaFuncionario: React.FC = () => {
 				isClosable: true,
 				position: 'top-right',
 			});
+			throw error; // Para capturar no método principal
 		}
 	};
 
@@ -407,26 +495,18 @@ const SelecionarDiaFuncionario: React.FC = () => {
 																	<Button
 																		maxH={[6, 6, 7, 8]}
 																		sx={btnStyle}
-																		onClick={() => {
-																			handleAtendimentoClick(Number(schedulling.id));
-																			if (activeCardId === Number(schedulling.id)) {
-																				handleUpdateScheduling(
-																					schedulling.id as number,
-																					schedulling.usuario_id,
-																					Status.realizado,
-																					elapsedTime
-																				);
-																			}
-																		}}
-																		isDisabled={
-																			activeCardId !== null &&
-																			activeCardId !== Number(schedulling.id)
+																		onClick={() =>
+																			handleAtendimentoClick(
+																				Number(schedulling.id),
+																				schedulling.usuario_id
+																			)
 																		}
 																	>
 																		{activeCardId === Number(schedulling.id)
 																			? 'Encerrar'
 																			: 'Atender'}
 																	</Button>
+
 																	{activeCardId !== Number(schedulling.id) && (
 																		<Button
 																			maxH={[6, 6, 7, 8]}

@@ -75,7 +75,7 @@ const SelecionarDia: React.FC = () => {
 	const [funcionariosPorCras, setFuncionariosPorCras] = useState<number>();
 	const [diasBloqueados, setDiasBloqueados] = useState<BloqueioAgendamentoModel[]>([]);
 	const hoje = new Date();
-	const maxDate = payload?.tipo_usuario === 1 ? addDays(selectedDate, 6) : addDays(new Date(), 600);
+	const maxDate = payload?.tipo_usuario === 1 ? selectedDate : addDays(new Date(), 600);
 	const agendamentosFuturos = schedullingData.filter(agendamento => {
 		if (typeof agendamento.data_hora === 'string' && agendamento.status === 2) {
 			const dataAgendamento = toZonedTime(parseISO(agendamento.data_hora), timeZone); // Ajuste de fuso horário
@@ -392,7 +392,11 @@ const SelecionarDia: React.FC = () => {
 												}
 												onSelect={handleDateChange}
 												onChange={(date: Date) => setSelectedDate(date)}
-												minDate={addDays(new Date(), 1)}
+												minDate={
+													payload?.tipo_usuario === 1
+														? addDays(new Date(), 7)
+														: addDays(new Date(), 1)
+												}
 												className="customInput"
 												calendarContainer={({ className, children }) => (
 													<Box

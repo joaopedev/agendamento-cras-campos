@@ -23,6 +23,9 @@ export const BairroCras: Bairro[] = [
   {
     cras: 'Custodópolis',
     bairro: [
+      'JARDIM DAS ACÁCIAS',
+      'JARDIM DAS FIGUEIRAS',
+      'JARDIM DOS JATOBÁS',
       'PARQUE BARAO DO RIO BRANCO',
       'PARQUE BONSUCESSO',
       'PARQUE CUSTODOPOLIS',
@@ -42,6 +45,7 @@ export const BairroCras: Bairro[] = [
     bairro: [
       'PARQUE ALVORADA',
       'JARDIM CARIOCA',
+      'JARDINS DE CAMPOS',
       'PARQUE NITEROI',
       'PARQUE PRAZERES',
       'PARQUE PRESIDENTE VARGAS',
@@ -172,7 +176,6 @@ export const BairroCras: Bairro[] = [
       'CAXIAS DE TOCOS',
       'CAZUMBA',
       'COQUEIRO DE TOCOS',
-      'CORRENTEZA',
       'CUPIM DE POÇO GORDO',
       'DONANA',
       'ESPINHO',
@@ -256,6 +259,7 @@ export const BairroCras: Bairro[] = [
     bairro: [
       'AREIA BRANCA',
       'CHAVE DO PARAISO',
+      'CORRENTEZA',
       'CONSELHEIRO JOSINO',
       'ESPIRITO SANTINHO',
       'MATA DA CRUZ',

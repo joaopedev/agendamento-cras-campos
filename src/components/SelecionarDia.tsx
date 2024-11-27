@@ -73,7 +73,9 @@ const SelecionarDia: React.FC = () => {
     getAllUsers,
   } = useContext(AuthContext);
   const [selectedDate, setSelectedDate] = useState<Date>(
-    payload?.tipo_usuario === 1 ? new Date() : new Date()
+    payload?.tipo_usuario === 1
+      ? addDays(new Date(), 1)
+      : addDays(new Date(), 1)
   );
   console.log(selectedDate);
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -280,6 +282,7 @@ const SelecionarDia: React.FC = () => {
       { hora: '15:00', disponivel: true },
       // { hora: '15:30', disponivel: true },
       { hora: '16:00', disponivel: true },
+      { hora: '16:30', disponivel: true },
     ];
 
     if (payload?.cras === 5) {
@@ -474,7 +477,7 @@ const SelecionarDia: React.FC = () => {
                           }
                           onSelect={handleDateChange}
                           onChange={(date: Date) => setSelectedDate(date)}
-                          minDate={new Date()}
+                          minDate={addDays(new Date(), 1)}
                           className='customInput'
                           calendarContainer={({ className, children }) => (
                             <Box

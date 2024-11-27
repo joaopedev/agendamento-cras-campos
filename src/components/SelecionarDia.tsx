@@ -282,7 +282,7 @@ const SelecionarDia: React.FC = () => {
       { hora: '15:00', disponivel: true },
       // { hora: '15:30', disponivel: true },
       { hora: '16:00', disponivel: true },
-      { hora: '16:30', disponivel: true },
+      // { hora: '16:30', disponivel: true },
     ];
 
     if (payload?.cras === 5) {

@@ -278,21 +278,21 @@ const SelecionarDia: React.FC = () => {
   const horarios = useMemo(() => {
     let baseHorarios = [
       { hora: '08:00', disponivel: true },
-      { hora: '08:30', disponivel: true },
+      // { hora: '08:30', disponivel: true },
       { hora: '09:00', disponivel: true },
-      { hora: '09:30', disponivel: true },
+      // { hora: '09:30', disponivel: true },
       { hora: '10:00', disponivel: true },
-      { hora: '10:30', disponivel: true },
+      // { hora: '10:30', disponivel: true },
       { hora: '11:00', disponivel: true },
-      { hora: '11:30', disponivel: true },
+      // { hora: '11:30', disponivel: true },
       { hora: '13:00', disponivel: true },
-      { hora: '13:30', disponivel: true },
+      // { hora: '13:30', disponivel: true },
       { hora: '14:00', disponivel: true },
-      { hora: '14:30', disponivel: true },
+      // { hora: '14:30', disponivel: true },
       { hora: '15:00', disponivel: true },
-      { hora: '15:30', disponivel: true },
+      // { hora: '15:30', disponivel: true },
       { hora: '16:00', disponivel: true },
-      { hora: '16:30', disponivel: true },
+      // { hora: '16:30', disponivel: true },
     ];
 
     if (payload?.cras === 5) {

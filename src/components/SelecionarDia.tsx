@@ -198,26 +198,36 @@ const SelecionarDia: React.FC = () => {
       await registerSchedulling({ ...data, data_hora: String(adjustedDate) });
 
       setAgendamentoRealizado(true);
-      // Recarrega a página
-      window.location.reload();
 
-      // toast({
-      // 	title: 'Agendamento realizado com sucesso',
-      // 	duration: 5000,
-      // 	isClosable: true,
-      // 	position: 'top-right',
-      // 	status: 'success',
-      // 	variant: 'custom-success',
-      // });
+      // Display success message
+      toast({
+        title: 'Agendamento realizado com sucesso',
+        duration: 2000,
+        isClosable: true,
+        position: 'top-right',
+        status: 'success',
+        variant: 'custom-success',
+      });
+
+      // Reload the page after 2 seconds
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
     } catch (error) {
-      // toast({
-      // 	title: 'Erro ao realizar agendamento',
-      // 	description: (error as Error).message,
-      // 	status: 'error',
-      // 	duration: 5000,
-      // 	isClosable: true,
-      // 	position: 'top-right',
-      // });
+      // Display error message when the time slot is no longer available
+      toast({
+        title:
+          'Este horário não está mais disponível, por favor escolha outro horário.',
+        status: 'error',
+        duration: 2000, // Display the toast for 2 seconds
+        isClosable: true,
+        position: 'top-right',
+      });
+
+      // After 2 seconds, reload the page
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
     }
   };
 
@@ -268,21 +278,21 @@ const SelecionarDia: React.FC = () => {
   const horarios = useMemo(() => {
     let baseHorarios = [
       { hora: '08:00', disponivel: true },
-      // { hora: '08:30', disponivel: true },
+      { hora: '08:30', disponivel: true },
       { hora: '09:00', disponivel: true },
-      // { hora: '09:30', disponivel: true },
+      { hora: '09:30', disponivel: true },
       { hora: '10:00', disponivel: true },
-      // { hora: '10:30', disponivel: true },
+      { hora: '10:30', disponivel: true },
       { hora: '11:00', disponivel: true },
-      // { hora: '11:30', disponivel: true },
+      { hora: '11:30', disponivel: true },
       { hora: '13:00', disponivel: true },
-      // { hora: '13:30', disponivel: true },
+      { hora: '13:30', disponivel: true },
       { hora: '14:00', disponivel: true },
-      // { hora: '14:30', disponivel: true },
+      { hora: '14:30', disponivel: true },
       { hora: '15:00', disponivel: true },
-      // { hora: '15:30', disponivel: true },
+      { hora: '15:30', disponivel: true },
       { hora: '16:00', disponivel: true },
-      // { hora: '16:30', disponivel: true },
+      { hora: '16:30', disponivel: true },
     ];
 
     if (payload?.cras === 5) {

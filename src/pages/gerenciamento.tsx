@@ -71,17 +71,49 @@ const Gerenciamento: React.FC = () => {
   const saveEdit = async () => {
     if (editingEmployee.data) {
       try {
-        await updateUser(editingEmployee.data.id!, editingEmployee.data);
-        toast({
-          title: 'Funcionário editado com sucesso',
-          duration: 5000,
-          isClosable: true,
-          position: 'top-right',
-          status: 'success',
-          variant: 'custom-success',
-        });
-        setEditingEmployee({ index: null, data: null });
-        fetchEmployeeData();
+        // Recupera os dados originais do funcionário
+        const originalData = employeeData.find(
+          emp => emp.id === editingEmployee.data?.id
+        );
+
+        // Verifica as diferenças entre os dados originais e os editados
+        const updatedFields = Object.entries(editingEmployee.data).reduce(
+          (changes, [key, value]) => {
+            if (
+              originalData &&
+              originalData[key as keyof typeof originalData] !== value
+            ) {
+              changes[key] = value;
+            }
+            return changes;
+          },
+          {} as Record<string, any>
+        );
+
+        // Só faz a requisição se houver alterações
+        if (Object.keys(updatedFields).length > 0) {
+          await updateUser(editingEmployee.data.id!, updatedFields);
+
+          toast({
+            title: 'Funcionário editado com sucesso',
+            duration: 5000,
+            isClosable: true,
+            position: 'top-right',
+            status: 'success',
+            variant: 'custom-success',
+          });
+
+          setEditingEmployee({ index: null, data: null });
+          fetchEmployeeData();
+        } else {
+          toast({
+            title: 'Nenhuma alteração detectada',
+            duration: 3000,
+            isClosable: true,
+            position: 'top-right',
+            status: 'info',
+          });
+        }
       } catch (error) {
         toast({
           title: 'Erro ao editar funcionário',

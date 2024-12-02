@@ -192,7 +192,7 @@ const CardShowAgendamento: React.FC = () => {
                 {primeiroAgendamento &&
                   format(
                     getDataHoraAsDate(primeiroAgendamento.data_hora),
-                    "HH'h'",
+                    'HH:mm',
                     {
                       locale: ptBR,
                     }

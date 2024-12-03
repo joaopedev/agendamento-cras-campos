@@ -177,103 +177,47 @@ const SelecionarDiaFuncionario: React.FC = () => {
     );
   }
 
-  const handleAtendimentoClick = async (
+  const handleAtendidoClick = async (
     schedullingId: number,
     usuarioId: string
   ) => {
-    if (schedullingId === activeCardId) {
-      // Encerrar atendimento
-      try {
-        // Atualiza o banco de dados antes de encerrar
-        await handleUpdateScheduling(
-          schedullingId,
-          usuarioId,
-          Status.realizado, // Define o status como realizado
-          elapsedTime // Tempo decorrido
-        );
+    try {
+      await handleUpdateScheduling(
+        schedullingId,
+        usuarioId,
+        Status.realizado,
+        0
+      );
 
-        // Reseta os estados locais
-        setActiveCardId(null);
-        setStartTime(null);
-        setElapsedTime(0);
-        localStorage.removeItem('activeCardId');
-        localStorage.removeItem('startTime');
-
-        // Exibe um toast de sucesso
-      } catch (error) {
-        // Exibe um toast de erro se a atualização falhar
-        toast({
-          title: 'Erro ao encerrar atendimento',
-          description: 'Não foi possível atualizar o status no banco de dados.',
-          status: 'error',
-          duration: 5000,
-          isClosable: true,
-          position: 'top',
-        });
-        console.error('Erro ao atualizar status:', error);
-      }
-    } else {
-      // Iniciar atendimento
-      if (activeCardId !== null) {
-        // Exibe um aviso se já houver um atendimento em andamento
-        toast({
-          title: 'Atenção',
-          description: (
-            <>
-              <Text>Já existe um atendimento em andamento:</Text>
-              <Text fontWeight='bold'>
-                {schedullingData.find(item => item.id === activeCardId)?.name}
-              </Text>
-              <Text>
-                Dia{' '}
-                <strong>
-                  {format(
-                    new Date(
-                      schedullingData.find(item => item.id === activeCardId)
-                        ?.data_hora || ''
-                    ),
-                    'dd/MM/yyyy'
-                  )}
-                </strong>{' '}
-                às{' '}
-                <strong>
-                  {format(
-                    new Date(
-                      schedullingData.find(item => item.id === activeCardId)
-                        ?.data_hora || ''
-                    ),
-                    'HH:mm'
-                  )}
-                </strong>
-              </Text>
-            </>
-          ),
-          status: 'error', // Ajuste o status conforme necessário
-          duration: 5000,
-          isClosable: true,
-          position: 'top',
-          // variant: 'subtle', // Use uma variante para manter o design uniforme
-        });
-
-        return;
-      }
-
-      // Inicia um novo atendimento
-      const currentTime = Date.now();
-      setActiveCardId(schedullingId);
-      setStartTime(currentTime);
-      localStorage.setItem('activeCardId', schedullingId.toString());
-      localStorage.setItem('startTime', currentTime.toString());
-
-      // Exibe um toast de sucesso
+      // Exibir um toast de sucesso ao marcar como atendido
       toast({
-        title: 'Atendimento iniciado',
-        description: 'O atendimento foi iniciado com sucesso.',
+        title: 'Usuário atendido',
+        description: 'O atendimento foi marcado como realizado.',
         status: 'success',
         duration: 3000,
         isClosable: true,
         position: 'top',
       });
+
+      // Atualizar a lista de agendamentos localmente para refletir a mudança
+      setSchedullingData(prevData =>
+        prevData.map(agendamento =>
+          agendamento.id === schedullingId
+            ? { ...agendamento, status: Status.realizado }
+            : agendamento
+        )
+      );
+    } catch (error) {
+      // Exibir um toast de erro caso a atualização falhe
+      toast({
+        title: 'Erro ao atualizar status',
+        description: 'Não foi possível marcar o usuário como atendido.',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+        position: 'top',
+      });
+      console.error('Erro ao atualizar status:', error);
     }
   };
 
@@ -286,11 +230,11 @@ const SelecionarDiaFuncionario: React.FC = () => {
     try {
       await updateScheduling(id, usuario_id, {
         status: newStatus,
-        duracao_atendimento: Math.floor(duracaoAtendimento / 60) || 0, // Converte segundos para minutos
+        duracao_atendimento: duracaoAtendimento || 0,
       });
       toast({
-        title: 'Atendimento encerrado',
-        description: 'O atendimento foi encerrado com sucesso.',
+        title: 'Status atualizado',
+        description: `O status foi atualizado para ${Status[newStatus]}.`,
         status: 'success',
         duration: 3000,
         isClosable: true,
@@ -302,21 +246,20 @@ const SelecionarDiaFuncionario: React.FC = () => {
             ? {
                 ...agendamento,
                 status: newStatus,
-                duracao_atendimento: duracaoAtendimento,
               }
             : agendamento
         )
       );
     } catch (error) {
       toast({
-        title: 'Erro ao atualizar o status',
-        description: (error as Error).message,
+        title: 'Erro ao atualizar status',
+        description: 'Não foi possível atualizar o status.',
         status: 'error',
         duration: 5000,
         isClosable: true,
-        position: 'top-right',
+        position: 'top',
       });
-      throw error; // Para capturar no método principal
+      console.error('Erro ao atualizar status:', error);
     }
   };
 
@@ -562,41 +505,68 @@ const SelecionarDiaFuncionario: React.FC = () => {
                                     schedulling.data_hora
                                   ).toDateString() ===
                                     new Date().toDateString())) &&
-                                schedulling.status === 2 && ( // Exibe apenas para usuários do tipo 3 ou tipo 2 com a data atual
+                                schedulling.status === 2 && ( // Exibe os botões apenas para status pendente
                                   <Flex
                                     gap={2}
                                     flexDir={['row', 'row', 'column', 'column']}
+                                    alignItems='center'
                                   >
+                                    {/* Botão "Atendido" */}
                                     <Button
                                       maxH={[6, 6, 7, 8]}
                                       sx={btnStyle}
                                       onClick={() =>
-                                        handleAtendimentoClick(
+                                        handleAtendidoClick(
                                           Number(schedulling.id),
                                           schedulling.usuario_id
                                         )
                                       }
                                     >
-                                      {activeCardId === Number(schedulling.id)
-                                        ? 'Encerrar'
-                                        : 'Atender'}
+                                      Atendido
                                     </Button>
 
-                                    {activeCardId !==
-                                      Number(schedulling.id) && (
+                                    {/* Botão "Ausente" */}
+                                    <Button
+                                      maxH={[6, 6, 7, 8]}
+                                      onClick={() =>
+                                        handleUpdateScheduling(
+                                          schedulling.id as number,
+                                          schedulling.usuario_id,
+                                          Status.ausente,
+                                          0
+                                        )
+                                      }
+                                      boxShadow='1px 1px 2px hsla(0, 28%, 0%, 0.7)'
+                                      minW={['80px', '80px', '90px', '100px']}
+                                      fontSize={[
+                                        '0.8rem',
+                                        '0.8rem',
+                                        '0.9rem',
+                                        '0.9rem',
+                                      ]}
+                                      bg={'#c2bb00'}
+                                      textColor={'white'}
+                                      _hover={{
+                                        bg: '#8a8600',
+                                        fontWeight: 'bold',
+                                      }}
+                                    >
+                                      Ausente
+                                    </Button>
+
+                                    {/* Botão "Cancelar" */}
+                                    {payload?.tipo_usuario === 3 && (
                                       <Button
-                                        maxH={[6, 6, 7, 8]}
                                         onClick={() =>
                                           handleUpdateScheduling(
                                             schedulling.id as number,
                                             schedulling.usuario_id,
-                                            Status.ausente,
-                                            elapsedTime
+                                            Status.cancelado,
+                                            0
                                           )
                                         }
-                                        boxShadow={
-                                          '1px 1px 2px hsla(0, 28%, 0%, 0.7)'
-                                        }
+                                        maxH={[6, 6, 7, 8]}
+                                        boxShadow='1px 1px 2px hsla(0, 28%, 0%, 0.7)'
                                         minW={['80px', '80px', '90px', '100px']}
                                         fontSize={[
                                           '0.8rem',
@@ -604,54 +574,16 @@ const SelecionarDiaFuncionario: React.FC = () => {
                                           '0.9rem',
                                           '0.9rem',
                                         ]}
-                                        bg={'#c2bb00'}
+                                        bg={'#e53e3e'}
                                         textColor={'white'}
                                         _hover={{
-                                          bg: '#8a8600',
+                                          bg: '#c53030',
                                           fontWeight: 'bold',
                                         }}
                                       >
-                                        Ausente
+                                        Cancelar
                                       </Button>
                                     )}
-
-                                    {activeCardId !== Number(schedulling.id) &&
-                                      payload?.tipo_usuario === 3 && (
-                                        <Button
-                                          onClick={() =>
-                                            handleUpdateScheduling(
-                                              schedulling.id as number,
-                                              schedulling.usuario_id,
-                                              Status.cancelado,
-                                              elapsedTime
-                                            )
-                                          }
-                                          maxH={[6, 6, 7, 8]}
-                                          boxShadow={
-                                            '1px 1px 2px hsla(0, 28%, 0%, 0.7)'
-                                          }
-                                          minW={[
-                                            '80px',
-                                            '80px',
-                                            '90px',
-                                            '100px',
-                                          ]}
-                                          fontSize={[
-                                            '0.8rem',
-                                            '0.8rem',
-                                            '0.9rem',
-                                            '0.9rem',
-                                          ]}
-                                          bg={'#e53e3e'}
-                                          textColor={'white'}
-                                          _hover={{
-                                            bg: '#c53030',
-                                            fontWeight: 'bold',
-                                          }}
-                                        >
-                                          Cancelar
-                                        </Button>
-                                      )}
                                   </Flex>
                                 )}
                             </Flex>

@@ -175,6 +175,7 @@ export const BairroCras: Bairro[] = [
       'CARIOCA DE TOCOS',
       'CAXIAS DE TOCOS',
       'CAZUMBA',
+      'CORRENTEZA (GOITACAZES)',
       'COQUEIRO DE TOCOS',
       'CUPIM DE POÇO GORDO',
       'DONANA',
@@ -259,8 +260,8 @@ export const BairroCras: Bairro[] = [
     bairro: [
       'AREIA BRANCA',
       'CHAVE DO PARAISO',
-      'CORRENTEZA',
       'CONSELHEIRO JOSINO',
+      'CORRENTEZA (MORRO DO COCO)',
       'ESPIRITO SANTINHO',
       'MATA DA CRUZ',
       'MORRO DO COCO',

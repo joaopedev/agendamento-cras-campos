@@ -214,6 +214,14 @@ const CardShowAgendamento: React.FC = () => {
                 </strong>
               </Text>
             )}
+
+            <Text as='span' color='red' fontWeight='bold'>
+              {' '}
+              <strong>
+                Caso mais de uma pessoa esteja agendada para um horário, o
+                atendimento será realizado por ordem de chegada.
+              </strong>
+            </Text>
             <Text>
               Documentos <strong>ORIGINAIS</strong> com foto de todos os
               moradores da família necessários para o seu atendimento: <br />
@@ -235,11 +243,11 @@ const CardShowAgendamento: React.FC = () => {
             <Text>
               Caso deseje alterar seus dados, entre em contato com seu CRAS.
               <br />
-              <strong>
+              {/* <strong>
                 Há uma tolerância de 10 minutos de atraso para o seu
                 atendimento, após o tempo de tolerância seu agendamento será
                 automaticamente cancelado.
-              </strong>
+              </strong> */}
             </Text>
 
             {/* Conditionally render the Cancel Appointment button */}

@@ -16,32 +16,31 @@ import {
   InputLeftAddon,
   CloseButton,
   useDisclosure,
-} from "@chakra-ui/react";
-import { Select } from "chakra-react-select"; // Import chakra-react-select
-import React, { ChangeEvent, useState, useContext, useEffect } from "react";
-import { HamburgerMenu } from "../components/HamburgerMenu";
-import SidebarHome from "../components/SidebarHome";
-import { AuthContext } from "../context/AuthContext";
-import { Controller, useForm } from "react-hook-form";
-import { CheckIcon, EditIcon } from "@chakra-ui/icons";
-import { IUserModel, Bairros, Cras } from "../interface/User";
-import { updateUserRequest } from "../services/auth-request";
-import { BairroCras } from "../components/BairroCras";
-import { isEqual, pickBy } from "lodash";
+} from '@chakra-ui/react';
+import { Select } from 'chakra-react-select'; // Import chakra-react-select
+import React, { ChangeEvent, useState, useContext, useEffect } from 'react';
+import { HamburgerMenu } from '../components/HamburgerMenu';
+import SidebarHome from '../components/SidebarHome';
+import { AuthContext } from '../context/AuthContext';
+import { Controller, useForm } from 'react-hook-form';
+import { CheckIcon, EditIcon } from '@chakra-ui/icons';
+import { IUserModel, Bairros, Cras } from '../interface/User';
+import { updateUserRequest } from '../services/auth-request';
+import { BairroCras } from '../components/BairroCras';
 
 export const UserEdit: React.FC = () => {
   const { onClose } = useDisclosure();
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [showCard, setShowCard] = useState(false);
-  const [cpf, setCpf] = useState<string>("");
+  const [cpf, setCpf] = useState<string>('');
   const { payload, setPayload } = useContext(AuthContext);
-  const [inputTelefone, setInputTelefone] = useState("");
+  const [inputTelefone, setInputTelefone] = useState('');
   const toast = useToast();
 
   const handleChange = (event: any) => {
     formatarCPF(event.target.value);
-    setError("");
+    setError('');
   };
 
   const {
@@ -62,16 +61,16 @@ export const UserEdit: React.FC = () => {
     defaultValues: cpfData || {},
   });
 
-  const selectedBairro = watch("endereco.bairro");
+  const selectedBairro = watch('endereco.bairro');
   useEffect(() => {
     if (selectedBairro) {
-      const bairroCras = BairroCras.find((item) =>
+      const bairroCras = BairroCras.find(item =>
         item.bairro.includes(selectedBairro)
       );
 
       if (bairroCras) {
         const crasEnum = Cras[bairroCras.cras as keyof typeof Cras];
-        setValue("cras", crasEnum);
+        setValue('cras', crasEnum);
       }
     }
   }, [selectedBairro, setValue]);
@@ -83,8 +82,8 @@ export const UserEdit: React.FC = () => {
   };
 
   const bairroOptions: BairroOption[] = Object.values(Bairros)
-    .filter((bairro): bairro is string => typeof bairro === "string")
-    .map((bairro) => ({
+    .filter((bairro): bairro is string => typeof bairro === 'string')
+    .map(bairro => ({
       label: bairro,
       value: bairro,
     }));
@@ -98,45 +97,45 @@ export const UserEdit: React.FC = () => {
     setIsEditing(false);
     if (payload) {
       reset(payload);
-      setInputTelefone(""); // Clear the inputTelefone state
+      setInputTelefone(''); // Clear the inputTelefone state
     }
   };
-  const [inputDataNascimento, setInputDataNascimento] = useState("");
+  const [inputDataNascimento, setInputDataNascimento] = useState('');
 
   const formatDataNascimento = (data: string) => {
     if (data.length > 2) {
-      data = data.slice(0, 2) + "/" + data.slice(2);
+      data = data.slice(0, 2) + '/' + data.slice(2);
     }
     if (data.length > 5) {
-      data = data.slice(0, 5) + "/" + data.slice(5);
+      data = data.slice(0, 5) + '/' + data.slice(5);
     }
     return data;
   };
 
   const handleDataNascimentoChange = (e: ChangeEvent<HTMLInputElement>) => {
-    let value = e.target.value.replace(/\D/g, ""); // Remove caracteres não numéricos
+    let value = e.target.value.replace(/\D/g, ''); // Remove caracteres não numéricos
     value = value.slice(0, 8); // Limita a 8 dígitos (DDMMAAAA)
 
     setInputDataNascimento(value); // Atualiza o estado local
-    setValue("data_nascimento", value); // Atualiza o valor do formulário
+    setValue('data_nascimento', value); // Atualiza o valor do formulário
   };
 
   function formatarCPF(cpf: string) {
-    cpf = cpf.replace(/\D/g, "");
-    return setCpf(cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/g, "$1.$2.$3-$4"));
+    cpf = cpf.replace(/\D/g, '');
+    return setCpf(cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/g, '$1.$2.$3-$4'));
   }
 
   const handleGetByCpf = async () => {
     try {
-      await getByCpf(cpf.replace(/\D/g, ""));
+      await getByCpf(cpf.replace(/\D/g, ''));
     } catch (error) {
       toast({
-        title: "Erro ao buscar usuário",
+        title: 'Erro ao buscar usuário',
         description: (error as Error).message,
-        status: "error",
+        status: 'error',
         duration: 5000,
         isClosable: true,
-        position: "top-right",
+        position: 'top-right',
       });
     }
   };
@@ -144,26 +143,7 @@ export const UserEdit: React.FC = () => {
   const handleSave = async (data: IUserModel) => {
     try {
       if (!payload || !payload.id) {
-        throw new Error("Informações do usuário não disponíveis");
-      }
-
-      // Comparar valores iniciais e atuais
-      const updatedFields = pickBy(data, (value, key) => {
-        const initialValue = cpfData ? cpfData[key as keyof IUserModel] : null;
-        return !isEqual(value, initialValue); // Retorna true se o valor for diferente
-      });
-
-      // Verificar se há alterações
-      if (Object.keys(updatedFields).length === 0) {
-        toast({
-          title: "Nenhuma alteração",
-          description: "Nenhum campo foi modificado.",
-          status: "info",
-          duration: 3000,
-          isClosable: true,
-          position: "top-right",
-        });
-        return;
+        throw new Error('Informações do usuário não disponíveis');
       }
 
       // Verificar se a data de nascimento mudou
@@ -177,111 +157,115 @@ export const UserEdit: React.FC = () => {
 
       if (hoursDifference <= 24) {
         throw new Error(
-          "Não é possível atualizar as informações dentro de 24 horas da última atualização"
+          'Não é possível atualizar as informações dentro de 24 horas da última atualização'
         );
       }
 
       // Atualizar a senha se a data de nascimento mudou
-      if (dateOfBirthChanged && data.tipo_usuario === 1) {
+      if (dateOfBirthChanged) {
         data.password = data.data_nascimento;
       }
 
-      const { data: updatedUserData } = await updateUserRequest(payload.id, updatedFields);
+      const { data: updatedUserData } = await updateUserRequest(
+        cpfData?.id,
+        data
+      );
 
-      setPayload((prev) => ({
-        ...prev,
+      setPayload(cpfData => ({
+        ...cpfData,
         ...updatedUserData,
+        tipoUsuario: cpfData?.tipo_usuario,
       }));
 
       setIsEditing(false);
       toast({
-        title: "Sucesso",
-        description: "Informações atualizadas com sucesso.",
+        title: 'Sucesso',
+        description: 'Informações atualizadas com sucesso.',
         duration: 5000,
         isClosable: true,
-        position: "top-right",
-        status: "success",
-        variant: "custom-success",
+        position: 'top-right',
+        status: 'success',
+        variant: 'custom-success',
       });
     } catch (error) {
       toast({
-        title: "Erro",
+        title: 'Erro',
         description: (error as Error).message,
-        status: "error",
+        status: 'error',
         duration: 5000,
         isClosable: true,
-        position: "top-right",
+        position: 'top-right',
       });
     }
   };
 
   useEffect(() => {
     if (cpfData) {
-      setValue("name", cpfData.name);
-      setValue("cras", cpfData.cras);
-      setValue("usuario_id", cpfData.id);
-      setValue("endereco", cpfData.endereco);
-      setValue("telefone", cpfData.telefone);
-      setValue("data_nascimento", cpfData.data_nascimento);
-      setInputDataNascimento(cpfData.data_nascimento || "");
+      setValue('name', cpfData.name);
+      setValue('cras', cpfData.cras);
+      setValue('usuario_id', cpfData.id);
+      setValue('endereco', cpfData.endereco);
+      setValue('telefone', cpfData.telefone);
+      setValue('data_nascimento', cpfData.data_nascimento);
+      setInputDataNascimento(cpfData.data_nascimento || '');
     }
   }, [cpfData, setValue]);
 
   const handleTelefoneChange = (e: ChangeEvent<HTMLInputElement>) => {
-    let value = e.target.value.replace(/\D/g, "");
+    let value = e.target.value.replace(/\D/g, '');
     value = value.slice(0, 11); // Limit to 11 digits (DDD + 9-digit number)
 
     if (value.length > 2) {
-      value = "(" + value.slice(0, 2) + ") " + value.slice(2);
+      value = '(' + value.slice(0, 2) + ') ' + value.slice(2);
     }
     if (value.length > 10) {
-      value = value.slice(0, 10) + "-" + value.slice(10);
+      value = value.slice(0, 10) + '-' + value.slice(10);
     }
     setInputTelefone(value); // Update formatted input in state
-    setValue("telefone", value); // Update form value with formatted number
+    setValue('telefone', value); // Update form value with formatted number
   };
   console.log(cpfData);
 
   return (
-    <Flex h="100vh">
+    <Flex h='100vh'>
       <SidebarHome />
       <HamburgerMenu />
       <Box
-        alignItems={"center"}
-        justifyContent={"center"}
-        pl={["0%", "30%", "25%", "20%"]}
-        w={"100%"}
-        display={"flex"}
-        flexDir="column"
+        alignItems={'center'}
+        justifyContent={'center'}
+        pl={['0%', '30%', '25%', '20%']}
+        w={'100%'}
+        display={'flex'}
+        flexDir='column'
         gap={3}
       >
-        <Text fontWeight={"bold"}>Buscar cidadão pelo CPF</Text>
+        <Text fontWeight={'bold'}>Buscar usuário pelo CPF</Text>
         <Flex gap={1}>
           <Input
             maxW={500}
             value={cpf}
-            type="text"
+            type='text'
             onChange={handleChange}
-            placeholder="Digite o CPF"
+            placeholder='Digite o CPF'
           />
           {/* <Button onClick={handleGetByCpf}>Buscar por CPF</Button> */}
           <Button
             sx={{
-              maxW: "max-content",
-              display: "-ms-grid",
-              boxShadow: "1px 1px 2px hsla(0, 28%, 0%, 0.7)",
-              color: "#fff",
-              bg: "hsla(207, 74%, 42%, 0.80)",
-              minW: ["80px", "80px", "90px", "100px"],
-              fontSize: ["0.8rem", "0.8rem", "0.9rem", "1rem"],
+              maxW: 'max-content',
+              display: '-ms-grid',
+              boxShadow: '1px 1px 2px hsla(0, 28%, 0%, 0.7)',
+              color: '#fff',
+              bg: 'hsla(207, 74%, 42%, 0.80)',
+              minW: ['80px', '80px', '90px', '100px'],
+              fontSize: ['0.8rem', '0.8rem', '0.9rem', '1rem'],
               _hover: {
-                bg: "hsla(207, 74%, 42%, 1)",
-                fontWeight: "bold",
+                bg: 'hsla(207, 74%, 42%, 1)',
+                fontWeight: 'bold',
               },
             }}
             onClick={() => {
               if (cpf?.length !== 14) {
-                setError("O CPF deve conter exatamente 11 números.");
+                setError('O CPF deve conter exatamente 11 números.');
               } else {
                 handleGetByCpf();
                 setShowCard(true);
@@ -292,42 +276,42 @@ export const UserEdit: React.FC = () => {
           </Button>
         </Flex>
         {error && (
-          <Text fontSize={12} color="red.500">
+          <Text fontSize={12} color='red.500'>
             {error}
           </Text>
         )}
         {showCard && (
           <form onSubmit={handleSubmit(handleSave)}>
-            <Card p={4} bg={"#F4F4F4"} w={"1000px"}>
+            <Card p={4} bg={'#F4F4F4'} w={'1000px'}>
               <Flex
-                flexDir={["column", "column", "row", "row"]}
-                justifyContent={"space-evenly"}
-                alignItems={"center"}
+                flexDir={['column', 'column', 'row', 'row']}
+                justifyContent={'space-evenly'}
+                alignItems={'center'}
                 gap={2}
               >
                 <Avatar
-                  bg={"hsla(207, 74%, 42%, 0.80)"}
-                  color={"white"}
-                  size={["md", "md", "lg", "xl"]}
+                  bg={'hsla(207, 74%, 42%, 0.80)'}
+                  color={'white'}
+                  size={['md', 'md', 'lg', 'xl']}
                   name={cpfData?.name}
                 />
-                <Stack w={["90%", "90%", "30%", "35%"]}>
+                <Stack w={['90%', '90%', '30%', '35%']}>
                   <FormControl
                     isInvalid={!!errors.name}
                     isDisabled={!isEditing}
                   >
-                    <FormLabel htmlFor="name" fontWeight="bold" color="black">
+                    <FormLabel htmlFor='name' fontWeight='bold' color='black'>
                       Nome
                     </FormLabel>
                     <InputGroup>
-                      <InputLeftElement pointerEvents="none" />
+                      <InputLeftElement pointerEvents='none' />
                       <Input
-                        id="name"
+                        id='name'
                         placeholder={cpfData?.name}
-                        _placeholder={{ opacity: 1, color: "black" }}
-                        size="md"
-                        {...register("name")}
-                        pl={"16px"}
+                        _placeholder={{ opacity: 1, color: 'black' }}
+                        size='md'
+                        {...register('name')}
+                        pl={'16px'}
                       />
                     </InputGroup>
                     <FormErrorMessage>
@@ -335,25 +319,25 @@ export const UserEdit: React.FC = () => {
                     </FormErrorMessage>
                   </FormControl>
                   <FormControl isInvalid={!!errors.cpf} isDisabled={!isEditing}>
-                    <FormLabel htmlFor="name" fontWeight="bold" color="black">
+                    <FormLabel htmlFor='name' fontWeight='bold' color='black'>
                       CPF
                     </FormLabel>
                     <InputGroup>
-                      <InputLeftElement pointerEvents="none" />
+                      <InputLeftElement pointerEvents='none' />
                       <Input
                         isDisabled
                         // sx={textStyle1}
                         // id='cpf'
                         placeholder={cpfData?.cpf
-                          .replace(/[^\d]/g, "")
+                          .replace(/[^\d]/g, '')
                           .replace(
                             /(\d{3})(\d{3})(\d{3})(\d{2})/,
-                            "$1.$2.$3-$4"
+                            '$1.$2.$3-$4'
                           )}
-                        _placeholder={{ opacity: 1, color: "black" }}
-                        size="md"
+                        _placeholder={{ opacity: 1, color: 'black' }}
+                        size='md'
                         // {...register('cpf')}
-                        pl={"16px"}
+                        pl={'16px'}
                       />
                     </InputGroup>
                     <FormErrorMessage>
@@ -366,32 +350,32 @@ export const UserEdit: React.FC = () => {
                     isDisabled={!isEditing}
                   >
                     <FormLabel
-                      htmlFor="data-de-nascimento"
-                      fontWeight="bold"
-                      color="black"
+                      htmlFor='data-de-nascimento'
+                      fontWeight='bold'
+                      color='black'
                     >
                       Data de Nascimento
                     </FormLabel>
                     <InputGroup>
-                      <InputLeftElement pointerEvents="none" />
+                      <InputLeftElement pointerEvents='none' />
                       <Input
-                        id="data-de-nascimento"
+                        id='data-de-nascimento'
                         placeholder={
                           cpfData?.data_nascimento
                             ? formatDataNascimento(cpfData.data_nascimento)
-                            : "DD/MM/AAAA"
+                            : 'DD/MM/AAAA'
                         }
                         value={formatDataNascimento(inputDataNascimento)} // Valor formatado para exibição
                         onChange={handleDataNascimentoChange} // Função de manipulação
-                        size="md"
+                        size='md'
                         sx={{
-                          fontSize: ["0.7rem", "0.8rem", "0.9rem", "1rem"],
-                          bg: "white",
-                          borderRadius: "5px",
-                          p: "4px 0",
-                          mt: "0px",
-                          mb: "0px",
-                          paddingLeft: "16px",
+                          fontSize: ['0.7rem', '0.8rem', '0.9rem', '1rem'],
+                          bg: 'white',
+                          borderRadius: '5px',
+                          p: '4px 0',
+                          mt: '0px',
+                          mb: '0px',
+                          paddingLeft: '16px',
                         }}
                         isDisabled={!isEditing}
                       />
@@ -405,11 +389,11 @@ export const UserEdit: React.FC = () => {
                     isInvalid={!!errors.telefone}
                     isDisabled={!isEditing}
                   >
-                    <FormLabel htmlFor="name" fontWeight="bold" color="black">
+                    <FormLabel htmlFor='name' fontWeight='bold' color='black'>
                       Celular
                     </FormLabel>
                     <InputGroup>
-                      <InputLeftElement pointerEvents="none" />
+                      <InputLeftElement pointerEvents='none' />
                       <InputLeftAddon
                       // sx={textStyle1}
                       >
@@ -417,13 +401,13 @@ export const UserEdit: React.FC = () => {
                       </InputLeftAddon>
                       <Input
                         // sx={textStyle1}
-                        id="telefone"
-                        placeholder={cpfData?.telefone || "Celular"}
-                        _placeholder={{ opacity: 1, color: "black" }}
-                        size="md"
+                        id='telefone'
+                        placeholder={cpfData?.telefone || 'Celular'}
+                        _placeholder={{ opacity: 1, color: 'black' }}
+                        size='md'
                         value={inputTelefone} // Use formatted input
                         onChange={handleTelefoneChange} // Use formatted input handler
-                        pl={"16px"}
+                        pl={'16px'}
                       />
                     </InputGroup>
                     <FormErrorMessage>
@@ -431,24 +415,24 @@ export const UserEdit: React.FC = () => {
                     </FormErrorMessage>
                   </FormControl>
                 </Stack>
-                <Stack w={["90%", "90%", "30%", "35%"]}>
+                <Stack w={['90%', '90%', '30%', '35%']}>
                   <FormControl
                     isInvalid={!!errors.endereco?.rua}
                     isDisabled={!isEditing}
                   >
-                    <FormLabel htmlFor="name" fontWeight="bold" color="black">
+                    <FormLabel htmlFor='name' fontWeight='bold' color='black'>
                       Rua
                     </FormLabel>
                     <InputGroup>
-                      <InputLeftElement pointerEvents="none" />
+                      <InputLeftElement pointerEvents='none' />
                       <Input
                         // sx={textStyle1}
-                        id="rua"
-                        placeholder={cpfData?.endereco?.rua || "Rua"} // Optional Chaining
-                        _placeholder={{ opacity: 1, color: "black" }}
-                        size="md"
-                        {...register("endereco.rua")}
-                        pl={"16px"}
+                        id='rua'
+                        placeholder={cpfData?.endereco?.rua || 'Rua'} // Optional Chaining
+                        _placeholder={{ opacity: 1, color: 'black' }}
+                        size='md'
+                        {...register('endereco.rua')}
+                        pl={'16px'}
                       />
                     </InputGroup>
                     <FormErrorMessage>
@@ -459,22 +443,22 @@ export const UserEdit: React.FC = () => {
                     isInvalid={!!errors.endereco?.numero}
                     isDisabled={!isEditing}
                   >
-                    <FormLabel htmlFor="name" fontWeight="bold" color="black">
+                    <FormLabel htmlFor='name' fontWeight='bold' color='black'>
                       Número
                     </FormLabel>
                     <InputGroup>
-                      <InputLeftElement pointerEvents="none" />
+                      <InputLeftElement pointerEvents='none' />
                       <Input
                         // sx={textStyle1}
-                        id="numero"
+                        id='numero'
                         placeholder={
-                          cpfData?.endereco?.numero?.toString() || "Número"
+                          cpfData?.endereco?.numero?.toString() || 'Número'
                         } // Add optional chaining
-                        _placeholder={{ opacity: 1, color: "black" }}
-                        size="md"
-                        {...register("endereco.numero")}
-                        pl={"16px"}
-                        pr={"16px"}
+                        _placeholder={{ opacity: 1, color: 'black' }}
+                        size='md'
+                        {...register('endereco.numero')}
+                        pl={'16px'}
+                        pr={'16px'}
                       />
                     </InputGroup>
                     <FormErrorMessage>
@@ -484,11 +468,11 @@ export const UserEdit: React.FC = () => {
                   </FormControl>
                   <Controller
                     control={control}
-                    name="endereco.bairro"
+                    name='endereco.bairro'
                     render={({ field }) => {
                       const selectedOption =
                         bairroOptions.find(
-                          (option) => option.value === field.value
+                          option => option.value === field.value
                         ) || null;
 
                       return (
@@ -497,33 +481,33 @@ export const UserEdit: React.FC = () => {
                           isDisabled={!isEditing}
                         >
                           <FormLabel
-                            htmlFor="bairro"
-                            fontWeight="bold"
-                            color="black"
+                            htmlFor='bairro'
+                            fontWeight='bold'
+                            color='black'
                           >
                             Bairro
                           </FormLabel>
                           <Select<BairroOption>
-                            id="bairro"
+                            id='bairro'
                             name={field.name}
                             options={bairroOptions}
-                            placeholder="Selecione seu bairro"
+                            placeholder='Selecione seu bairro'
                             isSearchable
                             value={selectedOption}
-                            onChange={(option) => {
+                            onChange={option => {
                               field.onChange(option?.value);
                             }}
                             chakraStyles={{
-                              container: (provided) => ({
+                              container: provided => ({
                                 ...provided,
                                 fontSize: [
-                                  "0.7rem",
-                                  "0.8rem",
-                                  "0.9rem",
-                                  "1rem",
+                                  '0.7rem',
+                                  '0.8rem',
+                                  '0.9rem',
+                                  '1rem',
                                 ],
-                                bg: "white",
-                                borderRadius: "5px",
+                                bg: 'white',
+                                borderRadius: '5px',
                               }),
                             }}
                             isDisabled={!isEditing}
@@ -536,30 +520,31 @@ export const UserEdit: React.FC = () => {
                       );
                     }}
                   />
+
                   <Controller
                     control={control}
-                    name="cras"
+                    name='cras'
                     render={({ field }) => (
                       <FormControl isInvalid={!!errors.cras} isDisabled>
                         <FormLabel
-                          htmlFor="cras"
-                          fontWeight="bold"
-                          color="gray"
+                          htmlFor='cras'
+                          fontWeight='bold'
+                          color='gray'
                         >
                           CRAS
                         </FormLabel>
                         <Input
-                          id="cras"
-                          value={field.value ? Cras[field.value] : ""}
+                          id='cras'
+                          value={field.value ? Cras[field.value] : ''}
                           isReadOnly
                           sx={{
-                            fontSize: ["0.7rem", "0.8rem", "0.9rem", "1rem"],
-                            bg: "white",
-                            borderRadius: "5px",
-                            p: "4px 0",
-                            mt: "0px",
-                            mb: "0px",
-                            paddingLeft: "16px",
+                            fontSize: ['0.7rem', '0.8rem', '0.9rem', '1rem'],
+                            bg: 'white',
+                            borderRadius: '5px',
+                            p: '4px 0',
+                            mt: '0px',
+                            mb: '0px',
+                            paddingLeft: '16px',
                           }}
                         />
                         <FormErrorMessage>
@@ -574,37 +559,37 @@ export const UserEdit: React.FC = () => {
                     maxW={10}
                     maxH={10}
                     onClick={handleConfirmEdit}
-                    borderRadius={"100%"}
-                    transform="auto"
-                    bgColor={"hsla(207, 74%, 42%, 0.80)"}
-                    _hover={{ backgroundColor: "hsla(207, 74%, 42%, 1)" }}
+                    borderRadius={'100%'}
+                    transform='auto'
+                    bgColor={'hsla(207, 74%, 42%, 0.80)'}
+                    _hover={{ backgroundColor: 'hsla(207, 74%, 42%, 1)' }}
                   >
-                    <EditIcon color={"white"} />
+                    <EditIcon color={'white'} />
                   </Button>
                 )}
                 {isEditing && (
-                  <Flex gap={2} flexDir={["row", "row", "column", "column"]}>
+                  <Flex gap={2} flexDir={['row', 'row', 'column', 'column']}>
                     <Button
-                      type="submit"
+                      type='submit'
                       maxW={10}
                       maxH={10}
-                      borderRadius={"100%"}
-                      transform="auto"
-                      colorScheme="green"
+                      borderRadius={'100%'}
+                      transform='auto'
+                      colorScheme='green'
                       // bgColor={'#016234'}
                       // _hover={{ backgroundColor: '#016234' }}
                     >
-                      <CheckIcon color={"white"} />
+                      <CheckIcon color={'white'} />
                     </Button>
                     <Button
                       maxW={10}
                       maxH={10}
-                      colorScheme="red"
+                      colorScheme='red'
                       onClick={handleCancelEdit}
-                      borderRadius={"100%"}
-                      transform="auto"
+                      borderRadius={'100%'}
+                      transform='auto'
                     >
-                      <CloseButton w={0} h={0} color={"white"} />
+                      <CloseButton w={0} h={0} color={'white'} />
                     </Button>
                   </Flex>
                 )}
@@ -618,30 +603,30 @@ export const UserEdit: React.FC = () => {
 };
 
 export const boxStyle = {
-  w: "60%",
-  maxW: ["300px", "350px", "500px", "950px"],
-  minW: "250px",
-  boxShadow: "2px 2px 5px hsla(0, 28%, 0%, 0.5)",
-  p: ["20px", "20px", "30px", "40px"],
-  borderRadius: "25px",
-  bg: "#F4F4F4",
-  textAlign: "center",
-  alignContent: "center",
+  w: '60%',
+  maxW: ['300px', '350px', '500px', '950px'],
+  minW: '250px',
+  boxShadow: '2px 2px 5px hsla(0, 28%, 0%, 0.5)',
+  p: ['20px', '20px', '30px', '40px'],
+  borderRadius: '25px',
+  bg: '#F4F4F4',
+  textAlign: 'center',
+  alignContent: 'center',
 };
 export const btnStyle = {
-  p: "0",
-  w: ["30%", "40%", "40%", "40%"],
-  display: "-ms-grid",
-  boxShadow: "1px 1px 2px hsla(0, 28%, 0%, 0.7)",
-  color: "#fff",
-  bg: "#016234",
-  maxW: "950px",
-  px: "10px",
+  p: '0',
+  w: ['30%', '40%', '40%', '40%'],
+  display: '-ms-grid',
+  boxShadow: '1px 1px 2px hsla(0, 28%, 0%, 0.7)',
+  color: '#fff',
+  bg: '#016234',
+  maxW: '950px',
+  px: '10px',
   minW: [22, 24, 26, 28],
-  fontSize: ["0.7rem", "0.8rem", "0.9rem", "1rem"],
+  fontSize: ['0.7rem', '0.8rem', '0.9rem', '1rem'],
   _hover: {
-    bg: "#00963f",
-    fontWeight: "bold",
+    bg: '#00963f',
+    fontWeight: 'bold',
   },
 };
 export default UserEdit;

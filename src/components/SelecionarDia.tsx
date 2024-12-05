@@ -55,7 +55,7 @@ const SelecionarDia: React.FC = () => {
   const currentTime = toZonedTime(new Date(), timeZone);
   const currentHour = currentTime.getHours();
   // const isBeforeNineAm = currentHour < 9;
-  const isBetween9pmAnd9am = currentHour >= 21 || currentHour < 9;
+  const isBetween9pmAnd9am = currentHour >= 22 || currentHour < 9;
   const [showForm, setShowForm] = useState(false);
   const [showConfirmar, setShowConfirmar] = useState(false);
   const [horarioSelecionado, setHorarioSelecionado] = useState<string | null>(
@@ -432,124 +432,441 @@ const SelecionarDia: React.FC = () => {
                 AGENDAR ATENDIMENTO
               </Text>
               <Divider my={2} />
-
-              {isBetween9pmAnd9am && payload?.tipo_usuario !== 3 ? (
-                <Box
-                  p={4}
-                  borderWidth='1px'
-                  borderRadius='md'
-                  bg='gray.100'
-                  mt={4}
-                >
-                  <Text fontWeight='bold' fontSize={['xl', 'xl', '2xl', '3xl']}>
-                    Não temos vagas disponíveis, tente novamente mais tarde.
-                  </Text>
-                </Box>
-              ) : (
-                // Exibe o DatePicker normalmente
-                <Flex gap={2} flexDirection={'column'}>
+              {
+                // Exibe o card informativo antes das 9h
+                // isBeforeNineAm ? (
+                // Exibe o card informativo entre 21:00 e 9:00
+                isBetween9pmAnd9am ? (
                   <Box
-                    flexDir={['column', 'column', 'row', 'row']}
-                    mx={'auto'}
-                    className='box__dia'
-                    alignItems={'center'}
-                    display={'flex'}
-                    columnGap={2}
+                    p={4}
+                    borderWidth='1px'
+                    borderRadius='md'
+                    bg='gray.100'
+                    mt={4}
                   >
                     <Text
-                      fontWeight='bold'
-                      fontSize={['12px', '12px', '15px', '15px']}
+                      fontWeight={'bold'}
+                      fontSize={['xl', 'xl', '2xl', '3xl']}
                     >
-                      DIA SELECIONADO:
+                      Não temos vagas disponíveis, tente novamente mais tarde.
                     </Text>
+                  </Box>
+                ) : (
+                  // Exibe o DatePicker após as 9h
+                  <Flex gap={2} flexDirection={'column'}>
                     <Box
+                      flexDir={['column', 'column', 'row', 'row']}
+                      mx={'auto'}
+                      className='box__dia'
                       alignItems={'center'}
-                      w={'min-content'}
-                      borderRadius={5}
-                      border={'1px solid #999'}
-                      p={'1px'}
+                      display={'flex'}
+                      columnGap={2}
                     >
-                      <DatePicker
-                        dateFormat='dd/MM/yyyy'
-                        locale={'pt-BR'}
-                        selected={selectedDate}
-                        filterDate={date =>
-                          date.getDay() !== 0 &&
-                          date.getDay() !== 6 &&
-                          date <= maxDate
-                        }
-                        onSelect={handleDateChange}
-                        onChange={(date: Date) => setSelectedDate(date)}
-                        minDate={addDays(new Date(), 1)}
-                        className='customInput'
-                        calendarContainer={({ className, children }) => (
-                          <Box
-                            style={{
-                              borderRadius: '10px',
-                              padding: '16px',
-                              background: bgColor,
-                              color: '#fff',
-                              boxShadow: '1px 1px 10px hsla(0, 28%, 0%, 0.4)',
-                            }}
-                          >
-                            <CalendarContainer className={className}>
-                              <Text
-                                style={{
-                                  background: bgColor,
-                                  padding: '4px',
-                                  color: 'white',
-                                }}
-                              >
-                                Selecione um dia
-                              </Text>
-                              <Text style={{ position: 'relative' }}>
-                                {children}
-                              </Text>
-                            </CalendarContainer>
-                          </Box>
-                        )}
-                      />
-                    </Box>
-                  </Box>
-                  <Divider my={1} />
-                  <Box className='box__esquerda' flex={1}>
-                    <Text
-                      pb={1}
-                      fontSize={['12px', '12px', '15px', '15px']}
-                      fontWeight='bold'
-                    >
-                      HORÁRIOS DISPONÍVEIS
-                    </Text>
-                    <SimpleGrid columns={[2, null, 5]} spacing='1'>
-                      {horariosDisponiveis.map(horario => (
-                        <BoxHorario
-                          key={horario.hora}
-                          horario={horario}
-                          selectedDate={selectedDate}
-                          onHorarioSelect={(date: Date) => {
-                            setSelectedDate(date);
-                            setHorarioSelecionado(horario.hora);
-                            onOpen();
-                            payload?.tipo_usuario === 1 && setShowForm(true);
-                          }}
-                          setValue={setValue}
+                      <Text
+                        fontWeight='bold'
+                        fontSize={['12px', '12px', '15px', '15px']}
+                      >
+                        DIA SELECIONADO:
+                      </Text>
+                      <Box
+                        alignItems={'center'}
+                        w={'min-content'}
+                        borderRadius={5}
+                        border={'1px solid #999'}
+                        p={'1px'}
+                        // mx={'auto'}
+                      >
+                        <DatePicker
+                          dateFormat='dd/MM/yyyy'
+                          locale={'pt-BR'}
+                          selected={selectedDate}
+                          filterDate={date =>
+                            date.getDay() !== 0 &&
+                            date.getDay() !== 6 &&
+                            date <= maxDate
+                          }
+                          onSelect={handleDateChange}
+                          onChange={(date: Date) => setSelectedDate(date)}
+                          minDate={addDays(new Date(), 1)}
+                          className='customInput'
+                          calendarContainer={({ className, children }) => (
+                            <Box
+                              style={{
+                                borderRadius: '10px',
+                                padding: '16px',
+                                background: bgColor,
+                                color: '#fff',
+                                boxShadow: '1px 1px 10px hsla(0, 28%, 0%, 0.4)',
+                              }}
+                            >
+                              <CalendarContainer className={className}>
+                                <Text
+                                  style={{
+                                    background: bgColor,
+                                    padding: '4px',
+                                    color: 'white',
+                                  }}
+                                >
+                                  Selecione um dia
+                                </Text>
+                                <Text style={{ position: 'relative' }}>
+                                  {children}
+                                </Text>
+                              </CalendarContainer>
+                            </Box>
+                          )}
                         />
-                      ))}
-                    </SimpleGrid>
-                    <Flex mt={2} justifyContent={'center'} gap={2}>
-                      <Flex gap={2} alignItems='center'>
-                        <Box w={3} h={3} bg='green.500' borderRadius='50%' />
-                        <Text>Horário Disponível</Text>
-                      </Flex>
+                      </Box>
+                    </Box>
+                    <Divider my={1} />
+                    <Box className='box__esquerda' flex={1}>
+                      <Text
+                        pb={1}
+                        fontSize={['12px', '12px', '15px', '15px']}
+                        fontWeight='bold'
+                      >
+                        HORÁRIOS DISPONÍVEIS
+                      </Text>
+                      <SimpleGrid columns={[2, null, 5]} spacing='1'>
+                        {horariosDisponiveis.map(horario => (
+                          <BoxHorario
+                            key={horario.hora}
+                            horario={horario}
+                            selectedDate={selectedDate}
+                            onHorarioSelect={(date: Date) => {
+                              setSelectedDate(date);
+                              setHorarioSelecionado(horario.hora);
+                              onOpen();
+                              payload?.tipo_usuario === 1 && setShowForm(true);
+                            }}
+                            setValue={setValue}
+                          />
+                        ))}
+                      </SimpleGrid>
+                      <Modal
+                        isOpen={isOpen}
+                        onClose={() => {
+                          onClose();
+                          setShowForm(false);
+                          setShowConfirmar(false);
+                        }}
+                        isCentered
+                        size={['xs', 'sm', 'md', 'lg']}
+                      >
+                        <ModalOverlay />
+                        <ModalContent
+                          minW={['90%', '27em', '30em', '48em']}
+                          textAlign={'center'}
+                        >
+                          <ModalCloseButton />
+                          <ModalBody>
+                            <form onSubmit={handleSubmit(onSubmit)}>
+                              {payload?.tipo_usuario !== 1 && (
+                                <Flex flexDir={'column'} mt={4} gap={4}>
+                                  <Flex
+                                    p={0}
+                                    w={'100%'}
+                                    alignItems={'center'}
+                                    flexDir={'column'}
+                                    gap={2}
+                                  >
+                                    <ModalHeader fontWeight={'bold'}>
+                                      Buscar usuário pelo CPF
+                                    </ModalHeader>
+                                    <Flex gap={1} w={'80%'}>
+                                      <Input
+                                        value={cpf}
+                                        type='text'
+                                        onChange={handleChange}
+                                        placeholder='Digite o CPF'
+                                      />
+                                      <Button
+                                        sx={{
+                                          maxW: 'max-content',
+                                          display: '-ms-grid',
+                                          boxShadow:
+                                            '1px 1px 2px hsla(0, 28%, 0%, 0.7)',
+                                          color: '#fff',
+                                          bg: '#016234',
+                                          minW: [
+                                            '80px',
+                                            '80px',
+                                            '90px',
+                                            '100px',
+                                          ],
+                                          fontSize: [
+                                            '0.8rem',
+                                            '0.8rem',
+                                            '0.9rem',
+                                            '1rem',
+                                          ],
+                                          _hover: {
+                                            bg: '#00963f',
+                                            fontWeight: 'bold',
+                                          },
+                                        }}
+                                        onClick={() => {
+                                          if (cpf?.length !== 14) {
+                                            setError(
+                                              'O CPF deve conter exatamente 11 números.'
+                                            );
+                                          } else {
+                                            handleGetByCpf();
+                                            setShowForm(true);
+                                          }
+                                        }}
+                                      >
+                                        Buscar
+                                      </Button>
+                                    </Flex>
+                                  </Flex>
+                                  {error && (
+                                    <Text fontSize={12} color='red.500'>
+                                      {error}
+                                    </Text>
+                                  )}
+                                  {cpfData && (
+                                    <Box
+                                      p={4}
+                                      borderWidth='1px'
+                                      borderRadius='md'
+                                      bg='gray.100'
+                                    >
+                                      <Text>
+                                        <strong>Nome:</strong> {cpfData.name}
+                                      </Text>
+                                      <Text>
+                                        <strong>CRAS:</strong>{' '}
+                                        {Cras[cpfData.cras]}
+                                      </Text>
+                                    </Box>
+                                  )}
+                                </Flex>
+                              )}
 
-                      <Flex gap={2} alignItems='center'>
-                        <Box w={3} h={3} bg='red.500' borderRadius='50%' />
-                        <Text>Horário Indisponível</Text>
+                              {showForm && (
+                                <>
+                                  <ModalHeader fontWeight={'bold'}>
+                                    Selecione uma opção para continuar:
+                                  </ModalHeader>
+
+                                  <Flex flexDir='column' alignItems='center'>
+                                    <FormControl isInvalid={!!errors.servico}>
+                                      <RadioGroup
+                                        onChange={value => {
+                                          setSelectedOption(value as string);
+                                          setShowConfirmar(true);
+                                        }}
+                                      >
+                                        <Stack
+                                          direction='row'
+                                          justifyContent='space-around'
+                                        >
+                                          <Radio
+                                            {...register('servico')}
+                                            id='cadastramento'
+                                            value='1'
+                                            isChecked={selectedOption === '1'}
+                                          >
+                                            Inclusão no CadÚnico
+                                          </Radio>
+                                          <Radio
+                                            {...register('servico')}
+                                            id='atualizacao'
+                                            value='2'
+                                            isChecked={selectedOption === '2'}
+                                          >
+                                            Atualização do CadÚnico
+                                          </Radio>
+                                        </Stack>
+                                      </RadioGroup>
+                                      {payload?.tipo_usuario === 1 &&
+                                        showConfirmar && (
+                                          <ModalFooter
+                                            justifyContent={'center'}
+                                          >
+                                            <Text>
+                                              Deseja confirmar o seu agendamento
+                                              para o dia{' '}
+                                              <strong>
+                                                {selectedDate &&
+                                                  format(
+                                                    selectedDate,
+                                                    'dd/MM/yyyy'
+                                                  )}
+                                              </strong>{' '}
+                                              às{' '}
+                                              <strong>
+                                                {horarioSelecionado}
+                                              </strong>{' '}
+                                              no{' '}
+                                              {payload && (
+                                                <strong>
+                                                  CRAS - {Cras[payload.cras]}?
+                                                </strong>
+                                              )}
+                                            </Text>
+                                          </ModalFooter>
+                                        )}
+                                    </FormControl>
+                                    <Box display={'none'}>
+                                      <FormControl isInvalid={!!errors.name}>
+                                        <FormLabel htmlFor='name'>
+                                          Nome
+                                        </FormLabel>
+                                        <Input
+                                          id='name'
+                                          {...register('name')}
+                                          defaultValue={
+                                            payload?.tipo_usuario === 1
+                                              ? payload?.name
+                                              : cpfData?.name
+                                          }
+                                        />
+                                        {errors.name && (
+                                          <Text color='red.500'>
+                                            {errors.name.message}
+                                          </Text>
+                                        )}
+                                      </FormControl>
+                                      <FormControl
+                                        isInvalid={!!errors.data_hora}
+                                      >
+                                        <FormLabel htmlFor='data_hora'>
+                                          Data e Hora
+                                        </FormLabel>
+                                        <Input
+                                          id='data_hora'
+                                          defaultValue={
+                                            selectedDate
+                                              ? format(
+                                                  selectedDate,
+                                                  'yyyy-MM-dd HH:mm'
+                                                )
+                                              : ''
+                                          }
+                                          {...register('data_hora')}
+                                          readOnly
+                                        />
+                                        {errors.data_hora && (
+                                          <Text color='red.500'>
+                                            {errors.data_hora.message}
+                                          </Text>
+                                        )}
+                                      </FormControl>
+
+                                      <FormControl isInvalid={!!errors.cras}>
+                                        <FormLabel htmlFor='cras'>
+                                          Cras
+                                        </FormLabel>
+                                        <Input
+                                          id='cras'
+                                          {...register('cras')}
+                                          defaultValue={
+                                            payload?.tipo_usuario === 1
+                                              ? payload?.cras
+                                              : cpfData?.cras
+                                          }
+                                        />
+
+                                        {errors.cras && (
+                                          <Text color='red.500'>
+                                            {errors.cras.message}
+                                          </Text>
+                                        )}
+                                      </FormControl>
+                                      <FormControl isInvalid={!!errors.status}>
+                                        <FormLabel htmlFor='status'>
+                                          Status
+                                        </FormLabel>
+                                        <Input
+                                          id='status'
+                                          {...register('status')}
+                                          defaultValue={2}
+                                        />
+                                        {errors.status && (
+                                          <Text color='red.500'>
+                                            {errors.status.message}
+                                          </Text>
+                                        )}
+                                      </FormControl>
+                                      <FormControl
+                                        isInvalid={!!errors.usuario_id}
+                                      >
+                                        <FormLabel htmlFor='usuario_id'>
+                                          Usuário ID
+                                        </FormLabel>
+                                        <Input
+                                          id='usuario_id'
+                                          {...register('usuario_id')}
+                                          defaultValue={
+                                            payload?.tipo_usuario === 1
+                                              ? payload?.id
+                                              : cpfData?.id
+                                          }
+                                        />
+                                        {errors.usuario_id && (
+                                          <Text color='red.500'>
+                                            {errors.usuario_id.message}
+                                          </Text>
+                                        )}
+                                      </FormControl>
+                                    </Box>
+                                  </Flex>
+                                </>
+                              )}
+                              <ModalFooter justifyContent={'center'}>
+                                <Button
+                                  minW={['100px', '100px', '150px', '150px']}
+                                  boxShadow={
+                                    '1px 1px 2px hsla(0, 28%, 0%, 0.7)'
+                                  }
+                                  fontSize={[
+                                    '0.8rem',
+                                    '0.8rem',
+                                    '0.9rem',
+                                    '1rem',
+                                  ]}
+                                  colorScheme='red'
+                                  variant='solid'
+                                  mr={3}
+                                  onClick={onClose}
+                                >
+                                  Cancelar
+                                </Button>
+                                {showConfirmar && (
+                                  <Button
+                                    onClick={() => {
+                                      onClose();
+                                      setShowForm(false);
+                                      setShowConfirmar(false);
+                                    }}
+                                    sx={btnStyle}
+                                    type='submit'
+                                  >
+                                    Confirmar
+                                  </Button>
+                                )}
+                              </ModalFooter>
+                            </form>
+                          </ModalBody>
+                        </ModalContent>
+                      </Modal>
+                      <Flex mt={2} justifyContent={'center'} gap={2}>
+                        <Flex gap={2} alignItems='center'>
+                          <Box w={3} h={3} bg='green.500' borderRadius='50%' />
+                          <Text>Horário Disponível</Text>
+                        </Flex>
+
+                        <Flex gap={2} alignItems='center'>
+                          <Box w={3} h={3} bg='red.500' borderRadius='50%' />
+                          <Text>Horário Indisponível</Text>
+                        </Flex>
                       </Flex>
-                    </Flex>
-                  </Box>
-                </Flex>
-              )}
+                    </Box>
+                  </Flex>
+                )
+              }
             </Box>
           )}
         </Flex>

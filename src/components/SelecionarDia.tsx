@@ -55,7 +55,7 @@ const SelecionarDia: React.FC = () => {
   const currentTime = toZonedTime(new Date(), timeZone);
   const currentHour = currentTime.getHours();
   // const isBeforeNineAm = currentHour < 9;
-  const isBetween9pmAnd9am = currentHour >= 22 || currentHour < 9;
+  const isBetween9pmAnd9am = currentHour >= 23 || currentHour < 9;
   const [showForm, setShowForm] = useState(false);
   const [showConfirmar, setShowConfirmar] = useState(false);
   const [horarioSelecionado, setHorarioSelecionado] = useState<string | null>(

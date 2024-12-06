@@ -77,6 +77,7 @@ export const BairroCras: Bairro[] = [
       'PARQUE SÃO CAETANO',
       'PARQUE SUMARE',
       'PARQUE TAMANDARE',
+      'RIO PRETO',
       'SANTA CRUZ',
       'CENTRO (OU ESPLANADA)',
     ],

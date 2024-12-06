@@ -276,6 +276,7 @@ export enum Bairros {
   'RES. VIVENDAS DA PENHA II',
   'RETIRO',
   'RIBEIRO DO AMARO',
+  'RIO PRETO',
   'SABAO',
   'SANTA BARBARA',
   'SANTA CRUZ',

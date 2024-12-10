@@ -95,7 +95,7 @@ const SelecionarDia: React.FC = () => {
   const hoje = new Date();
   const maxDate =
     payload?.tipo_usuario === 1
-      ? addDays(new Date(), 14)
+      ? addDays(new Date(), 10)
       : addDays(new Date(), 600);
 
   const agendamentosFuturos = schedullingData.filter(agendamento => {
@@ -313,67 +313,68 @@ const SelecionarDia: React.FC = () => {
   }, [payload?.cras, selectedDate]);
 
   const horariosDisponiveis = useMemo(() => {
-    return horarios.map(horario => {
-      if (selectedDate) {
-        const dataSelecionadaFormatada = format(selectedDate, 'yyyy-MM-dd');
-        const horariosAgendados = schedullingData
-          .filter(agendamentos => agendamentos?.status === 2)
-          .filter(
-            agendamentos =>
-              format(
-                toZonedTime(new Date(agendamentos.data_hora), timeZone),
-                'yyyy-MM-dd'
-              ) === dataSelecionadaFormatada
-          )
-          .map(agendamentos =>
-            format(new Date(agendamentos.data_hora), 'HH:mm')
+    return horarios
+      .filter(horario => {
+        if (selectedDate) {
+          const dataSelecionadaFormatada = format(selectedDate, 'yyyy-MM-dd');
+          const horariosAgendados = schedullingData
+            .filter(agendamentos => agendamentos?.status === 2)
+            .filter(
+              agendamentos =>
+                format(
+                  toZonedTime(new Date(agendamentos.data_hora), timeZone),
+                  'yyyy-MM-dd'
+                ) === dataSelecionadaFormatada
+            )
+            .map(agendamentos =>
+              format(new Date(agendamentos.data_hora), 'HH:mm')
+            );
+
+          const countAgendados = horariosAgendados.filter(
+            h => h === horario.hora
+          ).length;
+          const bloqueados = diasBloqueados
+            .filter(
+              (bloqueio: BloqueioAgendamentoModel) =>
+                format(
+                  toZonedTime(
+                    parseISO(bloqueio.data as unknown as string),
+                    timeZone
+                  ),
+                  'yyyy-MM-dd'
+                ) === dataSelecionadaFormatada
+            )
+            .filter(h => h.cras === payload?.cras);
+
+          const isBlocked = bloqueados.some(
+            (bloqueio: BloqueioAgendamentoModel) => {
+              if (bloqueio.tipo_bloqueio === 'diario') {
+                return true;
+              }
+              if (
+                bloqueio.tipo_bloqueio === 'matutino' &&
+                horaParaMinutos(horario.hora) < 780
+              ) {
+                return true;
+              }
+              if (
+                bloqueio.tipo_bloqueio === 'vespertino' &&
+                horaParaMinutos(horario.hora) >= 780
+              ) {
+                return true;
+              }
+              return false;
+            }
           );
 
-        const countAgendados = horariosAgendados.filter(
-          h => h === horario.hora
-        ).length;
-        const bloqueados = diasBloqueados
-          .filter(
-            (bloqueio: BloqueioAgendamentoModel) =>
-              format(
-                toZonedTime(
-                  parseISO(bloqueio.data as unknown as string),
-                  timeZone
-                ),
-                'yyyy-MM-dd'
-              ) === dataSelecionadaFormatada
-          )
-          .filter(h => h.cras === payload?.cras);
-
-        const isBlocked = bloqueados.some(
-          (bloqueio: BloqueioAgendamentoModel) => {
-            if (bloqueio.tipo_bloqueio === 'diario') {
-              return true;
-            }
-            if (
-              bloqueio.tipo_bloqueio === 'matutino' &&
-              horaParaMinutos(horario.hora) < 780
-            ) {
-              return true;
-            }
-            if (
-              bloqueio.tipo_bloqueio === 'vespertino' &&
-              horaParaMinutos(horario.hora) >= 780
-            ) {
-              return true;
-            }
-            return false;
-          }
-        );
-
-        return {
-          ...horario,
-          disponivel:
-            countAgendados < Number(funcionariosPorCras) && !isBlocked,
-        };
-      }
-      return horario;
-    });
+          return countAgendados < Number(funcionariosPorCras) && !isBlocked;
+        }
+        return false;
+      })
+      .map(horario => ({
+        ...horario,
+        disponivel: true,
+      }));
   }, [
     horarios,
     selectedDate,
@@ -520,29 +521,46 @@ const SelecionarDia: React.FC = () => {
                     </Box>
                     <Divider my={1} />
                     <Box className='box__esquerda' flex={1}>
-                      <Text
-                        pb={1}
-                        fontSize={['12px', '12px', '15px', '15px']}
-                        fontWeight='bold'
-                      >
-                        HORÁRIOS DISPONÍVEIS
-                      </Text>
-                      <SimpleGrid columns={[2, null, 5]} spacing='1'>
-                        {horariosDisponiveis.map(horario => (
-                          <BoxHorario
-                            key={horario.hora}
-                            horario={horario}
-                            selectedDate={selectedDate}
-                            onHorarioSelect={(date: Date) => {
-                              setSelectedDate(date);
-                              setHorarioSelecionado(horario.hora);
-                              onOpen();
-                              payload?.tipo_usuario === 1 && setShowForm(true);
-                            }}
-                            setValue={setValue}
-                          />
-                        ))}
-                      </SimpleGrid>
+                      {horariosDisponiveis.length > 0 ? (
+                        <Text
+                          pb={1}
+                          fontSize={['12px', '12px', '15px', '15px']}
+                          fontWeight='bold'
+                        >
+                          HORÁRIOS DISPONÍVEIS
+                        </Text>
+                      ) : (
+                        <Text
+                          pb={1}
+                          fontSize={['24px', '24px', '30px', '30px']}
+                          fontWeight='bold'
+                          color='red.500'
+                        >
+                          Não há horários disponíveis para esse dia. <br />{' '}
+                          Utilize o calendário e acesse o próximo dia disponível
+                          para verificar disponibilidade de vagas.
+                        </Text>
+                      )}
+                      {horariosDisponiveis.length > 0 && (
+                        <SimpleGrid columns={[2, null, 5]} spacing='1'>
+                          {horariosDisponiveis.map(horario => (
+                            <BoxHorario
+                              key={horario.hora}
+                              horario={horario}
+                              selectedDate={selectedDate}
+                              onHorarioSelect={(date: Date) => {
+                                setSelectedDate(date);
+                                setHorarioSelecionado(horario.hora);
+                                onOpen();
+                                payload?.tipo_usuario === 1 &&
+                                  setShowForm(true);
+                              }}
+                              setValue={setValue}
+                            />
+                          ))}
+                        </SimpleGrid>
+                      )}
+
                       <Modal
                         isOpen={isOpen}
                         onClose={() => {
@@ -852,17 +870,6 @@ const SelecionarDia: React.FC = () => {
                           </ModalBody>
                         </ModalContent>
                       </Modal>
-                      <Flex mt={2} justifyContent={'center'} gap={2}>
-                        <Flex gap={2} alignItems='center'>
-                          <Box w={3} h={3} bg='green.500' borderRadius='50%' />
-                          <Text>Horário Disponível</Text>
-                        </Flex>
-
-                        <Flex gap={2} alignItems='center'>
-                          <Box w={3} h={3} bg='red.500' borderRadius='50%' />
-                          <Text>Horário Indisponível</Text>
-                        </Flex>
-                      </Flex>
                     </Box>
                   </Flex>
                 )

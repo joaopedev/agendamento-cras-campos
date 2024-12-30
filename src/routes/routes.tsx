@@ -15,6 +15,7 @@ import UserEdit from '../pages/UserEdit';
 import Termos from '../pages/termos';
 import Privacidade from '../pages/privacidade';
 import Suporte from '../pages/suporte';
+import Manutenção from '../pages/manutenção';
 
 const AppRoutes: React.FC = () => {
   const { isAuthenticated } = useAuth();
@@ -25,7 +26,7 @@ const AppRoutes: React.FC = () => {
         <Route
           path='/'
           element={
-            isAuthenticated ? <Navigate to='/home' replace /> : <Login />
+            isAuthenticated ? <Navigate to='/home' replace /> : <Manutenção />
           }
         />
         <Route

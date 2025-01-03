@@ -26,7 +26,7 @@ const AppRoutes: React.FC = () => {
         <Route
           path='/'
           element={
-            isAuthenticated ? <Navigate to='/home' replace /> : <Manutenção />
+            isAuthenticated ? <Navigate to='/home' replace /> : <Login />
           }
         />
         <Route

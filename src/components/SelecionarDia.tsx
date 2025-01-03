@@ -55,7 +55,7 @@ const SelecionarDia: React.FC = () => {
   const currentTime = toZonedTime(new Date(), timeZone);
   const currentHour = currentTime.getHours();
   // const isBeforeNineAm = currentHour < 9;
-  const isBetween9pmAnd9am = currentHour >= 23 || currentHour < 9;
+  const isBetween9pmAnd9am = currentHour >= 21 || currentHour < 9;
   const [showForm, setShowForm] = useState(false);
   const [showConfirmar, setShowConfirmar] = useState(false);
   const [horarioSelecionado, setHorarioSelecionado] = useState<string | null>(
@@ -95,7 +95,7 @@ const SelecionarDia: React.FC = () => {
   const hoje = new Date();
   const maxDate =
     payload?.tipo_usuario === 1
-      ? addDays(new Date(), 10)
+      ? addDays(new Date(), 7)
       : addDays(new Date(), 600);
 
   const agendamentosFuturos = schedullingData.filter(agendamento => {
